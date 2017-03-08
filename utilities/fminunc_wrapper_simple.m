@@ -4,7 +4,7 @@ function [f,g] = fminunc_wrapper_simple(x,F,G)
 % and also compatible with Mark Schmidt's minFunc package
 %
 % Example usage:
-%   F = @(x) norm(A*x-b)/2  % this is our objective
+%   F = @(x) norm(A*x-b)^2/2  % this is our objective
 %   G = @(x) A'*(A*x-b)     % this is the gradient of F(x)
 %   options = optimoptions('fminunc','SpecifyObjectiveGradient',true);
 %   func    =  @(x)fminunc_wrapper_simple(x,F,G);
