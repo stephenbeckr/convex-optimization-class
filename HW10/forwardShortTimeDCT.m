@@ -1,6 +1,6 @@
 function coeff = forwardShortTimeDCT( y, win )
 % coeff = forwardShortTimeDCT( y, win )
-%   applies the MDCT to the signal y
+%   applies the Modified DCT to the signal y
 %   This is a linear function.
 %   Assumes y is a column vector of length N
 %   The blockSize is encoded in the length of win
@@ -14,11 +14,11 @@ function coeff = forwardShortTimeDCT( y, win )
 %   is:
 %   win         = sin( pi*( (1:blockSize) + 1/2)/(blockSize) );
 %   (a typical value of blockSize = 1024)
-%   This leads satisifes the Princen-Bradley conditions, meaning that
+%   This satisifes the Princen-Bradley conditions, meaning that
 %   we can guarantee   win.^2 + circshift( win, blockSize/2).^2  =  1
 %
 % Stephen Becker, 3/18/2017
-% See also adjointShortTimeDCT.m 
+% See also adjointShortTimeDCT.m
 
 N           = length(y);
 blockSize   = length(win);

@@ -1,9 +1,9 @@
 function y = adjointShortTimeDCT( coeff, win, Ntrue )
-% coeff = adjointShortTimeDCT( coeff, win )
+% y = adjointShortTimeDCT( coeff, win )
 %   applies the adoint/transpose MDCT to the coefficients "coeff"
 %   This is also the pseudo-inverse of the forward MDCT
 %
-% coeff = adjointShortTimeDCT( coeff, win, N_original )
+% y = adjointShortTimeDCT( coeff, win, N_original )
 %   should be used when the forward MDCT is applied to signals
 %   of length N_original. We need to know N_original so we can
 %   undo the zero-padding (which is done when N_original is not
@@ -12,7 +12,7 @@ function y = adjointShortTimeDCT( coeff, win, Ntrue )
 % see forwardShortTimeDCT.m for an example of the window "win"
 %
 % Stephen Becker, 3/18/2017
-% See also forwardShortTimeDCT.m 
+% See also forwardShortTimeDCT.m
 
 
 N           = length(coeff)/2;
