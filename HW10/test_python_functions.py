@@ -14,8 +14,8 @@ def convert_handel():
     y = mat['y']
     Fs = mat['Fs']
 
-#   pickle.dump((y,Fs), open('handel.pkl', 'wb'))
-    pickle.dump((y,Fs), open('handel2.pkl', 'wb'),protocol=2)
+    pickle.dump((y,Fs), open('handel.pkl', 'wb')) # NOT bw compatible w/ python2
+    pickle.dump((y,Fs), open('handel2.pkl', 'wb'), protocol=2)
 
     # load with
     y,Fs = pickle.load(open('handel.pkl', 'rb'))
