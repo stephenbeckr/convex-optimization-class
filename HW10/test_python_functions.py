@@ -14,7 +14,8 @@ def convert_handel():
     y = mat['y']
     Fs = mat['Fs']
 
-    pickle.dump((y,Fs), open('handel.pkl', 'wb'))
+#   pickle.dump((y,Fs), open('handel.pkl', 'wb'))
+    pickle.dump((y,Fs), open('handel2.pkl', 'wb'),protocol=2)
 
     # load with
     y,Fs = pickle.load(open('handel.pkl', 'rb'))
@@ -45,7 +46,7 @@ def test_my_upsample():
     print(my_upsample(y, sampleSet, x.size))
 
 if __name__ == '__main__':
-    #convert_handel()
+    convert_handel()
     #test_project_l1()
     #test_STDCT()
-    test_my_upsample()
+#   test_my_upsample()
