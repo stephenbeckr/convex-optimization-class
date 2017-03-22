@@ -11,7 +11,7 @@ def project_l1(x, tau=1.):
     Crucial bug fix: 3/17/2017, SRB
     """
     absx = np.abs(x)
-    s = np.sort(x)[::-1] # sort in descending order
+    s = np.sort(absx)[::-1] # sort in descending order
     cs = np.cumsum(s)
 
     if cs[-1] <= tau:
