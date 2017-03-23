@@ -68,7 +68,7 @@ def forwardShortTimeDCT(y, win=None):
 
     # Zero-pad y so it is a multiple of blockSize
     N = y.size
-    nBlocks = int(np.ceil(N/blockSize))
+    nBlocks = int(np.ceil(float(N)/blockSize))
     y = np.concatenate((y, np.zeros(nBlocks*blockSize-N)))
 
     # Apply DCT to aligned blocks
@@ -108,7 +108,7 @@ def adjointShortTimeDCT(coeff, win, Ntrue=None):
     N = int(coeff.size/2)
 
     blockSize = win.size
-    nBlocks = int(np.ceil(N/blockSize))
+    nBlocks = int(np.ceil(float(N)/blockSize))
 
     if Ntrue is not None and Ntrue > N:
         raise ValueError("""The specified value of Ntrue ({}) is too big
