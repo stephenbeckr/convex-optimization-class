@@ -33,6 +33,13 @@ if nargin < 5, numberPoints = 8; end
 
 n   = length(x0);
 
+if n <= 50
+    DO_FINITE_DIFFERENCES = true;
+else
+    % for large n, this is too expensive
+    DO_FINITE_DIFFERENCES = false;
+end
+
 if isempty(grad)
     % [fcn,grad] = f(x) convention
     [f0,g0] = f(x0);
@@ -46,28 +53,36 @@ hfinal  = log10(scaling*eps)/2+1;
 hList = logspace( 7+hfinal, hfinal, numberPoints );
 if nargout==0
     fprintf('%s\n',repmat('-',1,112));
-    fprintf('h\t\tForward diff\tCentral diff\t1st order Taylor\t2nd order Taylor\t3rd order Taylor\n');
+    if DO_FINITE_DIFFERENCES
+      fprintf('h\t\tForward diff\tCentral diff\t1st order Taylor\t2nd order Taylor\t3rd order Taylor\n');
+    else
+      fprintf('h\t\t1st order Taylor\t2nd order Taylor\t3rd order Taylor\n');
+    end
     fprintf('%s\n',repmat('-',1,112));
-else
-    Errors = zeros( numberPoints, 5 ); 
 end
+Errors = zeros( numberPoints, 3 + 2*DO_FINITE_DIFFERENCES );
+
 counter = 0;
 for h  = hList
     counter = counter + 1;
     
-    g = zeros(n,1);  % forward finite-differences
-    gc= zeros(n,1);  % central differences
-    e = zeros(n,1);
-    hh  = h;
-    for i = 1:n
-        e(i)    = 1;
-        f1      = f(x0 + hh*e);
-        g(i)    = ( f1 - f0 )/hh;
-        gc(i)   = ( f1 - f(x0-hh*e) )/(2*hh);
-        e(i)    = 0;
+    if DO_FINITE_DIFFERENCES
+        % This will be VERY slow if n is large
+        
+        g = zeros(n,1);  % forward finite-differences
+        gc= zeros(n,1);  % central differences
+        e = zeros(n,1);
+        hh  = h;
+        for i = 1:n
+            e(i)    = 1;
+            f1      = f(x0 + hh*e);
+            g(i)    = ( f1 - f0 )/hh;
+            gc(i)   = ( f1 - f(x0-hh*e) )/(2*hh);
+            e(i)    = 0;
+        end
+        er_fd   = norm(g - g0)/norm(g0);
+        er_cd   = norm(gc - g0)/norm(g0);
     end
-    er_fd   = norm(g - g0)/norm(g0);
-    er_cd   = norm(gc - g0)/norm(g0);
     
     % Another test that doesn't require us to build the entire gradient
     % Pick any reasonably point: let's make it something of a similar
@@ -97,9 +112,17 @@ for h  = hList
     err3    = err3/nReps;
     
     if nargout == 0
-        fprintf('%.1e\t\t%.1e\t\t%.1e\t\t%.1e\t\t\t%.1e\t\t\t%.1e\n',...
-            h, er_fd, er_cd, Taylor1, Taylor2, err3 );
-    else
+        if DO_FINITE_DIFFERENCES
+            fprintf('%.1e\t\t%.1e\t\t%.1e\t\t%.1e\t\t\t%.1e\t\t\t%.1e\n',...
+                h, er_fd, er_cd, Taylor1, Taylor2, err3 );
+        else
+            fprintf('%.1e\t\t%.1e\t\t\t%.1e\t\t\t%.1e\n',...
+                h, Taylor1, Taylor2, err3 );
+        end
+    end
+    if DO_FINITE_DIFFERENCES
         Errors(counter,:) = [er_fd, er_cd, Taylor1, Taylor2, err3];
+    else
+        Errors(counter,:) = [Taylor1, Taylor2, err3];
     end
 end
