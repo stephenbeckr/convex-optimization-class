@@ -10,6 +10,9 @@ function [f,g] = quadraticObjective(x,A,b, At)
 %   uses "At" for the adjoint of the linear operator "A".
 %   This is only necessary if "A" is a function handle
 %
+% ... = quadraticObjective( x, A, b, At, c )
+%   uses f(x) = 1/2 ||Ax-b||^2 + dot(c,x)
+%
 % This form is suitable for most of Matlab's solvers
 %   and for 3rd party packages like Mark Schmidt's minFunc
 %
@@ -21,9 +24,18 @@ if ~isa( A, 'function_handle')
 elseif nargin < 4
     error('If "A" is a function hande, need 4 inputs');
 end
+if nargin < 5
+    c   = [];
+end
 
 r   = A(x) - b; % residual
 f   = norm( r )^2/2;
+if ~isempty(c)
+    f   = f + dot(c,x);
+end
 if nargout >= 2
     g   = At(r);
+    if ~isempty(c)
+        g   = g + c;
+    end
 end
