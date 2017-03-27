@@ -21,9 +21,9 @@ def convert_handel():
     y,Fs = pickle.load(open('handel.pkl', 'rb'))
 
 def test_project_l1():
-    x = np.random.randn(10,1)
+    # JMF 25/03/2017: tested with row vec, col vec, and mats; matches project_l1.m
     mat = scipy.io.loadmat('x.mat')
-    x = mat['x'].ravel()
+    x = mat['x']
 
     y = project_l1(x, 1)
 
@@ -46,7 +46,7 @@ def test_my_upsample():
     print(my_upsample(y, sampleSet, x.size))
 
 if __name__ == '__main__':
-    convert_handel()
-    #test_project_l1()
+    #convert_handel()
+    test_project_l1()
     #test_STDCT()
-#   test_my_upsample()
+    #test_my_upsample()
