@@ -1,4 +1,4 @@
-function [hList, Errors] = gradientCheck( f, grad, x0, scaling, numberPoints )
+function [hList, Errors,chng] = gradientCheck( f, grad, x0, scaling, numberPoints, FORCE_FINITE_DIFF )
 % gradientCheck( f, grad, x0 )
 %   runs several gradient checks at the point x0
 % gradientCheck( f-and-grad, [], x0 )
@@ -6,7 +6,7 @@ function [hList, Errors] = gradientCheck( f, grad, x0, scaling, numberPoints )
 %   that returns [f(x), gradient(x)] = f-and-grad(x)
 %       i.e. fminunc style
 %
-% gradientCheck( ..., scaling, numberPoints )
+% gradientCheck( ..., scaling, numberPoints, FORCE_FINITE_DIFF )
 %   scales the stepsize and uses numberPoints values of h.
 %
 % [hList,Errors] = ...
@@ -21,19 +21,23 @@ function [hList, Errors] = gradientCheck( f, grad, x0, scaling, numberPoints )
 %   2nd order Taylor:       expect to decay like O(h^2)
 %   3rd order Taylor:       expect to decay like O(h^3)
 %
+% After this output, it displays the decay rates
+%   (variabe is "chng")
+%
 % Note: this decay in h is only until h reaches a certain level, and below
 %   that size, roundoff error will make the approximation worse and worse.
 %   The critical level of h is larger for the higher-order methods.
 %   Use "scaling" to adjust the relative value of h.
 %
-% Stephen.Becker@Colorado.edu, 2/23/2017
+% Stephen.Becker@Colorado.edu, 2/23/2017 (1/13/2018 update)
 
 if nargin < 4, scaling = 1; end
 if nargin < 5, numberPoints = 8; end
+if nargin < 6 || isempty(FORCE_FINITE_DIFF), FORCE_FINITE_DIFF = false; end
 
 n   = length(x0);
 
-if n <= 50
+if n <= 50 || FORCE_FINITE_DIFF
     DO_FINITE_DIFFERENCES = true;
 else
     % for large n, this is too expensive
@@ -52,6 +56,7 @@ end
 hfinal  = log10(scaling*eps)/2+1;
 hList = logspace( 7+hfinal, hfinal, numberPoints );
 if nargout==0
+    fprintf('\nGradient Check code: type "help gradientCheck" to see what output should look like\n');
     fprintf('%s\n',repmat('-',1,112));
     if DO_FINITE_DIFFERENCES
       fprintf('h\t\tForward diff\tCentral diff\t1st order Taylor\t2nd order Taylor\t3rd order Taylor\n');
@@ -61,6 +66,8 @@ if nargout==0
     fprintf('%s\n',repmat('-',1,112));
 end
 Errors = zeros( numberPoints, 3 + 2*DO_FINITE_DIFFERENCES );
+
+ESTIMATE_ORDER = true;
 
 counter = 0;
 for h  = hList
@@ -80,8 +87,8 @@ for h  = hList
             gc(i)   = ( f1 - f(x0-hh*e) )/(2*hh);
             e(i)    = 0;
         end
-        er_fd   = norm(g - g0)/norm(g0);
-        er_cd   = norm(gc - g0)/norm(g0);
+        er_fd   = norm(g - g0)/max(norm(g0),1e-10);
+        er_cd   = norm(gc - g0)/max(norm(g0),1e-10);
     end
     
     % Another test that doesn't require us to build the entire gradient
@@ -124,5 +131,52 @@ for h  = hList
         Errors(counter,:) = [er_fd, er_cd, Taylor1, Taylor2, err3];
     else
         Errors(counter,:) = [Taylor1, Taylor2, err3];
+    end
+end
+
+if ESTIMATE_ORDER
+    %df = diff( Errors )./Errors(1:end-1,:)
+    df = Errors(2:end,:)./Errors(1:end-1,:);
+    dh = hList(2:end)./hList(1:end-1);
+%     dh/df
+%     diag( dh )*(1./df)
+    chng = diag( log10(dh) )*log10((df) );
+    
+    if nargout == 0
+        fprintf('%s\n',repmat('-',1,112));
+        fprintf('Order decrease (red = indication that gradient is correct; should have some reds)\n')
+        fprintf('%s\n',repmat('-',1,112));
+        for j = 1:length(hList)-1
+            if DO_FINITE_DIFFERENCES
+%                 fprintf('%.1fx\t\t%.1fx\t\t%.1fx\t\t%.1fx\t\t\t%.1fx\t\t\t%.1fx\n',...
+%                     1, chng(j,1),chng(j,2),chng(j,3),chng(j,4),chng(j,5) );
+                fprintf('%.1fx\t\t',1);
+                if chng(j,1) > 0.9
+                    fprintf(2,'%.1fx\t\t',chng(j,1) );
+                else
+                    fprintf(1,'%.1fx\t\t',chng(j,1) );
+                end
+                if chng(j,2) > 1.9
+                    fprintf(2,'%.1fx\t\t',chng(j,2) );
+                else
+                    fprintf(1,'%.1fx\t\t',chng(j,2) );
+                end   
+                fprintf(1,'%.1fx\t\t\t',chng(j,3) ); % always O(1)
+                if chng(j,4) > 1.9
+                    fprintf(2,'%.1fx\t\t\t',chng(j,4) );
+                else
+                    fprintf(1,'%.1fx\t\t\t',chng(j,4) );
+                end
+                if chng(j,5) > 2.9
+                    fprintf(2,'%.1fx ',chng(j,5) );
+                else
+                    fprintf(1,'%.1fx',chng(j,5) );
+                end
+                fprintf('\n');
+            else
+                fprintf('%.1fx\t\t%.1fx\t\t\t%.1fx\t\t\t%.1fx\n',...
+                    1,chng(j,1),chng(j,2),chng(j,3));
+            end
+        end
     end
 end

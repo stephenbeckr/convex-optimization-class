@@ -45,8 +45,21 @@ def test_my_upsample():
     print(x)
     print(my_upsample(y, sampleSet, x.size))
 
+def Manuel():
+    mat = scipy.io.loadmat('handel.mat')
+    y = mat['y']
+    Fs = mat['Fs']
+#   y,Fs = pickle.load(open('handel2.pkl', 'rb'))
+    y = y.ravel()
+    N = y.size
+    print N
+
+    coeff, win = forwardShortTimeDCT(y)
+
+
 if __name__ == '__main__':
-    convert_handel()
+    Manuel()
+#   convert_handel()
     #test_project_l1()
     #test_STDCT()
 #   test_my_upsample()
