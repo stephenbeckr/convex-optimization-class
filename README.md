@@ -7,3 +7,5 @@ This repo contains in-class demos and some homework solutions
 [The course website](http://www.colorado.edu/amath/course-pages/spring-2017/appm4720-convex-optimization) which has more details.
 
 The [syllabus](APPM4720_5720_Fall2018_Syllabus.pdf) is available here on github
+
+Here is a list of [class project topics](SlideshowAllPresentations_4720Fall18.pdf) in a nice PDF
