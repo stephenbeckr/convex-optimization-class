@@ -17,8 +17,8 @@ We followed instructors' notes. The texts we used most often:
 
 ## Homeworks
 - [HW 1 and 2](Homeworks/appm47205720fall18homework01-02.pdf), due Fri Sept 7 2018
-- [HW 3 and 4](Homeworks/appm47205720fall18homework03-04.pdf), due Fri Sept 21 2018
-- [HW 5 and 6](Homeworks/appm47205720fall18homework05-06.pdf), due Fri Oct 5 2018
-- [HW 7 and 8](Homeworks/appm47205720fall18homework07-08.pdf), due Fri Oct 19 2018
+- [HW 3 and 4](Homeworks/appm47205720fall18homework03-4.pdf), due Fri Sept 21 2018
+- [HW 5 and 6](Homeworks/appm47205720fall18homework05-6.pdf), due Fri Oct 5 2018
+- [HW 7 and 8](Homeworks/appm47205720fall18homework07-8.pdf), due Fri Oct 19 2018
 - [HW 9 and 10](Homeworks/appm47205720fall18homework09-10.pdf), due Fri Nov 2 2018
-- [HW 11 and 12 (optional)](Homeworks/appm47205720fall18homework10-11.pdf), due Fri Nov 16 2018
+- [HW 11 and 12 (optional)](Homeworks/appm47205720fall18homework11-12.pdf), due Fri Nov 16 2018
