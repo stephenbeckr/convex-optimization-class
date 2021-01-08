@@ -12,8 +12,6 @@ The [day-by-day schedule](Fall2018_day-by-day_schedule.pdf) from Fall 2018 has e
 
 Here is a list of [class project topics](SlideshowAllPresentations_4720Fall18.pdf) in a nice PDF
 
-We followed instructors' notes. The texts we used most often:
-=======
 We will follow instructors' notes. The supplementary texts we used most often:
 - [Convex Optimization by Boyd and Vandenberghe](http://www.stanford.edu/~boyd/cvxbook/), Cambridge University Press 2004
 - [First-Order Methods in Optimization by Amir Beck](https://epubs.siam.org/doi/book/10.1137/1.9781611974997), SIAM 2017, see also [SIAM website](http://bookstore.siam.org/mo25/)
