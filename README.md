@@ -8,6 +8,8 @@ This repo contains in-class demos and some homework solutions
 
 The [syllabus](APPM4720_5720_Fall2018_Syllabus.pdf) is available here on github
 
+The [day-by-day schedule](Fall2018_day-by-day_schedule.pdf) from Fall 2018 has even more details on what we covered
+
 Here is a list of [class project topics](SlideshowAllPresentations_4720Fall18.pdf) in a nice PDF
 
 We followed instructors' notes. The texts we used most often:
