@@ -194,6 +194,7 @@ We recommend use of an IDE or something like JupyterLab.
 
 We do **not** recommend using C, C++ or Fortran for programming in this class; these languages take a lot longer to prototype in, and the performance can be fast but only if you do it right (and usually requires calling the right kind of libraries, like [NAG](https://www.nag.com/content/nag-library) or GLPK or using suites like PETSc, Trilinos, [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page), etc.)
 
+For automatic differentiation in Matlab, try [ADiMat](https://www.sc.informatik.tu-darmstadt.de/res/sw/adimat/general/index.en.jsp); in Python, try [JAX](https://jax.readthedocs.io/en/latest/)
 
 # More details on topics
 We don't present the lectures in the following order (lectures intermingle topics more, so that students can get started on interesting homeworks right away), but thematically, the following is what we roughly cover:
