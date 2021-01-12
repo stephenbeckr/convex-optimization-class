@@ -5,6 +5,9 @@ The homework assignments are here, but homework **solutions** are on Canvas
 
 - (list of HWs)
 
+
+You can find the old homeworks [here in the Fall2018 branch](https://github.com/stephenbeckr/convex-optimization-class/tree/Fall2018/Homeworks)
+
 ## FAQ
 
 ### General
