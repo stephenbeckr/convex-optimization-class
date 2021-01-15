@@ -7,7 +7,9 @@ Advanced Convex Optimization, APPM 5630. University of Colorado Boulder, Spring 
 ## Details in a nutshell
 This class is expected to sometimes meet remotely, sometimes in person, depending on CU's current COVID-19 status.
 
-When we meet **remotely**, this is a flipped class. Students are responsible for watching pre-recorded videos made by the instructor  (and get attendance points by filling out PlayPosit quizzes).  At the usual classtime, we meet via zoom to have a live session which is either for **demos** or **Q&A**, e.g., more like office hours.  During remote weeks, we'll only have **one hour of office hours** since the main lecture is like office hours.  The zoom link is listed in [Canvas](https://canvas.colorado.edu/).
+When we meet **remotely**, this may be taught as a flipped class. Students are responsible for watching pre-recorded videos made by the instructor  (and get attendance points by filling out PlayPosit quizzes).  At the usual classtime, we meet via zoom to have a live session which is either for **demos** or **Q&A**, e.g., more like office hours.  During flipped class weeks, we'll only have **one hour of office hours** since the main lecture is like office hours.  The zoom link is listed in [Canvas](https://canvas.colorado.edu/).
+
+We might also try live lectures during remote weeks; in that case, we'll have 3 hours of office hours.  The note will be pre-written but the instructor will present them live at the scheduled class time. We'll record the zoom session. You'll get attendance points by either attending the zoom lecture or by other arrangement (perhaps PlayPosit).
 
 When we meet **in person**, this is a traditional class. The instructor gives a lecture in the classroom.  We will have **three hours of office hours** on these weeks; the office hours will be via zoom since we are not allowed to actually meet in an office due to COVID-19 restrictions (same zoom link as used for remote sessions).  If a student does not want to attend class in person, they may request that we setup a live-stream via zoom, which can be recorded.
 
@@ -28,7 +30,7 @@ Prof. Becker's office hours (all held via zoom):
 - 3-5 PM Thursdays
 - 1-2 PM Fridays
 
-**Remote weeks**
+**Flipped class weeks**
 - 4-5 PM Thursdays
 
 
