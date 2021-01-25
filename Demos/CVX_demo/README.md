@@ -3,7 +3,7 @@
 ## Step 1: get introduced to CVX/CVXPY
 
 - For Matlab, see [cvx_demo.mlx](cvx_demo.mlx) or its PDF version [cvx_demo.pdf](cvx_demo.pdf)
-- For Python, see [cvxpy_intro.ipynb](cvxpy_intro.ipynb) (which has link to colab) or its PDF version [cvxpy_intro.pdf](cvxpy_intro.pdf)
+- For Python, see [cvxpy_intro.ipynb](cvxpy_intro.ipynb) (which has link to colab or use [direct link](https://colab.research.google.com/github/stephenbeckr/convex-optimization-class/blob/master/Demos/CVX_demo/cvxpy_intro.ipynb) or its PDF version [cvxpy_intro.pdf](cvxpy_intro.pdf)
 
 ## Step 2: try filling out the worksheet
 
