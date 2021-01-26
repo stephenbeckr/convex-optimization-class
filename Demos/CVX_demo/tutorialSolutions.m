@@ -19,7 +19,7 @@ cvx_begin
   subject to
     norm( A*x-y ) <= .1
 cvx_end
-fprintf('CVX status is "%s", optimal value is %g\n', cvx_status, cvx_optval );
+fprintf('Problem 1, CVX status is "%s", optimal value is %g\n', cvx_status, cvx_optval );
 %% Exercise 2
 cvx_begin
   variable x(n)
@@ -27,7 +27,7 @@ cvx_begin
   subject to
     norm( A*x-y ) <= .1
 cvx_end
-fprintf('CVX status is "%s", optimal value is %g\n', cvx_status, cvx_optval );
+fprintf('Problem 2, CVX status is "%s", optimal value is %g\n', cvx_status, cvx_optval );
 %% Exercise 3
 cvx_begin
   variable x(n)  
@@ -35,7 +35,7 @@ cvx_begin
   subject to
     norm( A*x-y ) <= .1
 cvx_end
-fprintf('CVX status is "%s", optimal value is %g\n', cvx_status, cvx_optval );
+fprintf('Problem 3, CVX status is "%s", optimal value is %g\n', cvx_status, cvx_optval );
 %% Exercise 4
 cvx_begin
   variable x(n)
@@ -49,7 +49,7 @@ cvx_begin
   variable xx(n)
   minimize norm(xx) + lambda*norm( A*xx - y )
 cvx_end
-fprintf('CVX status is "%s", optimal value is %g\n', cvx_status, cvx_optval );
+fprintf('Problem 4, CVX status is "%s", optimal value is %g\n', cvx_status, cvx_optval );
 fprintf(' Discrepanct via two methods is %g\n', norm(xx-x)/norm(x) );
 
 %% Exercise 5: matrix problem
@@ -60,13 +60,13 @@ cvx_begin
   variable x(m)
   minimize sum(norms( A - x*o', 2 ))
 cvx_end
-fprintf('CVX status is "%s", optimal value is %g\n', cvx_status, cvx_optval );
+fprintf('Problem 5, CVX status is "%s", optimal value is %g\n', cvx_status, cvx_optval );
 %% Exercise 6: matrix problem
 cvx_begin
   variable x(m)
   minimize norm( A - x*o')
 cvx_end
-fprintf('CVX status is "%s", optimal value is %g\n', cvx_status, cvx_optval );
+fprintf('Problem 6, CVX status is "%s", optimal value is %g\n', cvx_status, cvx_optval );
 %% Exercise 7: matrix problem
 cvx_begin
   variable X(m,n)
@@ -74,7 +74,7 @@ cvx_begin
   subject to
     ones(1,m)*X*ones(n,1) == 1
 cvx_end
-fprintf('CVX status is "%s", optimal value is %g\n', cvx_status, cvx_optval );
+fprintf('Problem 7, CVX status is "%s", optimal value is %g\n', cvx_status, cvx_optval );
 %% Exercise 8: matrix problem
 B   = A(:,1:5);
 cvx_begin
@@ -83,4 +83,4 @@ cvx_begin
   subject to
     X == semidefinite(m)
 cvx_end
-fprintf('CVX status is "%s", optimal value is %g\n', cvx_status, cvx_optval );
+fprintf('Problem 8, CVX status is "%s", optimal value is %g\n', cvx_status, cvx_optval );
