@@ -12,5 +12,5 @@
 ## Step 3: check your answers
 
 - For Matlab, [tutorialSolutions.m](tutorialSolutions.m)
-- For Python, [tutorialSolutions.py](tutorialSolutions.py)  (Todo, make a ipynb version w. colab link)
+- For Python, [tutorialSolutions.py](tutorialSolutions.py) (this uses an older version of cvxpy and python) or the (newer) Jupyter notebook  [tutorialSolutions.ipynb](tutorialSolutions.ipynb)
 
