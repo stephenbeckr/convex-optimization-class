@@ -2,6 +2,10 @@
 APPM 5630 at CU Boulder
 Prof. Becker, Spring 2021. Meeting time: MWF 10:20 -- 11:10 AM, ECCR 1B40.  COVID-19 details: this class is currently scheduled to meet remotely in January but might meet **in person** starting mid-February depending on COVID-19 status.
 
+Office hours:
+- For weeks in which HW is due, office hours are 11:15 AM - 12:15 PM Wednesday (right after class), 3-5 PM Thursday, and 1-2 PM Friday.
+- For all other weeks, office hours are only 3-5 PM Thursday.
+
 This repo contains in-class demos and some homework solutions (much of it is from Fall 2018 when this class was taught as a special topics course 4720/5720)
 
 - Here is the [class policy/procedures](policies.md) document (and if you need it for some reason, the [2018 policies/syllabus (PDF)](APPM4720_5720_Fall2018_Syllabus.pdf)).

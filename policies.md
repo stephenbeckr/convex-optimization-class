@@ -24,14 +24,20 @@ When we meet **in person**, this is a traditional class. The instructor gives a 
 Meeting time: MWF 10:20 -- 11:10 AM.  When we meet in person, the location is ECCR 1B40. When we meet remotely, use the zoom link (to be found in [Canvas](https://canvas.colorado.edu/)).
 
 ## Office Hours
-Prof. Becker's office hours (all held via zoom):
+Prof. Becker's office hours (all held via zoom even when class meets in person):
 
-**In-person weeks**
+**In-person or live-lecture weeks**
 - 3-5 PM Thursdays
 - 1-2 PM Fridays
 
+(update)
+- For weeks in which HW is due, office hours are 11:15 AM - 12:15 PM Wednesday (right after class), 3-5 PM Thursday, and 1-2 PM Friday.
+- For all other weeks, office hours are only 3-5 PM Thursday.
+
 **Flipped class weeks**
 - 4-5 PM Thursdays
+
+(update: as of February, we're no longer doing flipped classes)
 
 
 ## Course Topic Information and Syllabus
