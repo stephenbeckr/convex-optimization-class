@@ -46,8 +46,8 @@ Students will learn the mathematics behind convex analysis, and why convexity is
 |Week 6: Feb 15-19   | 13  | No class  | 14  |
 |Week 7: Feb 22-26   | 15  | 16  |  17 (HW 5-6 due)|
 |Week 8: Mar 1-5   |  18 | 19  | 20  |
-|Week 9: Mar 8-12   | 21  | 22  | 23  (HW 7-8 due)|
-|Week 10: Mar 15-19   | 24  | 25  | 26  |
+|Week 9: Mar 8-12   | 21  | 22  | 23 |
+|Week 10: Mar 15-19   | 24  | 25  | 26  (HW 7-8 due)|
 |Week 11: Mar 22-26 "spring pause" | 27  | 28***  | 29  |
 |Week 12: Mar 29-Apr 2   | 30  | 31  | 32  (HW 9-10 due)|
 |Week 13: Apr 5-9   | 33  |  34 | 35  |
