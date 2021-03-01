@@ -42,4 +42,4 @@ Because the type of report is a bit open-ended, the rubric below is necessarily 
 
 4. Professional communication (25%) of the written document and the oral presentation (and the slides). Well-organized and precise communication, grammatically correct writing, nicely format- ted documents and figures. Figures should be labeled appropriately.
 
-Here is a [more detailed rubric](APPM5360_Spr20_ProjecRubric.pdf) that I will actually use for grading the projects.
+Here is a [more detailed rubric](ProjectRubric.pdf) that I will actually use for grading the projects.
