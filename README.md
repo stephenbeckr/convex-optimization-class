@@ -1,6 +1,6 @@
 # Advanced Convex Optimization class
 APPM 5630 at CU Boulder
-Prof. Becker, Spring 2021. Meeting time: MWF 10:20 -- 11:10 AM, ECCR 1B40.  COVID-19 details: this class is currently scheduled to meet remotely in January but might meet **in person** starting mid-February depending on COVID-19 status.
+Prof. Becker, Spring 2021. Meeting time: MWF 10:20 -- 11:10 AM, ECCR 265 (NOT in ECCR 1B40 anymore).  COVID-19 details: this class is currently scheduled to meet remotely in January but might meet **in person** starting mid-February depending on COVID-19 status.
 
 Office hours:
 - For weeks in which HW is due, office hours are 11:15 AM - 12:15 PM Wednesday (right after class), 3-5 PM Thursday, and 1-2 PM Friday.

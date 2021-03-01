@@ -21,7 +21,7 @@ When we meet **in person**, this is a traditional class. The instructor gives a 
 - There are no teaching assistants (TAs) for this course
 
 ## Meeting times
-Meeting time: MWF 10:20 -- 11:10 AM.  When we meet in person, the location is ECCR 1B40. When we meet remotely, use the zoom link (to be found in [Canvas](https://canvas.colorado.edu/)).
+Meeting time: MWF 10:20 -- 11:10 AM.  When we meet in person, the location is ECCR 265 (NOT in ECCR 1B40 anymore). When we meet remotely, use the zoom link (to be found in [Canvas](https://canvas.colorado.edu/)).
 
 ## Office Hours
 Prof. Becker's office hours (all held via zoom even when class meets in person):
