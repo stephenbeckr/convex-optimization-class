@@ -276,7 +276,6 @@ def gradientDescent(f,grad,x0,prox=None, prox_obj=None,stepsize=None,tol=1e-6,
         fNew += prox_obj(xNew)
       if t == 0:
         flag = "Quitting since linesearch failed"
-        pprint("Iter",k,flag)
         break
     else:
       xNew = prox(y - t*g,t)
@@ -304,11 +303,9 @@ def gradientDescent(f,grad,x0,prox=None, prox_obj=None,stepsize=None,tol=1e-6,
     #   for each kind of check.
     if np.abs(fx-fNew) < tol*np.abs(fx) + 1e-3*tol:
       flag = "Quitting due to stagnating objective value"
-      pprint("Iter",k,flag)
       break
     if np.linalg.norm(g) < tol:
       flag = "Quitting due to norm of gradient being small"
-      pprint("Iter",k,flag)
       break
     # since xNew - x = stepsize*g, the following check is very similar
     #   to the norm(g) check. The main difference is that it uses both
@@ -317,7 +314,6 @@ def gradientDescent(f,grad,x0,prox=None, prox_obj=None,stepsize=None,tol=1e-6,
     #   Euclidean norm.
     if np.allclose(xNew,x,rtol=tol, atol=1e-3*tol):
       flag = "Quitting due to successive iterates being close together"
-      pprint("Iter",k,flag)
       break
     
     # Get ready for next iteration
@@ -341,6 +337,7 @@ def gradientDescent(f,grad,x0,prox=None, prox_obj=None,stepsize=None,tol=1e-6,
       print(f"{k:5d}  {fNew:7.2e}  {t:6.2e}  {err:.2e}")
     else:
       print(f"{k:5d}  {fNew:7.2e}  {t:6.2e}")
+  pprint("Iter",k,flag)
   if fx is None: fx = f(xNew)
   data = {'steps':k, 'fcnHistory':np.asarray(fcnHistory), 
           'errHistory':np.asarray(errHistory),
