@@ -118,7 +118,7 @@ def LipschitzLinesearch(f,x,grad,t,fx=None,prox=None,rho=0.9,linesearchMaxIters 
 
 
 
-def powerMethod(A, At=None, domainSize=None, x=None, iters=100, tol=1e-6): 
+def powerMethod(A, At=None, domainSize=None, x=None, iters=100, tol=1e-6, rng=None): 
   if not callable(A):
     Amatrix = A
     domainSize = Amatrix.shape[1]
@@ -128,6 +128,8 @@ def powerMethod(A, At=None, domainSize=None, x=None, iters=100, tol=1e-6):
   if x is None:
     if domainSize is None:
       raise ValueError("need domain size or x0 to be specified")
+    if rng is None:
+        rng = np.random.default_rng()
     x = rng.normal( size=domainSize )
   normalization = norm( x.ravel() ) # Euclidean/Frobenius norm 
   for k in range(iters):
