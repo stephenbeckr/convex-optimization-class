@@ -125,7 +125,7 @@ def powerMethod(A, At=None, domainSize=None, x=None, iters=100, tol=1e-6, rng=No
     At = lambda x : Amatrix.conj().T@x
     A  = lambda x : Amatrix@x
     print(domainSize)
-  else if At is None:
+  elif At is None:
     raise ValueError("If A is a function handle, must supply adjoint fcn via At=... ")
   if x is None:
     if domainSize is None:
