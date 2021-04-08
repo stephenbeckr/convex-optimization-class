@@ -25,7 +25,26 @@ firstOrderMethods module
 
     Finally, if you run this file from the command line, it will execute the tests
 
+    Features to add:
+        (1) adaptive restarts
+        (2) take advantage of functions that give you function value and gradient
+            at the same time (since it's often possible to share some computation;
+            e.g., f(x) = 1/2||Ax-b||^2, grad(x) = A'*(Ax-b), the residual Ax-b
+            only needs to be computed once
+
     Stephen Becker, April 1 2021, stephen.becker@colorado.edu
+    
+    Released under the Modified BSD License:
+
+Copyright (c) 2021, Stephen Becker. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+3. Neither the name of the Stephen Becker nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL STEPHEN BECKER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 """
 import numpy as np
 from numpy.linalg import norm
@@ -111,7 +130,55 @@ def LipschitzLinesearch(f,x,grad,t,fx=None,prox=None,rho=0.9,linesearchMaxIters 
     xNew = prox(x - t*grad,t)
     fNew = f(xNew)
   if fNew > fx + np.vdot(grad,xNew-x)+1/(2*t)*norm(xNew-x)**2:
-    print(f"Warning: linesearch never succeeded after {i:d} iters. Stepsize is {t:.2e}")
+    print(f"Warning: LipschitzLinesearch never succeeded after {i:d} iters. Stepsize is {t:.2e}")
+    t = 0
+  
+  return xNew, t, fNew, i
+
+
+def LipschitzLinesearch_stabler(f,x,g,t,fx=None,gx=None,prox=None,rho=0.9,linesearchMaxIters = None):
+  """"
+  Backtracking linesearch, should work if f is Lipschitz
+    Note: if we are minimizing f + g via proximal gradient methods,
+    then f should be just f, not f+g
+  f    is function to evaluate objective function
+  x    is current point
+  g is the gradient (a function)
+  t    is the initial guess for a stepsize
+  fx   is f(x) (for the value of x passed in) [optional]
+  gx   is grad(x) (for the value of x passed in) [optional]
+  Returns:
+    x,t,fx,iter   where x is new point, t is the stepsize used, fx=f(x)
+
+  More stable version (for numerical rounding errors)
+    but requires an additional gradient evaluation
+  This is Eq (5.7) in https://amath.colorado.edu/faculty/becker/TFOCS.pdf
+    (whereas the other LipschitzLinesearch is eq (5.6) )
+    "Templates for Convex Cone Problems with Applications to Sparse Signal Recovery"
+    by S. Becker, E. Candès, M. Grant. Mathematical Programming Computation, 3(3) 2011, pp 165–21
+  """
+  if linesearchMaxIters is None:
+    linesearchMaxIters = np.log(1e-14)/np.log(rho)
+  linesearchMaxIters = int(linesearchMaxIters)
+  if fx is None: # don't calculate if it was already calculated
+    fx = f(x)
+  if gx is None: # don't calculate if it was already calculated
+    gx = g(x)
+  if prox is None:
+    prox = lambda x, stepsize : x
+
+  xNew = prox(x - t*gx,t)
+  fNew = f(xNew)
+  gNew = g(xNew)  # objective function
+  i = 0
+  while np.abs(np.vdot(x-xNew,gNew-gx)) > 1/(2*t)*norm(xNew-x)**2  and  i < linesearchMaxIters:
+    i += 1
+    t *= rho
+    xNew = prox(x - t*gx,t)
+    fNew = f(xNew)  # objective function
+    gNew = g(xNew)  # gradient
+  if  np.abs(np.vdot(x-xNew,gNew-gx)) > 1/(2*t)*norm(xNew-x)**2 :
+    print(f"Warning: LipschitzLinesearch_stabler never succeeded after {i:d} iters. Stepsize is {t:.2e}")
     t = 0
   
   return xNew, t, fNew, i
@@ -149,7 +216,7 @@ def powerMethod(A, At=None, domainSize=None, x=None, iters=100, tol=1e-6, rng=No
 def gradientDescent(f,grad,x0,prox=None, prox_obj=None,stepsize=None,tol=1e-6,
                     maxIters=1e4,printEvery=None, linesearch=False,
                     stepsizeOptimism = 1.1, errorFunction=None, 
-                    ArmijoLinesearch = None,
+                    ArmijoLinesearch = None, LipschitzStable = True,
                     saveHistory=False,acceleration=True,restart=500,
                     **kwargs):
   """
@@ -165,6 +232,8 @@ def gradientDescent(f,grad,x0,prox=None, prox_obj=None,stepsize=None,tol=1e-6,
   linesearch  if True then uses backtracking linesearch (default: true if stepsize is None)
   ArmijoLinesearch  if True, uses Armijo backgracking linesearch (default:
     true, if no prox and no acceleration, otherwise false)
+  LipschitzStable   if not using Armijo linesearch, then use the stable (slightly more expensive)
+    linesearch?
   tol       stopping tolerance
   maxIters  maximum number of iterations
   printEvery        prints out information every printEvery steps; set to 0 for quiet
@@ -270,8 +339,11 @@ def gradientDescent(f,grad,x0,prox=None, prox_obj=None,stepsize=None,tol=1e-6,
         p    = xNew - y  # this reduces to p = -tPredicted*g if prox=I
         xNew,t,fNew,linesearchIter = backtrackingLinesearch(F,y,p,g,1,fy,**kwargs) # t=1
         t    *= tPredicted # since t was scaled to [0,1]
+      elif LipschitzStable:
+        xNew,t,fNew,linesearchIter =  LipschitzLinesearch_stabler(f,y,grad,tPredicted,gx=g,prox=prox)
       else:
         # todo, save fy value to save time (and rename fy and Fy)
+        # and also if this is not doing Nesterov, then we can pass in fx 
         xNew,t,fNew,linesearchIter = LipschitzLinesearch(f,y,g,tPredicted,prox=prox)
         fNew += prox_obj(xNew)
       if t == 0:
@@ -306,6 +378,9 @@ def gradientDescent(f,grad,x0,prox=None, prox_obj=None,stepsize=None,tol=1e-6,
       break
     if np.linalg.norm(g) < tol:
       flag = "Quitting due to norm of gradient being small"
+      # This isn't useful for proximal/projected methods
+      # but doesn't cause any harm though. Those methods will benefit
+      # from the np.allclose() check below
       break
     # since xNew - x = stepsize*g, the following check is very similar
     #   to the norm(g) check. The main difference is that it uses both
@@ -514,10 +589,11 @@ def runAllTestProblems():
               print("  (Linesearch:",linesearch," Nesterov acceleration:", acceleration,")")
               xNew, data = gradientDescent(prob['f'],prob['grad'],x0,stepsize=1/L,
                           prox=prob['prox'], prox_obj=prob['prox_obj'],
-                          errorFunction = errFcn, tol=1e-15, saveHistory=True, printEvery=0,
+                          errorFunction = errFcn, tol=1e-10, saveHistory=True, printEvery=0,
                           linesearch = linesearch,acceleration=acceleration,restart=100,
-                          maxIters=1e4)
+                          maxIters=1e4,ArmijoLinesearch = False, LipschitzStable=True)
               print(f"  Error in x: {errFcn(xNew):.2e}, after {data['steps']} steps")
+              print("  Stopping flag is:", data['flag'])
               print('')
       else:
           print("Skipping problem number",problemNumber+1, "since it requires CVXPY installation to find reference solution")
