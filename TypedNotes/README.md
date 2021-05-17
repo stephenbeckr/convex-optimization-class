@@ -7,4 +7,4 @@ For future semesters, these notes might be modified/added/corrected (you can mak
 
 Note: the compiled pdf might not always be up-to-date
 
-In addition, a less concise version of lecture notes for Spring 2021 will be updated regularly via master.pdf by Jaden. Source files will be shared at the end of the semester for convenience.
+In addition, a less concise version of lecture notes for Spring 2021 will be updated regularly via master.pdf by Jaden. It is most useful for lectures not posted on github and ease of locating information in a single PDF, although occasional extra insights might be helpful. Source files will be shared at the end of the summer for convenience.
