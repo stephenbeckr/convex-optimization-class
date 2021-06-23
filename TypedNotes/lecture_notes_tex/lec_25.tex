@@ -1,0 +1,66 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\subsubsection{Convergence of gradient descent}
+
+~\begin{thm}
+	Consider the problem 
+	\[
+		f^* = \min_x f(x)
+	.\] 
+	$ f \in \Gamma_0(\rr^{n})$. We assume $ \nabla f$ is $L$-Lipschitz continuous. Choose $ t = \frac{1}{L}$. Then gradient descent with step size $ t$ converges with rate  $ \mathcal{ O}\left( \frac{1}{k} \right) $.
+\end{thm}
+\begin{proof}
+	We wish to bound $ f(x_{k+1}) - f^* $ by the local linear and quadratic lower and upper bounds. $L$-Lipschitz continuous implies that $ \nabla ^2 f(x) \preceq L \cdot I$. Recall that $ x_{k+1} = x_k - \frac{1}{L} \nabla f(x_k)$.
+	\begin{align*}
+		f(x_{k+1}) &\leq f(x_k) + \langle \nabla f(x), x_{k+1}-x_k \rangle + \frac{L}{2} \norm{ x_{k+1}-x_k}^2 \\
+			   &= f(x_k) - \frac{1}{2L} \norm{ f(x_k)}^2 \text{ descent method guarantees progress} \\
+			   &\leq f^* +\langle \nabla f(x_k),x_k-x^*  \rangle -\frac{1}{2L} \norm{ \nabla f(x_k)}^2   \text{ by convexity} \\
+			   &= f^* + \frac{L}{2} \left( \norm{ x_k-x^* } ^2 - \norm{ x_k -x^* -\frac{1}{L} \nabla f(x_k)}^2  \right)   \\
+			   &= f^* + \frac{L}{2} \left( \norm{ x_k-x^* }^2 - \norm{ x_{k+1} - x^* }   \right)  \\
+		\sum_{ i= 1}^{ k}  f(x_i) - f^* &= \frac{L}{2} \sum_{ i= 1}^{ k} \norm{ x_{i-1} - x^* } ^2 - \norm{ x_i - x^* }^2  \\
+						&= \frac{L}{2} (\norm{ x_0 - x^* }^2 - \norm{ x_k - x^* }^2  ) \text{ telescope} \\
+						&\leq \frac{L}{2} \norm{ x_0 - x^* }^2   \\
+		f(x_{k}) - f^* &\leq \frac{1}{k} \sum_{ i= 1}^{ k} f(x_i) - f^* \leq \frac{L}{2k} \norm{ x_0-x^* }^2  \\
+			       &= \mathcal{ O}\left( \frac{1}{k} \right) 
+	\end{align*}
+\end{proof}
+
+Question: is this the best we can?
+\begin{enumerate}[label=(\arabic*)]
+	\item Is our analysis tight? Yes.
+	\item This is worst-case complexity.
+	\item Are there similar methods (\emph{i.e.} first-order) with faster rates? More precisely, first-order method satisfies (Lanczos/CG):
+		\[
+			x_k \in \mathscr{L}_k = \text{ span} \{x_0, \nabla f(x_0), \nabla f(x_1), \ldots , \nabla f(x_{k-1})\} 
+		.\]
+		The answer is yes, by Nesterov 1983.
+\end{enumerate}
+
+\begin{thm}[Nesterov 1983]
+	For any 1st order method, there exists a $ f \in \Gamma_0(\rr^{n})$ with $ \nabla f$ $L$-Lipschitz continuous and \[ f(x_k)-f^*  \geq \frac{3}{32} \cdot \frac{L}{k^2} \cdot \norm{ x_0-x^* }^2 \text{ for } k\leq \frac{1}{2}(n-1)  \] and \[x_k - x^* \geq \frac{1}{8} \norm{ x_0 - x^* }^2 \]
+\end{thm}
+\begin{proof}
+\emph{Sketch}: The adversarial function is
+\begin{align*}
+	f(x) &= \frac{L}{4} \left( \langle x,Ax \rangle - \langle e_1,x \rangle \right), A= \begin{pmatrix} 2&-1&0&\ldots\\-1&2&-1&0\\ \ldots\\0&0&-1&2 \end{pmatrix}\\
+	\nabla f(x) &= \frac{L}{4} (Ax, e_1)\\
+	x^* &= A^{-1} e_1
+\end{align*}
+Assume $ x_0 = 0$ (we can shift). At $ x_k$, only first $ k$ coordinates are nonzero. Since  $ A^{-1}$ is a dense matrix, so $ x^* $ has nonzero elements, so we can get a high norm difference.
+\end{proof}
+
+\begin{thm}[Nesterov]
+\begin{align*}
+	y_0 &= x_0\\
+	x_{k+1} &= y_k-t_k \nabla f(y_k)\\
+	y_{k+1} & = x_{k+1} + \frac{k}{k+3} (x_{k+1}-x_k)
+\end{align*}
+This has convergence rate of $ \mathcal{ O}\left(\frac{1}{k^2}\right)$.
+\end{thm}
+\begin{remark}
+	Since we cannot get better than $ O\left( \frac{1}{k^2} \right) $ and this algorithm achieves it, so it is optimal.
+\end{remark}
+
+\end{document}

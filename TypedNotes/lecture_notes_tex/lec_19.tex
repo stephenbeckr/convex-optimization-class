@@ -1,0 +1,124 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\subsection{Saddle point interpretation [BV 4.2]}
+Here we want to find the saddle points as we want to minimize the primal but maximize the dual.
+\begin{align*}
+	p^* = \min\quad &f_0(x)  \\
+	\text{subject to } \quad &f_i(x) \leq 0, i = 1,\ldots,m  \\
+&Ax = b  
+\end{align*}
+This is equivalent to
+\begin{align*}
+	&\min_{x}f_0(x) + \sup_{\lambda\geq 0, \nu}\left\{ \sum \lambda_i f_i(x) + \nu^{T} (Ax-b)\right\} \\
+		 =\ & \min_{x \in D} \sup_{\lambda\geq 0, \nu} \mathscr{L}(x,\lambda,\nu)
+\end{align*}
+This is because if $ f_i(x)>0$ or  $ a_i^{T} x -b_i \neq 0$ for some $ i$, then we get  $ \infty$ in the supremum, encoding it as infeasible.
+
+Then the dual is
+\[
+	d^* = \max_{\lambda\geq 0, \nu } g(\lambda,\nu) = \max_{\lambda\geq 0, \nu} \min_{x \in D} \mathscr{L}(x,\lambda,\nu)
+.\] 
+The weak-duality is equivalent to "min-max" inequality:
+\[
+	d^* =\max_{\lambda\geq 0,\nu} \min_{x \in D} \mathscr{L}(x,\lambda,\nu) \leq \min_{x \in D} \max_{\lambda\geq 0, \nu} \mathscr{L}(x,\lambda,\nu) = p^* 
+.\]
+And equality is achieved if strong-duality holds.
+\begin{note}
+All "min/max" should be "inf/sup" until proven.
+\end{note}
+
+\begin{thm}
+Saddle point occurs when
+\begin{enumerate}[label=(\arabic*)]
+	\item strong-duality/strong max/min
+	\item inf/sup are achieved.
+		
+		That is, $ (x^* ,(\lambda^* ,\nu^* ))$ is a saddle point of $ \mathscr{L}(x,(\lambda,\nu))$ if
+		\begin{align*}
+			\mathscr{L}(x^* ,(\lambda^* ,\nu^* )) &= \inf_x \mathscr{L}(x,(\lambda^* ,\nu^* )) \\
+			\mathscr{L}(x^* ,(\lambda^* ,\nu^* )) &= \sup_{\lambda,\nu} \mathscr{L}(x^* ,(\lambda,\nu))
+		\end{align*}
+\end{enumerate}
+\end{thm}
+
+\begin{coro}
+	If we know $ \lambda^* ,\nu^* $, then we can find $ x^* $ by solving the unconstrained problem
+	\[
+		\min_x \mathscr{L}(x,(\lambda^* ,\nu^* ))
+	.\] 
+\end{coro}
+This allows us to solve problems with shared Lagrangians.
+\subsubsection{Shared Lagrangian}
+\begin{eg}
+\begin{align*}
+\min\quad &\norm{ x}_1  \\ 
+\text{subject to } \quad & \norm{ Ax-b}_2 \leq \epsilon \quad \iff \quad \norm{ Ax-b}_2^2 - \epsilon^2 \leq 0 
+\end{align*}
+Let
+\[
+	\mathscr{L}(x,\lambda) = \norm{ x}_1 + \lambda \left( \norm{ Ax-b}_2^2 - \epsilon^2  \right) 
+.\]
+With the correct $ \lambda^* $, this is equivalent to
+\[
+\min_x \norm{ x}_1 + \lambda^* \norm{ Ax-b}_2^2
+,\]
+because dropping the constant doesn't affect minimizer. This unconstrained problem is much nicer because the least squares is differentiable, whereas the original constraint is hard to project.
+
+\end{eg}
+
+Even if we don't know $ \lambda^* $,
+\begin{enumerate}[label=(\arabic*)]
+	\item guess $ \lambda$, solve $ x = x(\lambda)$, check if the constraint is active, update $ \lambda$ (solve the dual problem).
+	\item often $ \epsilon$ is not known (hyper-parameter) and set via cross-validation so we can do cross-validation on $ \lambda$ directly (evaluate trade-off in modeling).
+\end{enumerate}
+We assume existence of saddle points here, which is given by the following:
+\begin{prop}
+Slater's on both primal and dual $ \implies$ existence of saddle points. 
+\end{prop}
+
+\subsection{Game Theory connection}
+Consider a finite, 2-person, 0-sum game: "matrix game" (not Prisoner's dilemma). 
+
+This involves the Minimax Theorem of Von Neumann.
+\begin{eg}[rock-paper-scissors]
+Player 1 wants to minimize and Player 2 wants to maximize utility. The payoff matrix looks like
+\begin{table}[H]
+	\centering
+	\begin{tabular}{c||c|c|c}
+		&P&S&R\\
+		\hline
+		\hline
+		P&0&1&-1\\
+		\hline
+		S&-1&0&1\\
+		\hline
+		R&1&-1&0
+	\end{tabular}
+	\caption*{Row: Player 1; Column: Player 2}
+\end{table}
+
+$ u^{T}Pv$ is the payoff, intuitively it means player 1 chooses a row and player 2 chooses a column. For a fair game, the payoff value is 0. Since $ A=-A^{T}$ is antisymmetrical, it's fair. But in reality, $ u$ and  $ v$ actually encode the probability of choose each row/column, which sums up to 1.
+
+Define probability simplex $ \Delta = \{u:u\geq 0, \sum u_i = 1\} $.
+
+\begin{case}[Player 2 knows player 1's strategy]
+If $ u$ is known, 
+Then the decision is easy: choose $ v \in \argmax_{v \in \Delta} u^{T}Pv$.
+
+If Player 1 knows Player 2 knows Player 1's strategy, then Player 1 should select $ u$ to minimize Player 2's payoff:
+ \[
+p_1^* = \min_{u \in \Delta} \max_{v \in \Delta} u^{T}Pv
+.\]
+This is in fact a LP.
+\end{case}
+\begin{case}[Player 1 knows Player 2's strategy]
+\[
+p_2^* = \max_{v \in \Delta} \min_{u \in \Delta} u^{T}Pv
+.\] 
+\end{case}
+Intuitively, whoever has knowledge of opponent's move gets an edge, so the payoff when Player 2 has an edge in maximizing will be at least the payoff when Player 1 has an edge in minimizing. That is, $ p_1^* \geq p_2^* $. This is weak duality. Slater's condition for LP requires only a feasible point. Since $ \Delta$ is nonempty, we have strong duality $ p_1^* =p_2^* $.
+\end{eg}
+
+\end{document}

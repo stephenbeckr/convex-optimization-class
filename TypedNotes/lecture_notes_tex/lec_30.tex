@@ -1,0 +1,83 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\subsubsection{Trust-region for nonconvex}
+\begin{align*}
+	x_{k+1} &= x_k + p_k \\
+	&= x_k + \argmin_{p} \langle \nabla f_k, p \rangle + \frac{1}{2} \langle p,B_k,p \rangle
+\end{align*}
+If $ B_k \succ 0$, then this is a convex quadratic, the gradient equals 0 is the sufficient condition. Then the Newton step is the minimizer $ p_k = B_k^{-1} \nabla f_k$. If not, Newton step isn't the minimizer. Now we have to use trust-region.
+\begin{align*}
+	x_{k+1} &= x_k + \argmin_{p} \langle \nabla f_k, p \rangle + \frac{1}{2} \langle p,B_k,p \rangle\\
+	s.t. \quad  & \norm{ p} \leq \Delta \iff \frac{1}{2}\norm{ p}^2 \leq \frac{1}{2} \Delta^2 
+\end{align*}
+\begin{remark}
+If $ B_k$ is indefinite, we see that if we pretend the gradient term isn't there, then the quadratic form is minimized by the leftmost eigenvector (associated with the negative-most eigenvalue) of $ B_k$, scaled to the trust region radius. See N+W for tricks to solve.
+\end{remark}
+The KKT conditions are necessary.
+\begin{align*}
+	\mathscr{L}(p, \lambda) = \langle \nabla f_k,p \rangle + \frac{1}{2} \langle p|B_k|p \rangle + \frac{1}{2} \lambda (\norm{ p}^2 - \Delta^2 )
+\end{align*}
+Stationarity:
+		\begin{align*}
+			\nabla f_k + B_k p + \lambda p &= 0 \\
+			p &= \underbrace{ (B_k + \lambda I)^{-1} }_{ \text{regularity} }  \nabla f_k
+		\end{align*}
+\begin{remark}
+Typical: trust-region methods can sometimes guarantee a local minimizer even if the problem isn't convex.
+\end{remark}
+\begin{remark}
+Alternatively, we can use
+\begin{itemize}
+	\item cubic regularization
+	\item perturbed gradient descent
+\end{itemize}
+\end{remark}
+\newpage
+\subsection{Nonlinear least squares}
+The objective is
+\begin{align*}
+	f(x) &= \frac{1}{2} \sum_{ j= 1}^{ m} r_j^2 (x), \quad  r_j: \rr^{n} \to \rr \\
+	     &:= \frac{1}{2} \norm{ R(x)} ^2, \quad R: \rr^{n} \to \rr^{m} 
+\end{align*}
+This is perhaps the most common in engineering and sciences. We use squares here not only because it's easier to differentiate but also because if our data have Gaussian noise, then this becomes the maximum likelihood estimation.
+
+Let the Jacobian of $ R$ be  $ J(x)$.
+ \begin{align*}
+	 J(x)_{i,j} &= \frac{\partial r_i}{\partial x_j}  \\
+	 J(x) &= \begin{pmatrix} \nabla r_1(x)^{T}\\ \vdots\\ \nabla r_m(x)^{T} \end{pmatrix} \\
+	 \nabla f(x) &= \nabla \left( \frac{1}{2} \sum_{ j= 1}^{ m} r_j^2(x) \right)  \\
+		     &= \frac{1}{2} \sum_{ j= 1}^{ m} \nabla (r_j^2(x)) && \text{ linearity}  \\
+		     &= \frac{1}{2} \sum_{ j= 1}^{ m} 2 r_j(x) \nabla r_j(x) \\
+		     &= J(x)^{T} R(x) \\
+	 \nabla ^2f(x) &= J(x)^{T}J(x) + \sum_{ j= 1}^{ m} r_j(x) \cdot  \nabla ^2 r_j(x)
+\end{align*}
+In the least squares case $ r_j(x) = a_i^{T} x -b_i$, we see that $ \nabla ^2f(x) = A^{T}A$ just as we expect.
+
+\subsubsection{Gauss-Newton method}
+\begin{align*}
+	x_{k+1} = x_k - B_k^{-1} \nabla f_k
+\end{align*}
+where $ B_k = J_k^{T} J_k$. So we ignore the sum term to approximate the Hessian. This is worse than Newton but better than gradient descent's constant $ L \cdot I$ approximation, and we get the approximation "for free" as we need to compute $ J(x)$ for the gradient anyway. Although inverting it can get expensive.
+
+Another derivation:
+\begin{align*}
+	R(x) &\approx R(x_k) + J(x_k) (x-x_k) && \text{ 1st order Taylor}\\ 
+	f(x) &= \frac{1}{2} \norm{ R(x)} ^2 \\
+	     &\approx \frac{1}{2} \norm{ R_k + J_k(x-x_k)}^2  && \text{ linear ls model!} \\
+	x_{k+1}&= (J_k^{T} J_k)^{-1} J_k^{T} (J_k x_k - R_k) &&\text{ normal eq} \\
+	       &= x_k - (J_k^{T} J_k)^{-1} J_k^{T} R_k\\
+	       &= x_k- (J_k^{T} J_k)^{-1} \nabla f_k \\
+\end{align*}
+\subsubsection{Levenberg-Marquardt}
+
+This is Gauss-Newton with a trust-region.
+
+Softwares:
+
+\begin{itemize}
+	\item Matlab: lsqnonlin
+	\item python: scipy.optimize.least\_squares, lmfit (modeling)
+\end{itemize}
+\end{document}

@@ -1,0 +1,128 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\newpage
+\section{Convex optimization problems}
+\subsection{Tricks}
+The standard form of an optimization problem looks like:
+\begin{align*}
+\min\ &f_0(x)\\
+\text{subject to } &f_i(x) \leq 0, i = 1,\ldots,m \\
+&h_i(x) = 0 , i = 1,\ldots,p
+\end{align*}
+\begin{enumerate}[label=\arabic*)]
+\item Max to min:
+\[
+	 \max_{x \in C} f(x) = - \min_{x \in C} -f(x)
+.\] 
+\item Equivalent problems:
+\begin{eg}
+	$ f(x) = \sqrt{|x|} $. Then $ \argmin f(x) = \argmin f(x)^2$ and we turn it into a convex problem.
+\end{eg}
+
+\begin{eg}
+	$ f(x) = \norm{ Ax-b} + \lambda \norm{ x}^2 $. Equivalently, we can solve
+	\[
+	\min \norm{ Ax- b}^2 + \sigma \norm{ x}^2  
+	.\] 
+	So we need to adjust the constant (Lagrange multipliers).
+\end{eg}
+
+\item Change of variables:
+This works especially well for affine transformation because it doesn't change convexity.
+	\item Eliminate equality constraints:
+		\begin{eg}
+		\[
+			\underset{ Ax=b}{ \min} f(x)
+		.\] 
+		We can decompose $ x = x_p + \ker A$ (particular solution + homogeneous solution). Let  $ F$ be the basis of  $ \ker(A)$, then  $ x= x_p + F z$. This way we change the problem to
+		\[
+			\min_z f(x_p +F z)
+		.\]
+		Notice this eliminates the constraint by (affine) change of variable.
+		\end{eg}
+	\item Slack variables:
+
+		$ f_i(x) \leq 0$ iff there exists a  $ s_i \geq 0$ s.t. $ f_i(x) + s_i =0$.
+		Then we turn $ \min_x f_0(x), \text{ subject to }  f_1(x) \leq 0$ into
+		\begin{align*}
+			\min_{x,s}\ &f_0(x)\\
+				   \text{ subject to }  &f_1(x) + s= 0\\ 
+				    &s\geq 0
+		\end{align*}
+		This is less important nowadays since softwares are less constrained by the form we give them.
+	\item Epigraph:
+		\[
+			\min_{x \in \rr^{n}} f(x) \iff \min_{x \in \rr^{n}, t \in \rr} t, \qquad  f(x) \leq t
+		.\] 
+		\begin{eg}
+			\begin{align*}
+		\min \norm{ Ax -b}_1 &= \min \sum_{ i= 1}^{ m} \left| a_i^{T} x - b_i \right|  \\ 
+				     &= \min_{t \in \rr^{m}, x \in \rr^{n}} \mathbbm{1} t\\ 
+				     & \qquad \qquad \qquad  a_i^{T}x - b_i \leq t_i\\
+				     & \qquad \qquad \qquad  a_i^{T} x - b_i \geq -t
+			\end{align*} 
+		\end{eg}
+	\item Solve coupled functions $ \min f(x) +g(x)$. This is equivalent to
+		\begin{align*}
+			\min_{x,z} f(x) + g(z) \text{ subject to }  x=z
+		\end{align*}
+		This way we decouple the functions and make it easier to solve.
+	\item Marginalization:
+		\begin{align*}
+			\min_{x,y} f(x,y) &= \min_x \left( \min_y f(x,y) \right)  \\
+					   &= \min_x g(x)
+		\end{align*}
+		\begin{note}
+		We can always commute extremization of the same type.
+		\end{note}
+\end{enumerate}
+
+\subsection{Convex optimization problems [BV04 Ch.4.2]}
+
+We wish to make both the function and the constraint sets to be convex. 
+A typical problem:
+\begin{align*}
+\min &f_0(x)\\
+\text{subject to } &f_i(x) \leq 0, i = 1,\ldots,m\\
+&h_i(x) = 0 , i = 1,\ldots,p
+\end{align*}
+A convex problem would be
+\begin{align*}
+	\min\ &f_0 (x) \\
+	     \text{ subject to }  &f_i(x) \leq 0 \\
+				  &a_i^{T} x =b_i
+\end{align*}
+where $ f_0, \ldots, f_m$ are convex functions and the equality constraints are affine.
+\begin{thm}
+Consider the convex problem, $\min f(x), x \in C$. Assume $ f \in \mathcal{ C}^{1}$. Then $ x$ is optimal iff
+\begin{enumerate}[label=\arabic*)]
+	\item $ x \in C$
+	\item $ \ \forall \ y \in C$, $ \langle \nabla f(x), y-x \rangle \geq 0$ (Euler inequality).
+\end{enumerate}
+
+\end{thm}
+
+\begin{proof}
+	$ (\impliedby)$: 
+	\begin{align*}
+		f(y) \geq  f(x) + \langle \nabla f(x) , y-x \rangle \geq f(x)
+	\end{align*}
+	$ (\implies)$:
+	Suppose $ x$ is optimal but there exists a $ y \in C$ s.t. $\langle \nabla f(x),y-x \rangle < 0$. Then for $ t \in (0,1]$, the 1D parameterization yields:
+	\begin{align*}
+		\phi(t) &=f(x+t(y-x))\\
+			&= \phi(0) + \phi'( 0) t + \frac{\phi''( \xi)}{ 2} t^2 \qquad \qquad  \text{ Taylor} \\
+			&\leq f(x) + t \langle \nabla f(x), y-x \rangle \qquad \phi \text{ convex by composition}  \\
+			&< f(x)
+	\end{align*}
+	Clearly $ \phi(t)$ is feasible and this contradicts that $ x$ is optimal. 
+\end{proof}
+\begin{coro}
+If $ \langle d,z \rangle \geq 0 \ \forall \ z \implies d=0$.
+\end{coro}
+\begin{proof}
+Take $ z=-d$ and result follows from positive definitiveness of norm.
+\end{proof}
+\end{document}

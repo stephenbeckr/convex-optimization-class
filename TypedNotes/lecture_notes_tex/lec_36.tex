@@ -1,0 +1,136 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\subsection{Newton's Method revisited, [BV04] Ch.9}
+\begin{align*}
+	\Delta x_{nt} &= \argmin_{\Delta x} f(x_k) + \langle \nabla f(x_k), \Delta x \rangle + \frac{1}{2} \langle \Delta x|\nabla ^2f(x_k)|\Delta x \rangle\\
+		      &= \nabla ^2 f(x_k)^{-1} \nabla f(x_k) && \nabla ^2f(x_k) \succ 0 \\
+	x_{k+1} &= x_k+t \Delta x_{nt}, t\approx 1
+\end{align*}
+Observe: this is affine invariant. That is, let $ \widetilde{ x} = Ax+b$, $ A$ invertible. And the update step doesn't change. This allows us to precondition the Hessian. Thus, convergence ought to be independent of the condition number of Hessian.
+
+\subsubsection{old-fashioned analysis}
+Assume $ \mu I \preceq \nabla ^2f(x) \preceq MI \ \forall \ x$, sometimes $ \norm{ \nabla ^3 f(x)} \leq L$. These are strong assumptions, depend on potentially unknown parameters, and not affine-invariant.
+\subsubsection{self-concordant analysis}
+Introduced by Nesterov and Nemirovski. 
+
+\begin{defn}[self-concordant]
+	$ f:\rr \to \rr$ is \allbold{self-concordant} (sc) if $ f$ is convex and
+	 \begin{align*}
+		 |f'''(x)| \leq 2(f''(x))^{\frac{3}{2}}
+	\end{align*}
+\end{defn}
+\begin{note}
+	$ f'''(0) \implies$ sc.
+\end{note}
+\begin{eg}
+	$ f(x) = -\log(x)$. Let's check if $ f$ is sc:  $ f''(x) = \frac{1}{x^2}, f'''(-\frac{2}{x^3})$, and it works!
+\end{eg}
+
+\begin{defn}
+	$ f: \rr^{n} \to \rr$ is sc if $ \ \forall \ x,v, \phi(t) = f(x+tv)$ is sc.
+\end{defn}
+\begin{note}
+This is just sc for all the lines.
+\end{note}
+\begin{prop}
+	If $ f(x)$ is sc, so is  $ x \mapsto f(Ax+b)$, $ A$ is  $ n \times n$. This is affine-invariant.
+\end{prop}
+\begin{eg}
+	linear or quadratic, $ -\log (\ve{x}) := \sum -\log(x_i)$ is sc. So is $ -\log \det(X)$.
+\end{eg}
+
+\begin{prop}
+	$ \nabla ^2 f(x) \succ 0 $ and $ f$ is sc  $ \iff$ $ f$ is strictly convex and  $ f$ is sc. 
+\end{prop}
+\begin{remark}
+	Recall that $ \nabla ^2 f(x) \succ 0$ implies strong (thus strict) convexity but strict convexity doesn't imply positive-definite Hessian even if the Hessian exists. It only implies positive-semidefinite Hessian. This proposition allows us to make a stronger claim.
+\end{remark}
+\subsubsection{damped/guarded Newton method}
+suitable for strictly convex functions.
+
+Let $ \Delta x_{nt} = -(\nabla ^2 f_k)^{-1} \nabla f_k$. $ \norm{ z}_{H} := \sqrt{\langle z|H|z \rangle}  , H \succ 0$.
+\begin{align*}
+	\lambda_k^2 := \lambda^2(x_k) &:= \norm{ \Delta x_{nt}}_{\nabla ^2 f_k}^2 && \text{ Newton decrement} \\
+	&:= \langle \nabla f_k| \nabla ^2 f_k^{-1}|\nabla f_k \rangle 
+\end{align*}
+\begin{remark}
+By the proposition above, we ensure $ \nabla ^2 f_k \succ 0$ defining a valid norm.
+\end{remark}
+terminate if $ \lambda_k^2 /2<$tol
+
+backtracking linesearch to ensure
+\begin{align*}
+	f(x_k + t \Delta x_{nt}) &< f_k + \underbrace{ \alpha}_{ \in (0,0.5)} \underbrace{ t}_{ t_0=1}  \underbrace{  \langle \nabla f_k, \Delta x_{nt} \rangle}_{ -\lambda_k ^2}\\
+	x_{k+1} &= x_k+ t \Delta x_{nt}
+\end{align*}
+
+\begin{prop}[BV Ch. 9.6.3]
+	Let $ p^*  = \min_{x } f(x)$. If $ \lambda(x) < 0.68$, then $ f(x)-p^* \leq \lambda^2(x)$.
+\end{prop}
+
+\begin{thm}
+If $ f$ is sc, strictly onvex, etc, there exists  $ 0< \eta < \frac{1}{4}$, $ \gamma > 0$ s.t. 
+\begin{enumerate}[label=(\roman*)]
+	\item Damped Newton phase: $ \lambda(x_k)> \eta$, then $ f(x_{k+1}) - f(x_k) < -\gamma$
+	\item Quadratic convergence phase: $ \lambda(x_k) \leq \eta$, then $ t=1$ and  $ 2 \lambda_{k+1} \leq (2\lambda_k)^2$. Here we have the bound:
+		\begin{align*}
+			f(x_{k_0+\ell})-p^* \leq \frac{1}{4} \left( \frac{1}{2} \right) ^{2^{\ell-k_0+1}}
+		\end{align*}
+\end{enumerate}
+\end{thm}
+\begin{note}
+	Before we get to the second phase, it's a constant rate and could be bad if it's too far away, but once we hit the second phase and we get amazing accuracy very quickly (less than 6 iterations).
+\end{note}
+The total number of iterations to $ \epsilon$-solution is
+\begin{align*}
+	\frac{f(x_0)-p^* }{ \gamma}+ \log_2 \left( \log_2 \left( \frac{1}{ \epsilon} \right)  \right) \approx 375(f(x_0)-p^* ) + 6
+\end{align*}
+
+\subsubsection{Newton's method with equality constraints}
+This is easy!
+
+\begin{align*}
+\min\quad &f_0(x) \\
+&Ax=b
+\end{align*}
+Then
+\begin{align*}
+	\mathscr{L}(x,\nu) = f(x) + \nu^{T}(Ax-b)
+\end{align*}
+The KKT conditions are:
+\begin{enumerate}[label=(\arabic*)]
+	\item $ 0=\nabla f(x) + A^{T} \nu$.
+	\item $ Ax=b$.
+\end{enumerate}
+These are already linearized. So the update step with Taylor expansion becomes:
+\begin{align*}
+	0&= \nabla f_k + \nabla ^2 f_k \Delta x + A^{T} \nu \\
+	b&= A(x+ \Delta x)
+\end{align*}
+\begin{align*}
+	\underbrace{ \begin{pmatrix} \nabla ^2 f_k& A^{T}\\A&0 \end{pmatrix}  }_{ \text{ saddle pt system}}\begin{pmatrix} \Delta x\\ \nu \end{pmatrix} = \begin{pmatrix} -\nabla f_k \\ -A x_k \end{pmatrix}   
+\end{align*}
+
+Another way to think is that $ x = Fz + x_p$, where  $ Fz \in \ker A$. Then
+\begin{align*}
+	\min_{z} f(Fz+x_p)
+\end{align*}
+Affine-invariant makes this easy using Newton. Then this problem is equivalent to the saddle point system via Schur's complement.
+\subsubsection{Newton with inequality constraints: IPM}
+\begin{align*}
+\min\quad &f_0(x) \\
+\text{subject to } \quad &f_i(x) \leq 0, i = 1,\ldots,m \\
+			 & Ax=b
+\end{align*}
+Using log barrier, we change the inequality constraints into solving the sc function
+\begin{align*}
+	x^* (t) &= \argmin_{x, Ax=b} f_0(x) +  \underbrace{ \sum_{ i= 1}^{ m} -\frac{1}{t} \log(-f_i(x)) }_{ \phi_t(x), \text{ sc} }
+\end{align*}
+Central path: $ \{x^* (t)\}_{t \geq 0} $. As we increase $ t$, we get closer to the boundary (think about the log barrier plot). If we choose $ t$ to be too large, it will take a long time. Instead we solve for an increasing sequence of  $ t$ using warm-start using solution from previous $ t$. 
+
+The primal-dual method take one step of Newton at each $ t$, and might be more efficient.
+
+$ f(x_k) - p^* \leq f(x_k) - g( \lambda_k, \nu_k) = \frac{m}{t}$. We can prove convergence using this nicely. See BV04 Ch 11 for more details on IPM.
+\end{document}

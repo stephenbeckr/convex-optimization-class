@@ -1,0 +1,139 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\chapter{Theoretical Foundation}
+\newpage
+\section{Introduction}
+An optimization problem looks like
+\[
+	\min_{x \in C} f(x)
+\]
+where $ f(x)$ is the  \allbold{objective function} and $ C \subseteq \rr^n$ is the \allbold{constraint set}. $ C$ might look like
+ \[
+	 C=\{x: g_i(x) \leq 0 \ \forall \ i=1,\ldots,m\} 
+.\] 
+
+\begin{remark}
+We can always turn a maximization problem into a minimization problem as the following:
+\[
+	\min_x f(x) = -\max_x -f(x)
+.\] 
+Therefore, WLOG, we will stick with minimization.
+
+\end{remark}
+	
+\begin{eg}
+	An assistant professor earns \$100 per day, and they enjoy both ice cream and cake. The optimization problem aims to maximize the utility ( \emph{e.g.} happiness) of ice cream $ f_1(x_1)$ and of cake $ f_2(x_2)$. The constraints we have is that $ x_1\geq 0, x_2 \geq 0$, and $ x_1+x_2 \leq 100$.
+
+	To maximize both utility, it might be natural to define
+	\[
+		F(\vec{x}) = \begin{pmatrix} f_1(x_1)\\f_2(x_2) \end{pmatrix}, \vec{ x} = \begin{pmatrix} x_1\\x_2 \end{pmatrix}  
+	\]
+and maximize $ F$. However, this isn't a well-defined problem, because  \emph{there is no total order on $ \rr^n$}! That is, we don't have a good way to compare whether a vector is bigger than another vector, except in the cases when the same direction of inequality can be achieved for all components of two vectors and a partial order can be established. For this kind of \allbold{multi-objective} optimization problem, we can look for Pareto-optimal points in these special cases. We can also try to convert the output into a scalar as the following:
+\[
+	\min_x f_1(x) + \lambda \cdot  f_2(x_2)
+\]
+for some $ \lambda>0$ that reflects our preference for cake vs ice cream. But this can be subjective.
+
+\end{eg}
+
+
+Thus, For the remainder of this class, we are only going to assume $ f: \rr^n \to \rr$. 
+\\
+
+Moreover, for $ f: \rr \to \rr$, it's very easy to solve by using root finding algorithms or grid search. So since interesting problems occur with vector inputs, we will simply use $ x$ to represent vectors.
+
+\begin{notation}
+	$ \min$ asks for the minimum value, whereas $ \arg\min$ asks for the minimizer that yields the minimum value.
+\end{notation}
+\newpage
+\subsection{Lipschitz continuity}
+\begin{eg}
+Let's consider a variant of the Dirichlet function, $ f: \rr \to \rr$
+\begin{equation*}
+	f(x)=
+\begin{cases}
+	x & \text{ if } x \in \qq\\  
+	1 & \text{ if } x \in \rr \setminus \qq 
+\end{cases}
+\end{equation*}
+Then the solution to the problem
+\[
+	\min_{x \in [0,1]} f(x) = 0
+\] 
+is $ x=0$ by observation. However, the function is not smooth and a small perturbation can yield wildly different values. Thus, it is not tractable to solve this numerically.
+\end{eg}
+
+This requires us to add a smoothness assumption:
+\begin{defn}
+	$ f: \rr^{n} \to \rr$ is \allbold{$L$-Lipschitz continuous} with respect to a norm $ \norm{ \cdot } $ if for all $ x, y \in \rr^{n}$,
+\[
+	|f(x) - f(y)|\leq L \cdot \norm{x-y} 
+.\]
+\end{defn}
+
+\begin{note}
+	Lipschitz continuity implies continuity and uniform continuity. It is a stronger statement because it tells us \emph{how} the function is (uniformly) continuous. However, it doesn't require differentiability. 
+\end{note}
+
+\begin{defn}
+For $ 1\leq p < \infty$,
+ \[
+	 \norm{x}_p = \left( \sum_{ i= 1}^{ n} |x_i|^p \right)^{\frac{1}{p}}  
+.\] 
+For $ p = \infty$,
+\[
+\norm{x}_{\infty} = \max_{1\leq i\leq n} |x_i|
+.\]
+\end{defn}
+
+\begin{remark}
+$ \norm{x}_1 $ and $ \norm{x}_2^2 $ have separable terms as they are sums of their components. $ \norm{x}_2^2 $ is also differentiable which makes it the nicest norm to optimize.
+\end{remark}
+
+\begin{eg}
+	Let $ f: \rr^{n} \to \rr$ be $ L$-Lipschitz continuous w.r.t.  $ \norm{ \cdot }_{\infty} $. Let $ C = [0,1]^{n}$, \emph{i.e.} in $ \rr^{2}$, $ C$ is a square. To solve the problem
+	\[
+		\min_{x \in C} f(x)
+	,\]
+	since we have few assumption, there is no better method (in the worst case sense) than the \allbold{uniform grid method}. The idea is that we pick $ p+1$ points in each dimension,  \emph{i.e.} $ \{0,\frac{1}{p},\frac{2}{p},\ldots,1\} $, so we would have $ (p+1)^{n}$ points in total.
+
+	Let $ x^* $ be a global optimal point, then there exists a grid point $ \widetilde{ x}$ s.t.  \[
+	\norm{ x^* -\widetilde{ x}}_{\infty} \leq \frac{1}{2} \cdot  \frac{1}{p} 
+	.\]
+	Thus by Lipschitz continuity, 
+	\begin{align*}
+		|f(x^* ) - f(\widetilde{ x})| &\leq L \cdot \norm{ x^* -\widetilde{ x}}_{\infty} \\
+		&\leq \frac{1}{2} \frac{L}{p}
+	\end{align*} 
+	So we can find $ \widetilde{ x}$ by taking the discrete minimum of all $ (p+1)^{n}$ grid points.\\
+
+	In (non-discrete) optimization, we usually can't exactly find the minimizer, but rather find something very close.
+
+\begin{defn}
+	$ x$ is a  \allbold{$ \epsilon$-optimal solution} to $ \min_{x \in C} f(x)$ if $ x \in C$ and
+	\[
+		f(x)-f^*  \leq \epsilon
+	\]
+	where $ f^* = \min_{x \in C} f(x)$.
+\end{defn}
+
+Our uniform grid method gives us an $ \epsilon$-optimal solution with $ \epsilon = \frac{L}{2p}$, and requires $ (p+1)^{n}$ function evaluations. Writing $ p$ in terms of  $ \epsilon$, we have $ p=\frac{L}{2 \epsilon}$ so equivalently it requires $ \left( \frac{2L}{ \epsilon} + 1 \right)^{n} $ function evaluations, which approximately is $ \epsilon^{-n}$. 
+
+For $ \epsilon = 10^{-6}$, $ n=100$, it requires  $ 10^{600}$ function evaluations. This is really bad!
+
+Take-aways from this example:
+\begin{itemize}
+	\item curse-of-dimensionality: there can be trillions of variables in a Google Neural Network. It would be intractable using the grid method.
+	\item we need more assumptions to allow us to use more powerful methods.
+\end{itemize}
+\end{eg}
+
+\subsection{Categorization}
+\begin{figure}[H]
+	\hspace*{-4cm}
+	\includegraphics[width=1.6\textwidth]{./figures/categorization.jpg}
+\end{figure}
+\newpage
+\end{document}

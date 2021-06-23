@@ -1,0 +1,104 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\subsubsection{Dual of linear programs}
+The primal (P) is:
+\begin{align*}
+\max_{x \in \rr^{n}}\quad & \langle c,x \rangle \\
+\text{subject to } \quad &x \geq 0\\
+y:\quad  &Ax \leq b
+\end{align*}
+The dual (D) is:
+\begin{align*}
+\min\quad &\langle b,y \rangle \\
+\text{subject to } \quad & y\geq 0\\
+x:\quad & A^{T} y \geq c
+\end{align*}
+
+Rules to transform (P) to (D):
+\begin{enumerate}[label=(\arabic*)]
+	\item $ \max \to \min$ and vice versa.
+	\item variables $ \to$ constraints and vice versa.
+	\item objective and RHS of inequality flip places.
+	\item matrices transpose.
+\end{enumerate}
+"SOB" mnemonic: sensible, odd, and bizarre from a business perspective
+\begin{align*}
+\text{ primal variable } x_i \quad &x_i\geq 0 \text{: sensible}  \\
+& \text{ no constraint: odd}   \\
+&x_i \leq 0 \text{: bizarre} 
+\end{align*}
+\begin{align*}
+	\text{ constraints in primal when maximizing} \quad & a_i^{T}x\leq b_i \text{: sensible (think budget)}  \\
+& a_i^{T}x=b_i\text{: odd}   \\
+&a_i^{T}x \geq b_i \text{: bizarre} 
+\end{align*}
+The rule: a dual constraint is S/O/B if primal variable is S/O/B. And vice versa. 
+
+\begin{eg}
+\begin{align*}
+	(P) \qquad \qquad \min_{\substack{x\geq 0\\ x \in \rr^{2}}} \quad &3x_1+2x_2\\
+						 y_1: \quad &x_1 + 2x_2 \geq 5 \qquad S\\
+						 y_2:\quad & \underbrace{x_2 \leq 2 \qquad}\qquad B\\
+							   & \begin{pmatrix} 1&2\\0&1 \end{pmatrix} \begin{pmatrix} x_1\\x_2 \end{pmatrix} 
+\end{align*}
+\begin{align*}
+	(D) \qquad \qquad \min_{\substack{y \in \rr^{2}\\y_1\geq 0\ S\\ y_2 \leq 0 \ B}} \quad &5y_1+2y_2\\
+						 x_1: \quad &y_1 + 0y_2 \leq 3 \qquad S\\
+						 x_2:\quad & 2y_1+y_2 \leq 2 \qquad  S
+\end{align*}
+
+
+Observe: $ f(x) = 3x_1 + 2 x_2 = \underbrace{2x_1}_{\geq 0} + \underbrace{(x_1 + 2x_2)}_{\geq 5} \geq 5$. We proved $ 5\leq p^* $. However, this is not the tightest bound. The dual variables give us the tightest: 3 times the first constraint and -4 times the second constraint yields $ 7\leq p^* $.
+\end{eg}
+\allbold{Duality gap}: $ x, \lambda$ feasible, $ f_0(x) - g(\lambda,\nu)$.
+
+\subsubsection{Strong duality results}
+\begin{itemize}
+	\item If $ (P)$ isn't convex, strong duality is unlikely except certain nonconvex QP: s-lemma/s-procedure (see Appendix of BV).
+	\item  If (P) is convex, strong duality holds under certain constraint qualifications (CQ) such as Slater's condition.
+		\begin{align*}
+		\min\quad &f_0(x) \\
+		\text{subject to } \quad &f_i(x) \leq 0, i = 1,\ldots,m \\
+		&Ax = b
+		\end{align*}
+		\begin{defn}[Slater's conditions]
+			They hold if there exists a strictly feasible point, $ x \in \ri(\dom(f_0))$ and
+
+			if $ f_i$ is affine, $ f_i(x)\leq 0$ (feasible)
+
+			if $ f_i$ isn't affine, $ f_i(x)<0$ (strictly feasible)
+
+			and $ Ax=b$.
+		\end{defn}
+		\begin{thm}
+			If (P) is convex and Slater's conditions hold, then
+			\begin{enumerate}[label=(\roman*)]
+				\item we have strong duality, $ d^* =p^* <\infty$
+				\item there exists an optimal solution to the dual problem.
+			\end{enumerate}
+		\end{thm}
+		\begin{note}
+			Slater's does NOT imply there exists an optimal \emph{primal} solution.
+		\begin{eg}
+		$ \inf_{x \in \rr} e^{x}$. It is convex, lsc, proper. But it is not coercive so it doesn't have an optimal primal solution.
+		\end{eg}
+		\end{note}
+		\begin{remark}
+		Often we want Slater's condition on the dual. Since the dual of the dual is the primal, then we guarantee an optimal solution.
+		\end{remark}
+		\begin{coro}[Slater for LP]
+		Slater's conditions hold iff the LP is feasible \emph{i.e.} $ p^* < \infty$.
+
+		$ p^* < \infty \implies d^* =p^* $ and dual optimal solution exists.
+
+		$ d^* >- \infty \implies d^* =p^* $ and primal optimal solution exists.
+
+		Hence if either $ p^* $ or $ d^* \in \rr$ (not $ \pm \infty$), then optimal primal and dual solutions exist.
+		\end{coro}
+		\begin{note}
+		$ d^* = - \infty, p^* = -\infty$ is possible but rare. This is not strong duality.
+		\end{note}
+\end{itemize}
+\end{document}

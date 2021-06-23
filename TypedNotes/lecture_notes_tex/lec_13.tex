@@ -1,0 +1,179 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\subsection{Existence and uniqueness of minimizers}
+\subsubsection{Existence}
+\begin{intuition}
+	We want to generalize EVT to functions in $ \Gamma_0(\rr^{n})$.
+\end{intuition}
+\begin{defn}[coercive]
+	$ f: \rr^{n} \to [-\infty,\infty]$ is \allbold{coercive} if
+	\[
+		\lim_{ \norm{ x}  \to \infty} f(x) = \infty
+	.\] 
+\end{defn}
+\begin{note}
+In other words, it grows!
+\end{note}
+\begin{prop}
+	$ f$ is coercive iff all sub-level sets  $ \{x: f(x) \leq \alpha\} $ are bounded.
+\end{prop}
+\begin{intuition}
+	There is no "horizontal asymptote".
+\end{intuition}
+\begin{prop}
+	If $ f \in \Gamma_0 (\rr^{n})$, $ f$ is coercive iff there exists  $ \alpha$ s.t. $ \{x:f(x) \leq \alpha\} $ is non-empty and bounded.
+\end{prop}
+
+\begin{remark}
+Convex + coercive need not be coercive.
+\end{remark}
+
+\begin{thm}[existence]
+	Let $ C$ be closed, convex, $ f \in \Gamma_0(\rr^{n}), C \cap \dom(f) \neq \O$, then $ \min_{x \in C} f(x) $ exists if either
+	\begin{enumerate}[label=\arabic*)]
+		\item $ f$ is coercive or
+		\item $ C$ is bounded.
+	\end{enumerate}
+\end{thm}
+
+\subsubsection{Uniqueness}
+~\begin{thm}[Uniqueness]
+	Let $ C$ be convex,  $ f$ is proper and convex, $ C \cap \dom(f) \neq \O$, then there is at most one minimizer of $ \min_{x \in C} f(x)$ if either
+	\begin{enumerate}[label=\arabic*)]
+		\item $ f$ is strictly convex or
+		\item  $ C \cap  \argmin f = \O$ and $ C$ is strictly convex.
+	\end{enumerate}
+\end{thm}
+\begin{intuition}
+	If the unconstrained minimizer is not in the constrained set, then $ C$ and not $ f$ dictates uniqueness.
+\end{intuition}
+
+\begin{defn}[strictly convex set]
+A set $ C$ is  \allbold{strictly convex} if there are no line segments on its boundary. That is,
+\[
+	\frac{x+y}{ 2} \in \inte (C) \ \forall \ x,y \in C, x\neq y
+.\] 
+\end{defn}
+\begin{remark}
+	In summary: let $ f \in \Gamma_0(\rr^{n})$. If $ f$ is strictly convex  $ \implies$ at most 1 minimizer. If $ f$ is coercive  $ \implies$ at least 1 minimizer.
+\end{remark}
+\begin{coro}
+If $ f$ is strongly convex, then there exists a unique minimizer.
+\end{coro}
+\begin{proof}
+Strongly convex $ \implies $ strictly convex. Also notice that if we choose $ x=0$, then
+ \[
+	 f(y)\geq f(x) + \langle \nabla f(x),y-x \rangle + \frac{\mu}{ 2} \norm{ y-x}^2 
+\]
+will be "coerced" to go to infinity as $ \norm{ y} \to \infty $.
+\end{proof}
+
+\subsection{Proximity operator}
+~\begin{defn}[orthogonal projection]
+The \allbold{orthogonal projection} of a point $ y$ onto a set  $ C$ is
+ \[
+	 \Proj_C(y) = \argmin_{x \in C} \norm{ x-y}_2 = \argmin_{x \in C} \frac{1}{2} \norm{ x-y}_2^2  
+.\]
+\end{defn}
+\begin{note}
+Applying a monotone transformation to the objective doesn't change the location of minimizer, hence we can use norm squared.
+\end{note}
+\begin{remark}
+The solution to the projection exists and is unique if $ C$ is a Chebyshev set  \emph{i.e.} closed and convex.
+\end{remark}
+\begin{defn}[proximity operator]
+	The \allbold{proximity operator} of a function $ f \in \Gamma_0 (\rr^{n})$ is
+	\[
+		\prox_f (y) = \argmin_x \left(\frac{1}{2} \norm{ x-y}_2^2 + f(x) \right)
+	.\] 
+\end{defn}
+\begin{ques}
+Is this minimizer unique? Does it even exist?
+\end{ques}
+
+The solution is unique because $ f$ is convex and the norm squared is strongly convex in $ x$, making the sum strongly convex which guarantees a unique minimizer.
+
+\begin{eg}
+Let $ f = I_C$ be an indicator function, then
+ \[
+	 \prox_f(y) = \Proj_C(y)
+.\] 
+\end{eg}
+\begin{remark}
+We often insert a scaling constant for convenience. This constant turns out to be the step size in an iterative algorithm:
+\[
+	\prox_{tf}(y) = \argmin_x \frac{1}{2}\norm{ x-y}_2 ^2 + t f(x)
+.\] 
+\end{remark}
+\begin{eg}
+	$ f(x) = \frac{1}{2} \norm{ x}_2^2 $. Then
+	\begin{align*}
+		\prox_f(y) &= \argmin_x \ \frac{1}{2} \norm{ x-y}_2 ^2 + \frac{t}{2} \norm{ x}_2 ^2\\
+		\text{ Fermat and differentiable}\implies 0 &= x^* -y + tx^*  \\
+		x^*  &= (1+t)^{-1} y
+	\end{align*}
+\end{eg}
+\begin{eg}[taking gradient]
+	$ f(x) = \frac{1}{2} \norm{ Ax-b}^2 $, what is $ \nabla f$?
+
+	Think of it as $ f = g \circ h$, where  $ g(x) = \frac{1}{2} \norm{ x}^2 $. 
+\end{eg}
+
+\begin{eg}
+	$ f(x) = \norm{ x}_1 $. So
+	\begin{align*}
+		\prox_{tf} (y) &= \argmin_x \frac{1}{2}\norm{ x-y}_2 ^2 + t\norm{ x}_1 \\
+			       &= \argmin_x \frac{1}{2} \sum_{ i= 1}^{ n} (x_i-y_i)^2 + t \sum_{ i= 1}^{ n} |x_i|
+	\end{align*}
+	Notice each $ i$ is separable, so WLOG we just need to find the optimal $ x_i$, dropping the $ i$ in notation:
+	 \begin{align*}
+		 \argmin_x \ \frac{1}{2}(x-y)^2 + t|x| 
+	\end{align*}
+	By Fermat's rule,
+	\begin{align*}
+		0 &\in \partial \left(\frac{1}{2}(x-y)^2 + t|x|\right)  \\
+		0 &\in x-y + t \partial (|x|) \qquad \qquad    \text{ via CQ such as full domain} \\
+		0 &\in x-y + \begin{cases}
+			t & x > 0\\
+			[-t,t] & x = 0\\
+			-t & x<0
+		\end{cases} 
+	\end{align*}
+	\begin{case}[1]
+		If $ x>0$, we have
+		 \begin{align*}
+			0 = x-y + t \implies x = y-t
+		\end{align*}
+		This is only valid if $ y-t > 0 \implies y > t$.
+	\end{case}
+	\begin{case}[2]
+	If $ x<0$, we have  $ 0 = x-y-t \implies x = y+ t \implies y < -t$.
+	\end{case}
+	\begin{case}[3]
+		If $ x = 0$, we have  $ 0 \in -y + [-t,t] \implies y \in [-t,t]$. 
+	\end{case}
+	This perfectly covers all cases.
+	\begin{align*}
+		\prox_{t|x|} (y) &=
+		\begin{cases}
+			y-t & y> t\\
+			0 & y \in [-t,t]\\
+			y+t & y<-t
+		\end{cases}\\
+				 &= \sgn(y) \cdot \lfloor |y|-t \rfloor_{+} \qquad  \text{ where } \lfloor \alpha \rfloor_+ = \max (\alpha,0) 
+	\end{align*}
+	~\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\textwidth]{./figures/soft_thresholding.png}
+	\end{figure}
+	The last expression is called \allbold{soft thresholding} and is more computationally efficient. Therefore, $ \prox_{t \norm{ \cdot }_1 }$ is just componentwise soft-thresholding.
+\end{eg}
+
+\subsubsection{Rules}
+If $ \prox_f,\prox_g$ are known, there is not a general formula for  $ \prox_{f+g}$. Even $ \prox_{f\circ L}$ isn't easy.
+
+\subsection{Moreau envelope}
+See supplemental lecture notes in "Proximity Operator".
+\end{document}

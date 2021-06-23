@@ -1,0 +1,93 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\newpage
+\subsection{Linear conjugate gradient method}
+CG solves (usually approximately) $ Ax =b$ if  $ A \succ 0$. More details and intuition can be found at \url{cs.cmu.edu/~quake-papers/painless-conjugate-gradient.pdf}.
+
+\begin{eg}
+	Consider the least squares problem. Let $ \phi(x) = \frac{1}{2} x^{T} \widetilde{ A}^{T} \widetilde{ A}x - \widetilde{ b}^{T} \widetilde{ A}x + \frac{1}{2} \widetilde{ b}^{T}\widetilde{ b} =: \frac{1}{2} x^{T} A x - b^{T} x + \text{ const.} $. Here $ A \succeq 0$ always and $ A \succ 0$ if $ m>n$ and full rank. Then we can solve  $ \nabla \phi(x) = Ax-b$.
+	\begin{note}
+	Don't form the Gram matrix. Instead use LSQR method.
+	\end{note}
+
+	One idea to $ \min \phi(x)$ is coordinate descent/alternating minimization. This slowly converges to the solution via a zigzag path. If we change to the eigenvector basis, it is guaranteed to converge in $ n$ steps. However, finding the eigenvector basis is just as expensive as solving the normal equation directly at  $ \mathcal{ O}(n^3)$.
+\begin{defn}[conjugate directions]
+$ \{p_i\} $ are conjugate directions if they are $ A$-orthogonal. That is, 
+\[
+\langle p_i |A|p_j \rangle := \langle p_i, A p_j \rangle = 0 \text{ if } i\neq j 
+.\] 
+\end{defn}
+
+\begin{note}
+If we have $ \{p_i\}_{i=0}^{n-1} $, it's a basis. If $ p_i$ are eigenvectors of a symmetric matrix  $ A$, then they are  $ A$-orthogonal.
+\end{note}
+
+Our goal is to find $ \{p_i\} $ more cheaply than eigenvectors.
+\end{eg}
+
+\begin{thm}[conjugate direction method (abstract)]
+Assume $ \{p_i\}_{i=0}^{n-1} $ are conjugate directions. Then
+\begin{align*}
+	x_{k+1} = x_k + \alpha_k p_k 
+\end{align*}
+where $ a_k$ solves $ \min_{\alpha} \phi(x_k + \alpha p_k)$ which is exact line search. The solution to this 1D problem has a closed form:
+\begin{align*}
+	a_k = - \frac{\langle r_k | p_k \rangle}{ \langle p_k|A|p_k \rangle}
+\end{align*}
+where $ r_k = A x_k-b$. Then $ x_n = x^* $.
+\end{thm}
+
+\begin{proof}
+Since $ \{ p_i\} $ is a basis, we can write
+\begin{align*}
+	x^* -x_0 &= \sum_{ i= 0}^{ n-1} \sigma_i p_i \\
+	p_k^{T} A(x^* -x_0)&= \sum_{ i= 0}^{ n-1} \sigma_i \langle p_k|A|p_i \rangle \\
+	&= \sigma_k \langle p_k|A|p_k \rangle \\
+	\sigma_k &= \frac{\langle p_k|A|x^* -x_0 \rangle}{ \langle p_k|A|p_k \rangle} \ \forall \ k
+\end{align*}
+Moreover,
+\begin{align*}
+	x_k - x_0 &= \sum_{ i= 0}^{ k-1} \alpha_i p_i \\
+	p_k^{T} A(x_k - x_0) &= \sum_{ i= 0}^{ k-1} \alpha_i \langle p_k|A|p_i \rangle \\
+	\langle p_k|A|x_k-x_0 \rangle &= 0
+\end{align*}
+Substituting $ x_k $ as $ x_0$,
+\begin{align*}
+	\sigma_k = \frac{\langle p_k|A|x^* -x_k \rangle}{ \langle p_k|A|p_k \rangle} = \alpha_k
+\end{align*}
+Therefore, $ x_n = x^* $ since they have the same expression in the basis.
+\end{proof}
+\begin{remark}
+We can think of this process as either building up $ x^* $ component-by-component or cutting the error  $ x^* -x_k$ component-by-component.
+\end{remark}
+Facts:
+\begin{itemize}
+	\item $ r_{k+1} = r_k + \alpha_k A p_k$ 
+	\item $ \langle r_k, p_i \rangle=0, i<k$.
+	\item $ x_k$ minimizes $ \phi$ over $ K(r_0,k) = \text{ span}\{r_0, A r_0,\ldots,A^{k-1} r_0\}  $. This is the Krylov subspace. Note that $ K(r_0,n-1) = \rr^{n}$.
+	\item $ \langle r_k,r_i \rangle=0, i<k$.
+	\item $ p_k, r_k \in K(r_0,k)$.
+\end{itemize}
+
+\begin{thm}[conjugate gradient]
+Given arbitrary $ x_0$, $ r_0 = A x_0 - b$, $ p_0 = -r_0$. Compute iteratively
+\begin{align*}
+	\beta_k &= \frac{\langle r_k|A|p_{k-1} \rangle}{ \langle p_{k-1}|A|p_{k-1} \rangle}, \text{ chosen s.t. }  \langle p_k|A|p_{k-1} \rangle=0 \\
+p_k &= -r_k + \beta_k p_{k-1}\\
+\alpha_k &= - \frac{\langle r_k|p_k \rangle}{ \langle p_k|A|p_k \rangle} \\
+	x_{k+1} &= x_k + \alpha_k p_k \\
+	r_{k+1} &= r_k - \alpha_k A p_k
+\end{align*}
+The magic is that $ \langle p_k|A|p_i \rangle=0 \ \forall \ i\leq k-1$ (see Nocedal and Wright for proof). 
+
+The cost is one matrix-vector multiply per step.
+\end{thm}
+\begin{thm}[convergence of CG]
+\begin{align*}
+	\norm{ x_k - x^* }_A \leq 2 \left( \frac{\sqrt{\kappa}-1 }{\sqrt{\kappa} +1 } \right)^{k} \norm{ x_0 - x^* }_A 
+\end{align*}
+where $ \kappa = \kappa(A)$ is the condition number of  $ A$.
+\end{thm}
+\end{document}

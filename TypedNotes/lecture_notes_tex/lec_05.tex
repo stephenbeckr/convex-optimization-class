@@ -1,0 +1,105 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+
+\subsection{separating and supporting hyperplanes}
+~\begin{thm}[separating hyperplane]
+Let $ C,D$ be convex, non-intersecting sets in  $ \rr^{n}$, then there exists $ a \in \rr^{n} \setminus \{0\} $ and $ \mu \in \rr$ s.t. 
+\begin{align*}
+	a^{T}x \leq \mu \ \forall \ x \in C\\
+	a^{T} x \geq \mu \ \forall \ x \in D
+\end{align*}
+\end{thm}
+\begin{note}
+This reads as there exists a hyperplane that separates the two convex sets. It is clearly not true if the sets aren't convex. $ a$ is the normal to the hyperplane.
+\end{note}
+
+\begin{defn}[Chebyshev set]
+A set $ S$ is a  \allbold{Chebyshev set} if for all $ x_0$, there exists a unique $ x \in S$ s.t. 
+\[
+x = \argmin_{y \in S} \norm{ y-x_0} 
+.\] 
+\end{defn}
+\begin{note}
+This reads as there exists a unique best approximation point in the set $ S$ for any $ x_0$.
+\end{note}
+\begin{eg}
+Open unit ball isn't Chebyshev because it doesn't reach infimum.
+\end{eg}
+\begin{eg}
+A nonconvex set isn't Chebyshev because there exists an $ x_0$ where we have at least two best approximation points.
+\end{eg}
+\begin{thm}
+Any nonempty, closed, convex set in a Hilbert space is Chebyshev.
+\end{thm}
+
+\begin{thm}[supporting hyperplanes]
+~\begin{enumerate}[label=(\roman*)]
+	\item If $ C$ is convex, closed and  $ D = \{x_0\}, x_0 \not\in C $, then there exists $ a \in \rr^{n}$ s.t. $ a^{T}x< a^{T}x_0 \ \forall \ x \in C$.
+	\item Same but $ C$ needs not be closed,  $ x_0 \not\in  \overline{C}$.
+	\item as in (ii) but allow $ x_0 \in \overline{C}\setminus C$.
+\end{enumerate}
+\end{thm}
+\begin{proof}
+	(i): WLOG let $ x_0 = 0$ (since we can always translate $ C$). $ C$ is Chebyshev so let  $ y$ be the unique closest point to  $ 0$, and define  $ a=-y$ (normal of the hyperplane). We wish to show that $ a^{T}x< a^{T} x_0 =0 \ \forall \ x \in C$. That is, $ y^{T} x>0 \ \forall \ x \in C$.
+
+	Given $ x \in C$, $ y + \epsilon (x-y) \in C$ by convexity. Since $ y$ is the best approximation point,
+	\begin{align*}
+		\norm{ y}^2 &\leq \norm{ y + \epsilon(x-y)}^2 \\
+		&= \norm{ y}^2 + 2 \epsilon\langle y,x-y \rangle+ \epsilon^2 \norm{ x-y}^2   \\
+		0&= 2 \langle y,x \rangle - 2 \langle y,y \rangle + \epsilon \norm{ x-y}^2  \\
+		\langle y,x \rangle &\geq \norm{ y}^2 -\frac{ \epsilon}{2} \norm{ x-y}^2 
+	\end{align*}
+	Take $ \epsilon \to 0$, since $ y \neq 0 \implies \norm{ y}>0 $, we obtain $ y^{T}x>0$ as required.
+\end{proof}
+
+\begin{remark}
+	This is related to \allbold{Theorems of Alternatives}. Generally, they are stated as the following:
+
+Either $ A$ is true,  $ B$ is false, but not both.
+\end{remark}
+\begin{eg}[Fredhold alternative,finite-dim]
+
+Either $ \{x: Ax=b\} $ is empty, or $ \{\lambda: A^{T} \lambda =0, \lambda^{T}b \neq 0\} $ is non-empty, but not both.
+
+Why do we care? To prove that there is a solution to $ Ax=b$. We can simply find a solution  $ x$. This is a "certificate". But if professor asks you to prove there isn't a solution to  $ Ax=b$, we can try to show that  $ A$ is singular, but if  $ b=0$ even singular  $ A$ works. Another way is to find a "certificate"  $ \lambda$. This is the first task of duality.
+\end{eg}
+
+
+\begin{eg}[Farkas Lemma]
+Either $ \{Ax=b,x\geq 0\} $ is non-empty, or $ \{\lambda: A^{T} \lambda\geq 0, \lambda^{T}b<0\} $ is non-empty, but not both.
+\end{eg}
+\begin{thm}[Thereom of Alternatives for strict linear inequalities]
+The following statements are equivalent:
+\begin{enumerate}[label=(\roman*)]
+	\item The set $ \{x: Ax<b\} $ is empty.
+	\item The sets $ C = \{b-Ax : x \in \rr^{n}\} $ and $ D = \rr_{++}^{m}$ do not intersect.
+	\item The hyperplane separation theorem and its converse hold. That is,
+		\[
+			\ \exists \ \lambda \geq 0 ( \lambda \neq 0) \text{ s.t. } A^{T} \lambda = 0, \lambda ^{T} b \leq 0 
+		.\] 
+\end{enumerate}
+\end{thm}
+\begin{intuition}
+	(ii) is just rephrasing (i). No intersection from (ii) can then be established by finding something that separates $ C,D$ in (iii).
+\end{intuition}
+\begin{proof}(converse of hyperplane separation)
+
+	(iii) $ \implies$ (i): suppose such $ \lambda$ exists, and for contradiction, assume there exists $ x$  s.t. $ Ax < b$. Then since $ \lambda \geq 0$,
+\[
+	0= (A^{T} \lambda)^{T} x = \lambda^{T} Ax < \lambda ^{T} b
+.\] 
+So we obtain $ 0< \lambda^{T} b \leq 0$, a contradiction.
+
+(i) $ \implies$ (iii): By the separation theorem, we know there exists $ \lambda \neq 0$ s.t. 
+\begin{align*}
+	\lambda^{T}(b-Ax) &\leq \mu, x \in \rr^{n}\\
+	\lambda^{T} y &\geq \mu, y \in \rr_{++}^{n}
+\end{align*}
+It follows from the first condition that $ \lambda^{T}Ax =0$ because otherwise we can just choose a large negative $ x$ to exceed $ \mu$ and get contradiction. Since this is true for all $ x$, it must be that  $ \lambda^{T} A = A^{T} \lambda =0$. From the second condition we have $ \lambda \geq 0$, because otherwise if $ \lambda_i<0$, we can choose $ y_i \to \infty$ to get contradiction. Moreover, we need $ \mu \leq 0$ since if $ \mu>0$, we can take all components of $ y $ to $ 0^{+} $, so $ \lambda^{T} y \to 0^{+} $. Then $ \lambda^{T}(b-A^{T}x)\leq \mu \leq 0$ implies that $ \lambda^{T} b \leq 0$.
+
+Taken together, we have $ \lambda \geq 0, \lambda \neq 0$, $ A^{T} \lambda =0,$ and $ \lambda^{T}b \leq 0$.
+\end{proof}
+\newpage
+\end{document}

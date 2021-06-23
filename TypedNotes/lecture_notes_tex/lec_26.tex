@@ -1,0 +1,75 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\subsubsection{Gradient descent analysis with strong convexity}
+
+What do we want to analyze? Error metrics.
+
+\begin{enumerate}[label=(\arabic*)]
+	\item $ f(x_{k+1}) - f_{x_k}, \norm{ x_{k+1} - x_k}, \norm{ \nabla f(x_k)} $: can always be practical termination criteria, although they might not be good.
+	\item $ f(x_k) -f^* $: we can use this sometimes if we know $ f^* =0 $ or in the primal/dual problem when we can squeeze the gap between bounds.
+	\item $ \norm{ x_k - x^* } $ : often can't use.
+\end{enumerate}
+
+\begin{remark}
+	$ f(x_k) = \sum_{ j= 1}^{ k} \frac{1}{j}$, then $ f(x_{k+1}) - f(x_k) \to 0$ but we don't have a minimum since the series diverge! 
+\end{remark}
+
+\subsubsection{suboptimality bounds (see PDF handout)}
+If $ \nabla f$ is $L$-Lipschitz continuous, then 
+\begin{enumerate}[label=(\arabic*)]
+	\item $ \norm{ \nabla f(x)} \leq L \norm{ x-x^* }_2  $.
+	\item $ f(x) - f^* \leq \frac{L}{2} \norm{ x - x^* } $ by continuity.
+	\item $ \norm{ \nabla f(x)}^2 \leq 2L (f(x) - f^* ) $.
+\end{enumerate}
+\begin{remark}
+	By these bounds, bounding $ \norm{ x-x^* } $ is the nicest if possible but usually out of reach. The next nicest to bound is $ f(x) - f^* $. "$ x$ is an $ \epsilon$-sub-optimal point" means $ f(x) - f^* \leq \epsilon$. 
+\end{remark}
+
+If $ f$ is  $ \mu$-strongly convex, then
+\begin{enumerate}[label=(\arabic*)]
+	\item $ \norm{ x-x^* }^2 \leq \frac{2}{\mu} (f(x) - f^* ) $.
+	\item $ \norm{ x-x^* } \leq \frac{1}{\mu} \norm{ \nabla f(x)} $.
+	\item Polyak-Lojasiewicz (PL): $ f(x) - f^* \leq \frac{1}{2\mu} \norm{ \nabla f(x)}^2 $.
+\end{enumerate}
+
+Recall from last time, we derive
+\[
+	f(x_{k+1}) \leq f(x_k) - \frac{1}{2L} \norm{ \nabla f(x_k)}^2 
+.\] 
+So if we add $ \mu$-strongly convex to the assumption of gradient descent analysis, then
+\begin{align*}
+	f(x_{k+1}) - f(x_k) &\leq - \frac{1}{2L} \norm{ \nabla f(x_k)}^2 \leq -\frac{\mu}{L} (f(x_k) -f^*) \text{ by PL}     \\
+	f(x_{k+1}) &\leq f(x_k) - \frac{\mu}{L} (f(x_k) - f^* )\\ 
+	f(x_{k+1}) - f^* &\leq \left( 1 - \frac{\mu}{L} \right) (f(x_k) - f^* )
+\end{align*}
+Since $ \mu I \preceq \nabla^2 f \preceq LI$. So $ 0< \rho:= \frac{\mu}{L} < 1$. By contraction mapping theorem, this converges.
+\begin{align*}
+	\norm{ x_k-x^* }^2 \leq \frac{2}{\mu} \rho^{k} (f(x_0) - f^* )
+\end{align*}
+\begin{remark}
+$ \kappa = \frac{L}{\mu}$ is the condition number of the Hessian, \emph{i.e.} the largest singular value over the smallest.
+\end{remark}
+\subsubsection{Convergence rate}
+\begin{table}[H]
+	\centering
+	\begin{tabular}{c|c|c}
+		rate& iteration number &example\\
+		\hline
+		\hline
+		$ \mathcal{ O}\left( \frac{1}{k^{1 /4}} \right) $ & $ \mathcal{ O}\left( \frac{1}{ \epsilon^{4}} \right) $ & non-convex subgradient method\\
+		\hline
+		$ \mathcal{ O}\left( \frac{1}{\sqrt{k} } \right) $ & $ \mathcal{ O}\left( \frac{1}{ \epsilon^2} \right) $ & subgradient descent or SGD\\
+		\hline
+		$ \mathcal{ O}\left( \frac{1}{k} \right) $& $ \mathcal{ O}\left( \frac{1}{ \epsilon} \right) $ & gradient-descent with Lipschitz\\
+		\hline
+		$ \mathcal{ O} \left( \frac{1}{k^2} \right) $ & $ \mathcal{ O}\left( \frac{1}{ \sqrt{ \epsilon} } \right) $ & Nesterov acceleration\\
+		\hline
+		$ \mathcal{ O}(\rho^{k})$ & $ \mathcal{ O}\left( \log\left( \frac{1}{ \epsilon} \right)  \right) $& gradient descent with Lipschitz and strong convexity\\
+		\hline
+		$ \mathcal{ O}\left( \rho^{2^{k}} \right) $ & $ \log_2 \left(\mathcal{ O}\left( \log \left( \frac{1}{ \epsilon} \right)  \right) \right) $ & Newton's method locally\\
+	\end{tabular}
+\end{table}
+
+\end{document}

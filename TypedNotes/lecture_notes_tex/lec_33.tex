@@ -1,0 +1,98 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+
+\section{Bonus: find gradients}
+
+\begin{enumerate}[label=(\arabic*)]
+	\item don't: DFO (derivate-free optimization). 	
+	\item finite differences
+	\item analytic
+	\item automatic:
+		\begin{enumerate}[label=(\alph*)]
+			\item automatic-differentiation (AD)
+			\item adjoint-state method
+		\end{enumerate}	 
+\end{enumerate}
+
+\subsection{DFO}
+
+In small dimensions, the gradient doesn't much information than multiple function evaluations. In large dimensions DFO fails.
+
+Let $ x \in \rr^{n}$. DFO gets $ \{f(x_i)\}_{i=1}^k$ and gradient method gets $ \{f(x_i), \nabla f(x_i)\}_{i=1}^k $. 
+
+\begin{eg}
+\begin{align*}
+	\min f(x) = \frac{1}{2} x^{T} H x + q^{T} x
+\end{align*}
+Consider the analogy of a game of guessing numbers but with an adversarial kid judging if your guesses are right or wrong. DFO only has $ k$-degrees of freedom, but the function has  $ n^2$-degree of freedom. So we need $ k =n^2$ to get it right. Although in low-dimensions we can use a grid-search method (just like the number guessing game).
+
+\end{eg}
+The usual setup of DFO: $ \nabla f$ exists but hard to find or $ \nabla f$ doesn't exist. This often happens when $ f$ is very noisy.
+
+The algorithms are:
+ \begin{enumerate}[label=(\arabic*)]
+	 \item model-based: \emph{e.g.} DFO-TR (trust-region) with $ \dim \approx 200$. We interpolate a polynomial in a trust region iteratively. We usually do linear or quadratic polynomials in high-dimensions because we need too many degrees of freedom in cubics or more.
+	 \item coordinate-descent, ``pattern search''.
+	 \item Nelder-Mead simplex-reflection (unrelated to symplex method)
+	 \item implicit filtering: gradient descent with large-stepsize finite-diff.
+	 \item Bayesian optimization: use Gaussian processes. 
+	 \item Evolutionary search: pick a random direction.
+	 \item particles swarm: meta-heuristics. They are good for finding global minimum but have poor accuracy.
+\end{enumerate}
+
+\subsection{Finite differences}
+\begin{eg}
+
+\begin{align*}
+	f(x) &= \cos x\\
+	f'(x) &= -\sin x\\
+	      &= \lim_{ h \to 0} \frac{\cos(x+h)- \cos(x)}{ h}&& \text{ forward-diff } \mathcal{ O}(h)\\
+	      &= \lim_{ h \to 0} \frac{\cos(x+h)-\cos(x-h)}{2h } &&\text{ central-diff } \mathcal{ O}(h^2)
+\end{align*}
+
+\end{eg}
+In $ \rr^{n}$,
+\begin{align*}
+	(\nabla f(x))_i &\approx \frac{f(x+he_i)-f(x)}{ h} && n+1 \text{ function eval} \\
+			&\approx \frac{f(x+he_i)-f(x-he_i)}{ 2h} && 2n \text{ function eval}
+\end{align*}
+This becomes expensive for more number of points at $ \mathcal{ O}(n)$.
+
+Although often the error isn't a big deal, this is a bad idea if $ f$ is noisy. This is great for prototyping. 
+
+Is the expense necessary?
+\begin{eg}
+\begin{align*}
+	f(x) &= \frac{1}{2} \norm{ Ax-b}^2, A \text{ square } && \mathcal{ O}(n^2)\\  
+	\nabla f(x) &= A^{T}(Ax-b) && \mathcal{ O}(n^2)
+\end{align*}
+But finite-difference here is $ \mathcal{ O}(n^3)$. So it's possible to beat finite-difference.
+\end{eg}
+
+\subsection{analytic solutions}
+Chain rule for vector fields:
+
+Let $ h = g \circ f$, where  $ f: \rr^{n} \to \rr^{m}, g: \rr^{m} \to \rr^{p}$, so $ h: \rr^{n} \to \rr^{p}$.
+
+\begin{align*}
+	\left[ Jf(x) \right]_{ij} &= \frac{[\partial f(x)]_{ij}}{ \partial x_j} \\
+	Jh(x) &= Jg(f(x)) Jf(x)\\
+\end{align*}
+\begin{eg}
+If $ p=1$, then
+ \begin{align*}
+	 \nabla h(x) = (Jh(x))^{T} = (Jf(x))^{T} \nabla g(f(x))
+\end{align*}
+\end{eg}
+\begin{eg}
+\begin{align*}
+	f(x) &= Ax+b, p =1&& Jf(x) = A\\
+	\nabla h(x) &= A^{T} \nabla g(Ax+b)
+\end{align*}
+\end{eg}
+
+\subsection{Automatic differentiation}
+See hand-written notes. I'm too lazy to write up this one.
+\end{document}

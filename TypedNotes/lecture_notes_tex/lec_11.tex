@@ -1,0 +1,103 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\subsection{Gradient descent}
+
+Problem: we want to solve $ \min_{x} f(x)$, $ f:\rr^{n} \to \rr$, $ f \in \Gamma_0 (\rr^{n})$ (proper, lsc, convex) and $ \nabla f$ is $L$-Lipschitz continuous (strongly smooth).
+
+\subsubsection{Attempt 1}
+\[
+	x_{k+1} = \argmin_{x} \left[ f(x_k) + \underbrace{ \langle \nabla f(x_k), x- x_k \rangle}_{q_k (x) \text{ 1st order surrogate} } \right]
+.\]
+Linearization is a common trick to simplify problems. However, this fails because $ \min_{x} q_k(x) = -\infty$ for a linear function (unless it's already optimal). We can fix this by add a compact constraint. Then it's called \allbold{Frank-Wolfe} or \allbold{conditional gradient}. We omit this discussion as it's a bit niche.
+
+\subsubsection{Attempt 2}
+Consider the 2nd order Taylor series:
+\[
+	x_{k+1} = \argmin_{x} \underbrace{ f(x_k) + \langle \nabla f(x_k) , x-x_k \rangle + \frac{1}{2} \langle x-x_k, \nabla ^2 f(x_k) (x-x_k) \rangle}_{q_k(x) \text{ quadratic surrogate} }
+.\] 
+Since $ f$ is convex,  $ \nabla ^2 f(x) \succeq 0 \implies q_k(x)$ is a convex quadratic (sum of convex functions). 
+
+To minimize $ q_k(x)$, we use Fermat's rule:
+\begin{align*}
+	0 &= \nabla q_k(x) \\
+	  &= \nabla f(x_k) + \nabla ^2 f(x_k) (x-x_k) &&\text{ gradients of linear and quadratic terms} \\
+	x_{k+1} &= x_k - \nabla ^2 f(x_k)^{-1} \nabla f(x_k) 
+\end{align*}
+
+This is \allbold{Newton's method}, a generalization of the "Newton-Raphson" for 1D root-finding, applied to the gradient. It is a \allbold{2nd-order method} because it involves the derivative of the gradient which is the second derivative (Hessian). 
+
+\begin{remark}
+	Unlike 1D root-finding, 2nd order methods in higher dimensions converge quickly but each iteration may be costly because we need to invert the Hessian and solving system of equations. This is about $ \mathcal{ O}(n^3)$. 1st-order methods only use $ \nabla f(x)$ and usually converge more slowly but each step is cheap at about $ \mathcal{ O}(n)$.
+\end{remark}
+
+\subsubsection{What to use?}
+It depends:
+\begin{itemize}
+	\item Structure matters (is $ \nabla ^2 f$ easy to invert? Is it ill-conditioned (which hurts 1st order more)?)
+	\item For small/medium problem size, high accuracy, we use 2nd order. This is default for cvx/cvxpy.
+	\item In between problems: try both?
+\end{itemize}
+
+\subsubsection{Other types}
+\begin{itemize}
+	\item 3rd order: usually not worth the complexity. See recent Nesterov work for a plausible implementation.
+	\item 0th order: Extremely slow and finding gradient is cheap anyway, usually not worth it.
+	\item coordinate descent: heavily depends on the structure.
+\end{itemize}
+
+\subsubsection{Attempt 3}
+By assumption, $ 0 \preceq \nabla ^2 f(x) \preceq L I$. Thus, for all $ y$,
+\[
+	\frac{1}{2} \langle y, \nabla ^2 f(x)\ y \rangle \leq \frac{1}{2} L \norm{ y}^2 
+.\] 
+This allows us to upper bound the quadratic surrogate and simplify it further by removing the Hessian. Notice $ (LI) ^{-1} = \frac{1}{L} I$ which replaces $ (\nabla ^2 f)^{-1}$. So we can modify Newton's method as
+\begin{align*}
+	x_{k+1} &= \argmin_{x} \underbrace{ f(x_k) + \langle \nabla f(x_k) , x- x_k \rangle + \frac{1}{2} L \norm{ x -x_k}^2}_{q_k(x)}\\ 
+		&= x_k - \frac{1}{L} \nabla f(x_k)
+\end{align*}
+This is $ \mathcal{ O}(n)$. Here $ q_k(x) \geq f(x) \ \forall \ x$ is more than a linearization but is less than the full 2nd order Taylor expansion. It is a \allbold{majorizer} of $ f$. 
+
+fig
+
+\subsubsection{Majorization-minimization (MM)} 
+MM can always guarantee making progress on the minimization. The framework is
+\begin{enumerate}[label=\arabic*)]
+	\item Assume we can always construct a majorizer $ q_k$ s.t.
+		\begin{enumerate}[label=(\roman*)]
+			\item $ \ \forall \ x, f(x) \leq q_k(x)$
+			\item $ f(x_k) = q_k(x_k)$ 
+		\end{enumerate}
+	\item Iterate: $ x_{k+1} \in \argmin_{x} q_k(x)$.
+\end{enumerate}
+This algorithm is a \allbold{descent algorithm}. That is, it never makes things worse.
+\begin{proof}
+\begin{align*}
+	f(x_{k+1}) &\leq q_k (x_{k+1}) \qquad  \text{ by (i)} \\
+		   &\leq q_k(x_k) \qquad  \text{ by 2)} \\
+		   &= f(x_k) \qquad \text{ by (ii)}  
+\end{align*}
+\end{proof}
+
+Usually we might eventually show that (no convexity needed):
+\begin{itemize}
+	\item If $ f(x)$ is bounded below, then  $ f(x_k)$ converges by MCT.
+	\item If $ (x_k)$ converges and $ f$ is lsc, then the limit  $ x_k \to x$ is a stationary point \emph{i.e.} $ \nabla f(x) =0$.
+\end{itemize}
+\begin{eg}[usually non-convex]
+	~\begin{enumerate}[label=\arabic*)]
+		\item Expectation maximization (EM) for maximum-likelihood estimation.
+		\item Difference of convex functions (DC) or convex + concave:
+			\[
+				f(x) = g(x) - h(x)
+			,\]
+			where $ g,h$ are both convex. Although $ -h$ is concave, $ -h$ is majorized by its tangent line which is convex. Then
+			\[
+				q_k(x) = g(x) - \underbrace{ (h(x_k) + \langle \nabla h(x_k),x-x_k \rangle)}_{ \text{ affine in }x } 
+			\]
+			is a majorizer, and $ q_k(x)$ is convex.
+	\end{enumerate}
+The takeaway is that not all non-convex problems are equally hard.
+\end{eg}
+\end{document}

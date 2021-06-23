@@ -1,0 +1,116 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\section{Methods for constrained problems}
+\subsubsection{Special nice constraints }
+\emph{e.g.} $ x\geq 0, \ell_i \leq x_i \leq u_i, \norm{ x-x_0}\leq 3 $
+\begin{enumerate}[label=(\arabic*)]
+	\item projected gradient descent (with Nesterov acceleration).
+	\item active-set methods ( \emph{e.g.} L-BFGS-B).
+\end{enumerate}
+\begin{eg}
+$ x \in \rr^{2}, 0\leq x_i \leq 1$. Suppose $ x_1^{k} = 1, x_2^{k} = .3 $. Then for $ k+1$, let  $ x_1^{k+1} = x_1^{k}$ unchanged, and ignore constraint for $ x_2$ and use $ L-BFGS$ and check it satisfies.
+\end{eg}
+
+\subsubsection{not-so-nice constraints}
+\emph{e.g.} $ g(x) \leq 0$ where $ g$ is non-linear.
+ \begin{enumerate}[label=(\arabic*)]
+	\item penalty methods: both convex and non-convex
+	\item augmented Lagrangian: both
+	\item sequential quadratic programming (SQP): both
+	\item ADMM (alternating direction method of multipliers, also applied to non-convex) and DR (Douglas-Rachford): convex
+	\item Primal Dual methods: mostly convex
+	\item Interior-point methods (IPM): convex. IPOPT: non-convex.
+\end{enumerate}
+
+\subsection{penalty methods}
+
+\begin{align*}
+\min\quad &f_0(x) \\
+\text{subject to } \quad &f_i(x) \leq 0, i = 1,\ldots,m \\
+&h_i(x) = 0 , i = 1,\ldots,p
+\end{align*}
+\begin{eg}
+\begin{align*}
+\min\quad &\norm{ x}_1  \\
+\text{subject to } \quad & \norm{ Ax-b}_2 ^2 \leq \epsilon^2 
+\end{align*}
+Then
+\begin{align*}
+	\mathscr{L}(x,\lambda) = \norm{ x}_1 + \lambda ( \norm{ Ax-b}^2 - \epsilon^2 ) 
+\end{align*}
+If strong-duality holds and there exists saddle points,
+\begin{align*}
+	x^*  \in \argmin_{x} \mathscr{L}(x, \lambda^* )
+\end{align*}
+\end{eg}
+We typically use the \allbold{quadratic penalty}:
+
+For equality constraints, define
+\begin{align*}
+	Q_{\mu} (x) = f_0(x) + \frac{\mu}{2} \sum_{ i= 1}^{ m} h_i(x)^2
+\end{align*}
+Solve
+\begin{align*}
+	x^{(k)} &= \argmin Q_{\mu_k}(x)\\
+	\text{ update } &\mu_{k+1} \text{ increasing}\\
+	x^{(k+1)} &= \argmin_{x} Q(\mu_{k+1}) (x)
+\end{align*}
+This is a warm-start with $ x^{(k)}$.
+\begin{thm}
+	Suppose $ \mu_k \to \infty$. If $ (x^{(k)})$ has a limit point $ x^* $, then $ x^* $ is optimal.
+\end{thm}
+\begin{note}
+	No convexity is needed but usually need convexity to update $ x^{(k+1)}$.
+\end{note}
+
+For inequality constraints, define
+\begin{align*}
+	Q_{\mu}(x) &= f_0(x) + \frac{\mu}{2} \left( \sum_{ i= 1}^{ m} h_i^2(x) + \sum_{ i= 1}^{ m} \lfloor f_i(x) \rfloor_{+}^2 \right) 
+\end{align*}
+\begin{note}
+The floor function makes it usually non-smooth.
+\end{note}
+\begin{remark}
+The general idea is to put constraints into the objective:
+\begin{align*}
+	\min f_0(x), \quad x \in C \implies \min f_0(x) + g(x)
+\end{align*}
+\end{remark}
+Methods
+\begin{enumerate}[label=(\arabic*)]
+	\item $ g(x) = I_{C}(x)$ : this is mathematically equivalent but no computational benefit
+	\item penalty: 
+		\begin{align*}
+			g_{\mu}(x) =
+			\begin{cases}
+				\mu \cdot x^2 & x<0\\
+				0 & x\geq 0
+			\end{cases}
+		\end{align*}
+		When $ \mu \to \infty$, the smooth quadratic barrier converges the non-smooth infinite barrier.
+	\item barrier:
+		\begin{align*}
+			g_{\mu}(x) = -\frac{1}{\mu} \cdot \log x
+		\end{align*}
+		The barrier is not define for $ x\leq 0$, so it forces the solution to stay strictly feasible.
+\end{enumerate}
+
+\begin{remark}
+Drawback: QP is often ill-conditioned as $ \mu \to \infty$.
+\end{remark}
+\begin{eg}
+\begin{align*}
+\min\quad &\frac{1}{2} x^{T}Px \\
+&Ax=b, A \in \rr^{m\times n}, m<n\\
+Q_{\mu}(x) &= \frac{1}{2} x^{T}Px + \frac{\mu}{2} \norm{ Ax-b}^2\\ 
+0 = \nabla Q &= Px + \mu A^{T}(Ax-b) \\
+x&= (P+ \mu A^{T}A)^{-1} A^{T}b
+\end{align*}
+Since the condition number of the matrix usually depends on $ \mu$, as $ \mu \to \infty$ the condition number also becomes very large.
+\end{eg}
+
+In addition to quadratic penalty, we can use exact penalty: use $ |h_i(x)|$ instead. It destroys smoothness.
+
+\end{document}

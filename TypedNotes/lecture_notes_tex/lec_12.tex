@@ -1,0 +1,187 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\newpage
+\subsection{Conjugate functions}
+
+~\begin{defn}[Fenchel-Legendre conjugate]
+	The \allbold{F.L. conjugate} of $ f$ is
+	 \[
+		 f^* (y) = \sup_x \{\langle y,x \rangle - f(x)\}
+	.\] 
+\end{defn}
+\begin{note}
+	For matrix inputs, use $ \tr\left( Y^{T} X \right) $.
+\end{note}
+
+\begin{prop}
+	$ f^* $ is always convex (whether $ f$ is or not).
+\end{prop}
+\begin{proof}
+	$ y \mapsto \langle y,x \rangle - f(x)$ is an affine function of $ y$ which is convex, and supremum preserves convexity. 
+\end{proof}
+
+\begin{eg}[1D Legendre Transform]
+	Assume $ f$ is strictly convex (so $ f'$ is strictly monotone/invertible). So $ f^* (y)$ is maximized (unique global) when $ 0= y- f'(x) \implies f'(x) = y \implies x= \left( f' \right)^{-1} (y) $. We can interpret $ y$ as the slope of $ f(x)$.
+	~\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.8\textwidth]{./figures/conj_func_1.png}
+	\end{figure}
+
+	Alternatively, we can think of  $ f^* (y)$ as finding the $ x$ that maximize the signed separation of the "line:  $ \langle y,x \rangle$ and $ f$, where the line is on top of  $ f$. Then  $ f^* (y)$ would be the maximized distance.
+	~\begin{figure}[H]
+		\centering
+		\includegraphics[width=1.0\textwidth]{./figures/conj_func_2.png}
+	\end{figure}
+\end{eg}
+
+\begin{remark}\label{conj-func-intuit}
+	We can generalize the intuition from 1D example to arbitrary dimensions. That is, we think of $y$ as the slope of $f(x)$ and think of $f^* (y)$ as the (negative) value of the intercept. For a closed, strictly convex function $f$, we know its epigraph has a supporting hyperplane at every $ x$. This yields a collection of affine minorants of $ f$, in the form $ f(x) \geq \langle y,x \rangle - b$ for every $ x$. The conjugate function $ f^* (y)$ says that the supporting hyperplane with slope $ y$ has the (negative) intercept $ b=f^* (y)$ because to be a supporting hyperplane, the supremum difference between the affine minorant $\langle y,x \rangle -b $ and $ f(x)$ must be zero. Now the affine minorants are of the form $ \langle y,x \rangle - f^* (y)$, we can recover the original function by taking the pointwise supremum of this collection of affine minorants. It's equivalent to taking the intersection of all supporting hyperplanes to recover the epigraph of $ f$. Hence $ f^{* *}=f$. This is the essence of duality here. For more details, please see \url{math.stackexchange.com/questions/223235/please-explain-the-intuition-behind-the-dual-problem-in-optimization}.
+\end{remark}
+
+\begin{eg}
+	$ f(x) = |x|$. What is  $ f^* \left( \frac{1}{2} \right) $?
+	~\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\textwidth]{./figures/abs_conj.png}
+	\end{figure}
+
+	$ f^* \left( \frac{1}{2} \right) = 0$ because the line is always below $ f$ except at 0.
+
+	What is $ f^* (2)?$ Answer: $ x \to \infty$.
+
+	This is in fact an indicator function of the set $ [-1,1]$!
+\end{eg}
+
+\subsubsection{Rules}
+\begin{enumerate}[label=\arabic*)]
+	\item Affine transformations: let $ g(x) = f(Ax+b)$,  $ A$ invertible. Let $ z=Ax+b$, $ A^{-*}:= \left( A^{-1} \right)^*$, then
+		 \begin{align*}
+			 g^* (y) &= \sup_{x}\ \langle y,x \rangle - f(Ax+b) \\
+				 &= \sup_z\ \langle y, A^{-1}(z-b) \rangle - f(z) \\
+				 &= -\langle y,A^{-1}b \rangle + \sup_z\ \langle A^{-*}y,z \rangle -f(z) \\
+				 &= \langle -y,A^{-1}b \rangle + f^* (A^{-*}y)
+		\end{align*}
+
+	\item Sums of functions: Let $ f(x) = f_1(x) + f_2(x)$. Is $ f^* (x) = f_1^* (x) + f_2^* (x)$? NO in general!
+
+		But it works if the $ f_i$ are independent/separable. That is, if $ f(u,v) = f_1(u) + f_2(v)$, then $ f^* (w,z) = f_1^* (w)+ f_2^* (z)$.
+\end{enumerate}
+\begin{eg}
+$ f(x) = I_C$.
+\begin{align*}
+	f^* (y) &= \sup_x\ \langle y,x \rangle - I_C(x) \\
+		&= \sup_{x \in C}\ \langle y,x \rangle && -\infty \text{ for } \sup \text{ is equivalent to }\infty \text{ for }\inf  
+\end{align*}
+This is called the \allbold{support function} of $ C$. 
+\begin{remark}
+Support function describes how much the plane $\{y:\langle y,x \rangle\}$ needs to shift to become a supporting hyperplane of $C$. 
+\end{remark}
+\end{eg}
+\begin{ques}
+	Let $ C = \{x: \norm{ x}_p \leq 1 \} $. What is the support function of this set?
+\end{ques}
+Per the definition, the support function is
+\begin{align*}
+	f^* (y) &= \sup_{\norm{ x}_p \leq 1} \langle y,x \rangle\\
+		&= \norm{ y}_{q}  && \text{ Holder's inequality}  
+\end{align*}
+Thus, the conjugate of the indicator function of a norm ball is the dual norm.
+
+ \subsubsection{Properties}
+ By definition of supremum,
+ \[
+	 f^* (y) \geq \langle x,y \rangle -f(x) \ \forall \ x
+ .\]
+Rearranging gives us
+\begin{thm}[Fenchel-Young inequality]
+\[
+	f(x) + f^* (y) \geq \langle x,y \rangle \ \forall \ x,y
+.\]
+\end{thm}
+\begin{coro}[16.23 BC17]
+\[
+	y \in \partial f(x) \iff f(x) + f^* (y) = \langle x,y \rangle
+.\] 
+\end{coro}
+\begin{coro}[16.24]
+	\[ f \in \Gamma_0(\rr^{n}) \implies (\partial f)^{-1} = \partial f^* .\]
+\end{coro}
+\begin{remark}
+	This comes from symmetry: $ x \in \partial f^* (y) \iff f(x) + f^* (y) =\langle x,y \rangle \iff y \in \partial f(x)$.
+\end{remark}
+\begin{coro}
+\[
+	0 \in \partial f(x) \iff \partial f^* (0)
+.\] 
+\end{coro}
+
+\begin{prop}
+	\[
+		f \in \Gamma_0(\rr^{n}) \iff f=f^{* *}   
+	.\] 
+\end{prop}
+See \cref{conj-func-intuit} for intuition of these properties.
+\begin{ques}
+	Is it possible that $ f=f^* $?
+\end{ques}
+Yes for exactly one function: $ f(x) = \frac{1}{2} \norm{ x}_2^2 $.
+\begin{ques}
+What if $ f$ isn't convex?
+\end{ques}
+	$ f^{** } $ is convex even when $ f$ isn't. So we can "approximate"  $ f$ using  $ f^{** }$. This is one way to do \emph{convex relaxation}. 
+
+\begin{defn}
+	The \allbold{lsc convex envelope} $ \breve{f}$ of $ f$ is
+	 \[
+		 \breve{f} = \sup\left\{g \in \Gamma(\rr^{n}): g \leq f \right\} 
+	.\] 
+	It follows that
+	\[
+		\epi(\breve{f}) = \overline{\conv(\epi(f))}
+	.\] 
+\end{defn}
+The problem with $ \breve{f}$ is that just like the convex hull, it's usually too abstract to be useful. It turns out that often $ f^{* *}= \breve{f}$ and is easier to find.
+
+\begin{eg}
+	Let $ f=h+g$ where  $ h$ is nonconvex and  $ g$ is convex. To minimize $ f$, our first thought might be to minimize  $\breve{f}= f^{* *}$ instead, but it is usually hard to find. We can relax it further by minimizing $ h^{* *} + g$. Even though this relaxation doesn't necessarily give us the same minimizer as the original, it is often good enough. Let's look at an example.
+\end{eg}
+
+\begin{eg}(compressed sensing)
+In this problem we have the primal problem
+\begin{align*}
+\min\quad &\norm{ x}_0  \\
+\text{subject to } \quad &\norm{ x}_{\infty} \leq 1 \\
+&Ax=b
+\end{align*}
+This is a highly non-convex problem due to $ \ell_0$ norm. Let's perform convex relaxation on it. First define $ h(x) = \norm{ x}_0 + I_{\norm{ x}_{\infty} \leq 1} $. We see that $ h$ is separable so we only consider the scalar case:
+\begin{align*}
+	h(x)=
+	\begin{cases}
+		0 & x=0\\
+		1 & x\neq 0, |x|\leq 1\\
+		\infty & |x|>1
+	\end{cases}
+\end{align*}
+~\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\textwidth]{./figures/hx.png}
+\end{figure}
+
+Then simply by eyeballing, we see that
+\begin{align*}
+	h^{* *}(x) = |x| + I_{|x|\leq 1}
+\end{align*}
+This is just $ \ell_1$ norm plus the indicator function! Thus the convex relaxation of the primal problem is
+\begin{align*}
+\min\quad &\norm{ x}_1  \\
+\text{subject to } \quad &\norm{ x}_{\infty} \leq 1 \\
+&Ax=b
+\end{align*}
+~\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{./figures/h2star.png}
+\end{figure}
+\end{eg}
+\end{document}

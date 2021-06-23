@@ -1,0 +1,107 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\newpage
+\chapter{Algorithms}
+\newpage
+\section{Unconstrained Optimization}
+We assume reasonable smoothness of the objective. Here is an overview of the algorithms:
+\begin{enumerate}[label=(\arabic*)]
+	\item gradient descent
+		\[
+			x_{k+1} = x_k - t \cdot  \nabla f(x_k), \quad t= \frac{1}{L}
+		.\] 
+		where $ L$ is the Lipschitz constant of the gradient.
+	\item Newton's method
+		\[
+			x_{k+1} = x_k - \left( \nabla ^2 f(x_k) \right)^{-1} \nabla f(x_k)
+		.\] 
+		This can reduce to gradient descent when we have $ \nabla ^2 f(x) \preceq L \cdot I$ and we just bound the Hessian with $ L \cdot I$.
+	\item Quasi-Newton
+\end{enumerate}
+\newpage
+\subsection{Proximal gradient descent}
+\begin{align*}
+	\min \underbrace{ f(x)}_{ \text{ smooth, strongly convex} } + \underbrace{ g(x)}_{ \text{simple, convex}}  
+\end{align*}
+Note we can add indicator function to $ g$:
+\[
+	g(x) = I_{C}(x) + h(x)
+,\] 
+\emph{i.e.} when we have constraint $ x \in C$.
+\subsubsection{motivation}
+We can try the first-order Taylor approximation of $ f$. However, recall minimizing a linear function would go to negative infinity, so we need to go to 2nd order.
+\begin{align*}
+	x_{k+1} &= \argmin_{x} f(x_k) + \langle \nabla f(x_k),x-x_k \rangle + \frac{1}{2} L\norm{ x-x_k}_2^2 + g(x)\\
+	&= \argmin_x \frac{1}{L} \left(  \langle \nabla f(x_k),x-x_k \rangle + \frac{1}{2} L\norm{ x-x_k}_2^2 + g(x)\right)  \\
+	&= \argmin_x \frac{1}{2} \norm{ x-\left(x_k - \frac{1}{L} \nabla f(x_k)\right)}_2^2 + \frac{1}{L} \cdot g(x) \text{ complete the square and ignore constants}  \\
+	&= \argmin_x \frac{1}{2} \norm{ x-\widetilde{ x}}_2^2 + \frac{1}{L} \cdot g(x)  \\
+	&= \prox_{\frac{1}{L} \cdot g} (\widetilde{ x})
+\end{align*}
+Note that this solution is unique because we have strong convexity.
+\subsubsection{algorithm}
+\begin{align*}
+	x_{k+1} = \prox_{t g} (x_k - t \cdot \nabla f(x_k))\qquad t\text{ via line search or } t=\frac{1}{L} 
+\end{align*}
+\begin{remark}
+	If $ g(x)=0$, proximal operator is the identity function so it reduces to gradient descent.
+\end{remark}
+
+\begin{eg}
+	$ g(x) = I_C$. Then
+	 \begin{align*}
+		 \prox_{t g} (\widetilde{ x}) = \Proj_C(x)
+	\end{align*}
+	Recall from linear algebra: if $ \Proj_V(\widetilde{ x})$ is the projection of $ \widetilde{ x} \to V$, then
+	\[
+		\widetilde{ x} =\Proj_V(\widetilde{ x}) + \Proj_{V^{\perp}}(\widetilde{ x})
+	.\]
+	We can generalize this result to \allbold{Moreau's decomposition}: 
+	\begin{align*}
+		\widetilde{ x} = \prox_g (\widetilde{ x}) + \prox_{g^* } (\widetilde{ x})
+	\end{align*}
+\end{eg}
+	\begin{eg}
+	\[
+		\Proj_{\norm{ x}_{\infty} \leq 1} = \widetilde{ x} - \prox_{\norm{ \cdot }_1 } (\widetilde{ x})
+	.\] 
+
+	\begin{align*}
+		\prox_{t \norm{ \cdot }_1 } (y) = \argmin_x \frac{1}{2} \norm{ x-y}_2 ^2 + L \norm{ x}_1 \text{ this is separable!}
+	\end{align*}
+	By Fermat's rule,
+	\begin{align*}
+		\prox_g (y) = \argmin \frac{1}{2}\norm{ x-y}^2 + g(x)\\
+		\implies 0 &\in x-y + \partial g(x)\\
+		y&\in x + \partial g(x)  \\
+		y & \in (I+\partial g)(x)  \\
+		x&\in \left( I+ \partial g \right)^{-1} (y)   \\
+		x&= \left( I+ \partial \norm{ }_1  \right)^{-1} y  \text{ unique solution s.c.}
+	\end{align*}
+	We derived earlier that the solution to $ \prox_{t \cdot \norm{ \cdot }_1 }$ is
+	\[
+		x= \sgn(y) \cdot \lfloor |y| - t\rfloor_{+}
+	.\] 
+	\end{eg}
+
+\subsubsection{alternative derivation}
+By Fermat
+\begin{align*}
+	0 &\in \partial (f+g)(x)  \\
+	0 &= \in \nabla  f(x) + \partial g(x) \text{ under CQ} \\
+	x &= x +  \nabla  f(x) + \partial g(x) \\
+	x-\nabla f(x) &\in x + \partial g(x) = (I + \partial g)(x)  \\
+	x &= \left( I+ \partial g \right) ^{-1} (I - \nabla f)(x) \text{ fixed point eqn} \\
+	x_{k+1} &= \left( I+ \partial g \right) ^{-1} (I - \nabla f)(x_k)\\
+		&= \prox_g (x_k - \nabla f(x_k)) 
+\end{align*}
+If $ f = 0$, we get
+ \begin{align*}
+	 x_{k+1} &= \prox_{t g}(x_k) \text{ here t is anything we want since }f=0 \\
+		 &= \argmin t \cdot g(x) + \frac{1}{2} \norm{ x-x_k}^2  \\
+\end{align*}
+\begin{remark}
+Forward Euler exactly corresponds to gradient descent, whereas backward Euler exactly corresponds to proximal gradient descent. Thus, proximal gradient descent is also called "forward-backward method".
+\end{remark}
+\end{document}

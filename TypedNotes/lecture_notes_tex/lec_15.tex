@@ -1,0 +1,147 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+
+\begin{remark}
+Euler inequality is an example of a \allbold{variational inequality}, where we can replace the gradient with any operator.
+\end{remark}
+
+\subsubsection{unconstrained problems}
+	$ C= \rr^{n}, dom(f) = \rr^{n}$. Choose $ y = x- \nabla f(x)$, we have
+	\[
+		-\norm{ \nabla f(x)} ^2 \geq 0 \iff \nabla f(x) = 0
+	,\]
+	and we recover Fermat.
+
+\subsubsection{convex equality/affine constraints}
+	$ C = \{x: Ax=b\}$ where $ A \in \rr^{m} \times \rr^{n}$. Then (2) becomes for all $ y$  s.t. $ Ay=b$,  $ \langle \nabla f(x),y-x \rangle\geq 0$. We can write $ y= y_p +v, v \in \ker(A)$. Since $ Ax = b$, we can take $ y_p = x$ so $ y=x+v$. Then it becomes $ \ \forall \ v \in \ker A$, $ \langle \nabla f(x),v  \rangle \geq 0$. Since $ \ker A$ is closed under negation, we need $ \langle \nabla f(x),-v \rangle\geq 0$. Thus we get the necessary and sufficient condition for $ x$ to be optimal:
+	\[
+		\langle \nabla f(x),v \rangle = 0
+	.\]
+	This means $ \nabla f(x) \perp \ker A$. Recall that the coimage space is orthogonal to the kernel, $ \nabla f(x) \in \coim A = \im A^{T}$. Thus the condition is equivalent to there exists a $ \nu \in \rr^{m}$ s.t. $ \nabla f(x) = A^{T} (-\nu)$. Rearranging yields: 
+	\[
+		\nabla f(x) + A^{T}\nu = 0
+	.\] 
+The $ \nu$ here is the \allbold{Lagrange multipliers}. 
+\subsection{Conic optimization problems [BV04 Ch.4.3, 4.4, 4.6]}
+
+\subsubsection{Linear programs}
+Linear objective with polyhedra constraints.
+
+Standard forms:
+\begin{alignat*}{3}
+	\min\ & \langle c,x \rangle \qquad\qquad  \min\ &&\langle c,x \rangle \qquad\qquad \min\ &&\langle c,x \rangle\\
+	\text{subject to } &Gx \leq h &&x\geq 0 \qquad  &&Ax\leq b\\
+			   &Ax = b &&Ax=b &&
+\end{alignat*}	
+\begin{eg}[convert first to second form]
+Use slack variable $ s\geq 0$  s.t. $ Gx+s =b$, $ x=x^{+}-x^{-}, x^{+},x^{-}\geq 0$. Let $ \widetilde{ x} = \begin{pmatrix} x^{+}\\x^{-}\\s \end{pmatrix} \geq 0$. Then we can combine the equality constraints into $ \widetilde{ A}\widetilde{ x}  = \widetilde{ b}$.
+\end{eg}
+
+\begin{eg}
+$ \min_x \norm{ x}_1 $ s.t. $ Ax=b$. Since this is separable/piecewise-linear, we use slack variables to rewrite $ x_i = x_i^{+} - x_i^{-}, x_i^{+}, x_i^{-}\geq 0$. Thus, $ |x_i| \leq x_i^{+}+ x_i^{-}$ which will be equality when we minimize. Now we have an equivalent problem
+\begin{align*}
+	\min_{x^{+}, x^{-}}\ & \mathbbm{1}^{T}(x^{+}+ x^{-}) \\
+\text{subject to } &Ax^{+}-Ax^{-} =b
+\end{align*}
+\end{eg}
+\begin{eg}[epigraph trick]
+\begin{align*}
+\min_x\ & \norm{ x}_{\infty}  \\
+\text{subject to } &Ax=b
+\end{align*}
+is equivalent to
+\begin{align*}
+	\min_{x,t}\ & t\\
+	\text{subject to } &Ax=b\\
+		&\norm{ x}_{\infty} \leq t
+\end{align*}
+\end{eg}
+\begin{remark}
+	LP is the most well-studied kind of convex optimization problem. It has wide applications in industry and can handle very large dimensions. However, integer LP is not convex and is NP-hard. But it is not impossible. In fact, it just takes a little longer to run and we can still prove that we have the best solution when we find one. CPLEX, MOSEK, Gurobi\ldots 
+\end{remark}
+
+
+\begin{thm}
+LP solution set always includes a vertex of the polyhedron.
+\end{thm}
+
+\subsubsection{Quadratic programs}
+
+\begin{align*}
+\min_x\ & \frac{1}{2} \langle x,Px \rangle + \langle q,x \rangle + r \\
+\text{subject to } &Gx \leq h \\
+&Ax = b
+\end{align*}
+\begin{note}
+Quadratic programs are not always convex. It must have $ P \succeq 0$ to be convex.
+\end{note}
+
+\begin{eg}[Regression]
+ \begin{align*}
+	\min \frac{1}{2} \norm{ Ax-b}^2 &= \frac{1}{2} \langle x,\underbrace{ A^{T}A}_{ \succeq 0} x \rangle - \langle x, A^{T}b \rangle + \norm{ b}^2
+\end{align*}
+\end{eg}
+\subsubsection{Quadratically constrained quadratic program (QCQP)}
+\begin{align*}
+\min_x\ & \frac{1}{2} \langle x,Px \rangle + \langle q,x \rangle + r \\
+\text{subject to } &\frac{1}{2} \langle x,P_i x \rangle + \langle q_i,x \rangle + r_i  \leq 0 \ \forall \ i=1,\ldots,m\\
+&Ax = b
+\end{align*}
+\subsubsection{Second-order cone program (SOCP)}
+It generalizes convex QCQP:
+\begin{align*}
+\min_x\ & \langle c_0,x \rangle \\
+\text{subject to } &\norm{ A_i x+b_i}_2 \leq \langle c_i,x \rangle+ d_i\\
+&Fx = g
+\end{align*}
+The inequality constraint is an affine composition with 2nd order cone (recall $ (y,t) \in \mathcal{ K} \iff \norm{ y}_2 \leq t$). This can be solved efficiently via cvxpy.
+\subsubsection{Conic programming}
+The standard form (2nd form) of LP is an example of conic program where the proper cone $ \mathcal{ K} = \rr_{+}^{n}$. More generally, a \allbold{conic program} is
+\begin{alignat*}{2}
+	\min\ & \langle c,x \rangle \qquad\qquad \qquad   \min\ &&\langle c,x \rangle \\
+	\text{subject to } &Fx +g \preceq_{ \mathcal{ K}} 0 &&x \succeq_{ \mathcal{ K}} 0 \\
+			   &Ax = b &&Ax=b
+\end{alignat*}	
+where $ \mathcal{ K}$ is a proper cone (closed, convex, solid, pointed) and $ y \succeq _{ \mathcal{ K}}0$ means $ y \in \mathcal{ K}$.
+
+Recall that if $ \mathcal{ K}_1, \mathcal{ K}_2$ are proper cones, so is $ \mathcal{ K} := \mathcal{ K}_1 \times \mathcal{ K}_2$. Thus for two different inequality constraints in the first form, we can instead write
+\[
+\begin{pmatrix} F_1\\F_2 \end{pmatrix} x + \begin{pmatrix} g_1\\g_2 \end{pmatrix} \preceq_{ \mathcal{ K}} 0
+.\] 
+This is how SOCPs is a conic program.
+\subsubsection{Semi-definite programs}
+This is a powerful tool that revolutionized engineering. Here the proper cone $ \mathcal{ K} = \rr_{+}^{n}$ (and direct products of these).
+\begin{notation}
+	$ \mathcal{ K}$ is omitted in $ \succeq$ here because SDP is so common.
+\end{notation}
+\begin{align*}
+	\min\ & \langle C,X \rangle \\
+	\text{subject to } & \langle A_i,X \rangle =b_i, i = 1,\ldots,m \iff \mathcal{ A}(X) = b\\
+&X \succeq 0 
+\end{align*}
+\begin{note}
+Here $ \mathcal{ A}$ is some abstract linear operator that can be flatten to a $ m \times n^2$ matrix if we vectorize $ X$.
+\end{note}
+\begin{remark}
+	$ \langle C,X \rangle = \tr\left( C^{T} X \right) = \langle \vec{C},\vec{X} \rangle$. To implement this, we do not want to multiple the matrices. Since $ \rr^{ n \times n} \cong \rr^{n^2}$, we can vectorize it and achieves $ \mathcal{ O}(n^2)$. 
+\end{remark}
+\begin{remark}
+$ \vec: \rr^{ n \times n} \to \rr^{n^2}$ and $ \mat : \rr^{n^2} \to \rr^{n \times n}$ are inverses.
+
+$ S^{n} \cong \rr^{ n(n+1) /2}$ because we can remove redundancy from symmetry. Although if memory is not an issue, it is usually easier to just use the whole thing since we have to reweight off-diagonal terms.
+\end{remark}
+
+\begin{remark}
+	We can treat a matrix as a vector using trace for inner product and Frobenius norm or as a transformation using spectral norm (doesn't have inner product because it's in Banach space not in Hilbert space). 
+\end{remark}
+
+\begin{remark}
+We have the Kronecker product trick
+\[
+	\vec(A X B) = \left( B^{T} \otimes A \right) \vec(X)
+.\] 
+Not all linear operator on matrices $ \mathcal{ A}(X)$ are in this form because we need to factorize the operator. Moreover, LHS is computationally cheaper than RHS.
+\end{remark}
+\end{document}

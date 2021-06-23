@@ -1,0 +1,94 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\subsection{non-linear conjugate gradient}
+Recall that in linear CG, $ \phi(x)$ is quadratic and $ \nabla \phi(x) = Ax-b = r$ the residual. In non-linear, neither holds true, but we can replace the parts that no longer hold with more general expressions:
+\begin{thm}[non-linear CG]
+\begin{align*}
+	a_k &\approx \argmin_{\alpha} \phi(x_k+ \alpha p_k) &&\text{ linesearch} \\
+	x_{k+1} &= x_k + \alpha_k p_k\\
+	\beta_{k+1}^{FR} &= \frac{\norm{ \nabla \phi_{k+1}^2} }{\norm{ \nabla \phi_k}^2  } \\
+	p_{k+1} &= -\nabla \phi_{k+1} + \beta_{k+1} p_k
+\end{align*}
+\end{thm}
+\begin{remark}
+	~\begin{itemize}
+		\item it can be fast, but has to be unconstrained optimization. It might work very well on "almost quadratic" functions.
+		\item too sensitive to parameters: Hager+Zhang has the most advanced version which uses a lot of parameters.
+		\item quasi-Newton methods can be just as fast and more stable.
+	\end{itemize}
+\end{remark}
+\newpage
+\subsection{Quasi-Newton Methods}
+\begin{remark}
+This is the gold-standard for large-scale, smooth, unconstrained optimization.
+\end{remark}
+
+\begin{defn}[quadratic approximation]
+\begin{align*}
+	m_k(p) &= f_k + \langle \nabla f_k,p \rangle + \frac{1}{2} \langle p|B_k|p \rangle, \quad B_k \succ 0 \\
+	\widetilde{ x}_{k+1} &= x_k +p_k , \quad p_k = \argmin_p m_k(p) = - B_k^{-1} \nabla f_k
+\end{align*}
+Sometimes we do a linesearch, $ x_{k+1} = x_k + \alpha p^* $.
+\end{defn}
+\begin{eg}
+Gradient descent is when $ B_k = L \cdot I.$
+\end{eg}
+\begin{eg}
+	Newton's method is when $ B_k = \nabla^2 f(x_k)$.
+\end{eg}
+
+\begin{thm}[Quasi-Newton]
+Using the quadratic approximation framework, choose $ B_k$ s.t. 
+\begin{enumerate}[label=(\arabic*)]
+	\item $ B_k$ is more accurate than $ L \cdot I$
+	\item $ B_k$ is cheaper than Newton (in terms of forming and inverting).
+\end{enumerate}
+\end{thm}
+
+The main trick is to construct $ B_{k+1}$ by updating $ B_k$.
+
+To find $ x_{k+2}$,
+\begin{align*}
+	m_{k+1}(p) &= f_{k+1} + \langle \nabla f_{k+1},p \rangle + \frac{1}{2} \langle p|B_{k+1}|p \rangle\\
+	\nabla m_{k+1} (p) &= \nabla f_{k+1} + B_{k+1} p  
+\end{align*}
+Thus, $ \nabla m_{k+1} (0) = \nabla f_{k+1}$.
+
+Then the following conditions are automatically satisfied:
+\begin{enumerate}[label=(\arabic*)]
+	\item $ m_{k+1} (0) = f_{k+1}$ 
+	\item $ \nabla m_{k+1} (0) = \nabla f_{k+1}$
+\end{enumerate}
+This gives us freedom in choosing $ B_{k+1}$. Let $ s_k = x_{k+1} - x_k$ and $ y_k = \nabla f_{k+1} - \nabla f_k$. Moreover, let's impose
+\begin{align*}
+	\nabla m_{k+1} (-s_k) &= \nabla f_{k+1} - B_{k+1} s_k = \nabla f_k\\
+B_{k+1} s_k &= y_k \qquad \text{ secant equation} 
+\end{align*}
+Most Quasi-Newton methods choose $ B_{k+1}$ to satisfy the secant equation.
+
+Notice that we want $ B_{k+1} \succ 0$. Then $ \langle s_k|B_k|s_k \rangle = \langle s_k, y_k \rangle >0$. This is a necessary condition called \allbold{curvature condition}. That is,
+		\[
+		\langle x_{k+1} - x_k, \nabla f_{k+1} - \nabla f_k \rangle > 0
+		.\] 
+		This is strictly monotone, which is satisfied when $ f$ is strictly convex. If $ f$ isn't strictly convex, it would complicate quasi-Newton method ( \emph{e.g.} might need to add a line search).
+
+		$ x \in \rr^{n}, B \in \rr^{n \times n}$, so $ B$ has  $ n(n+1) /2$ degrees of freedom, and $ n$ constraints from the secant equation.
+
+		 \begin{eg}
+			 When $ n=1$, degree of freedom and constraint are both 1, $ B_{k+1}$ is completely determined. This is called the \emph{secant method}.
+		\end{eg}
+When $ n>1$,  $ B$ is underdetermined. The standard ways to choose  $ B$ is
+ \begin{align*}
+	 B_{k+1} &= \argmin_{B \succ 0, B s_k = y_k} \norm{ B-B_k}_w^2 \\
+	 \text{ or } B_{k+1}^{-1} &= \argmin_{B^{-1} \succ 0, B^{-1}y_k=s_k} \norm{ B^{-1}-B_k^{-1}}_w^2  
+\end{align*}
+where $ \norm{ \cdot }_w $ is some norm chosen so the problem has a closed-form solution. The class of methods on choosing $ B$ is called the  \allbold{Broyden class}. 
+
+\begin{notation}
+	$ B$ approximates  $ \nabla ^2 f$, and $ H$ approximates  $ (\nabla ^2 f)^{-1}$. That is, $ B_k ^{-1} = H_k$.
+\end{notation}
+
+Observe that it's cheaper to just approximate the inverse Hessian, although it is actually not an issue because $ B_{k+1}$ is a low-rank update of $ B_k$, so we can use Sherman-Morrison-Woodbury formula to obtain the inverse very cheaply.
+\end{document}

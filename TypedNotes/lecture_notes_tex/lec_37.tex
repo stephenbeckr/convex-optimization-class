@@ -1,0 +1,118 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\begin{remark}
+	IPM are state-of-the-art on problems (used by cvxpy) that are
+\begin{enumerate}[label=(\arabic*)]
+	\item medium size or smaller (maybe 10000)
+	\item conic problems: LP, QP, SOCP, SDP:
+		\begin{align*}
+		\min\quad & \langle C,X \rangle \\
+		\text{subject to } &X \succeq 0 \\
+			  & \mathcal{ A}(x) =b
+		\end{align*}
+		and we can use $ -\log \det(X)$ to satisfy $ X \succeq 0$.
+\end{enumerate}
+\end{remark}
+
+\subsubsection{(Block) Coordinate Descent, Alternating Minimization, Gauss-Seidel}
+This method exploits certain structure of the problem. It's also a "column-action" methods.
+\begin{eg}[Gauss-Siedel]
+Consider solving the least square problem with $ x \in \rr^{n}$ and let $ G$ be the Gram matrix. The normal equation becomes
+\begin{align*}
+	Gx &= \widetilde{ b}\\
+	\begin{pmatrix} g_1 & \ldots& g_n \end{pmatrix} \begin{pmatrix} x_1\\ \vdots\\ x_n \end{pmatrix} &= \widetilde{ b} \\
+	g_i \alpha &= \widetilde{ b} - \left( \sum_{j<i} g_j x_j^{(k+1)}+ \sum_{j>i} g_j x_j^{(k)} \right) \\
+	x_i^{(k+1)} &= \alpha \\
+\end{align*}
+\end{eg}
+\begin{remark}
+	Jacobi only uses $ x^{(k)}$ for each $ k$, allowing parallelization and randomized order.
+\end{remark}
+
+If we do this row-wise, it's called ART (algebraic reconstruction technique) or Kaczmarz algorithm, or POCS (projection onto convex sets).
+
+Consider
+\begin{align*}
+	\min \quad & f(x), x = \begin{pmatrix} x_1 \\ \vdots\\x_n \end{pmatrix}, x_i  \in C_i \text{ can be blocks} \\
+	x_i^{(k+1)} &\in \argmin_{\alpha \in C} f\left( x_1^{(k+1)}, \ldots, x_{j-1}^{(k+1)}, \alpha, x_{i+1}^{(k)},\ldots, x_n^{(k)} \right) \text{ or } \\
+	x_i^{(k+1)} &= x_i^{(k)} -\eta \frac{\partial f}{\partial x_i} \left( x_1^{(k+1)},\ldots,x_{i-1}^{(k+1)}, x_i^{(k)},\ldots, x_n^{(k)} \right)  
+\end{align*}
+The last step is that if it's too hard to find $ \argmin$, we instead just take a gradient at that step.
+
+If we have two variables $ \min f(x,y)$, then
+\begin{align*}
+	x^{(k+1)} &\in \argmin_{x} f(x,y^{(k)})\\
+	y^{(k+1)} & \in \argmin_{y} f(x^{(k+1)},y)
+\end{align*}
+We can modify it to PALM (proximal alternating linearized minimization) for non-convex problems:
+\begin{align*}
+	x^{(k+1)} &\in \argmin_{x} f(x,y^{(k)}) + \frac{\mu}{2} \norm{ x - x^{(k)}}^2 \\
+	y^{(k+1)} & \in \argmin_{y} f(x^{(k+1)},y) + \frac{\mu}{2} \norm{ y-y^{(k)}}^2 
+\end{align*}
+
+\subsubsection{ADMM (Alternating Direction Method of Multipliers)}
+See 2011 Boyd et al monograph.
+
+\begin{align*}
+\min\quad &f(x) \\
+\text{subject to } \quad & Ax=b 
+\end{align*}
+Attempt 1: Let's try with dual ascent, using $ y$ as the dual variable:
+\begin{align*}
+	\mathscr{L}(x,y) &= f(x) + \langle y,Ax-b \rangle\\
+	g(y) &= \inf_{x} \mathscr{L}(x,y) \\
+	x_{k+1} &\in \argmin \mathscr{L}(x,y_k)\\ 
+	y_{k+1} &= y_k + t (\underbrace{ Ax_{k+1}-b}_{\nabla g(y_k) } ) 
+\end{align*}
+This allows us to exploit the separable structure of the original problem if available \emph{e.g.} $ f(x) = \sum f_i(x_i)$, since we need to relax the linear constraint in the original problem, and the dual allows us to make the Lagrangian separable \emph{i.e.} $ \langle y,Ax-b \rangle \implies \langle A^* y,x \rangle - \langle y,b \rangle$. However, the downside is that it may not converge.
+
+Attempt 2: Let's try the augmented Lagrangian which is equivalent to the original problem:
+\begin{align*}
+	\min \quad &f(x) + \frac{\rho}{2} \norm{ Ax-b}^2 \\
+		   &Ax=b
+\end{align*}
+Unfortunately the Lagrangian is no longer separable due to the quadratic term:
+\begin{align*}
+	\mathscr{L}(x,y) = f(x) + \langle y,Ax-b \rangle + \frac{\rho}{2} \norm{ Ax-b}^2 
+\end{align*}
+Would it be possible to combine the two methods?
+
+Attempt 3 (ADMM): let $ F(x) = \sum_{ i= 1}^{ n} f_i(x_i)$ or $ F(v) =  f(x) + g(z)$ if $ n=2$. 
+\begin{align*}
+	\min \quad & f(x) + g(z)\\
+		   & Ax+ Bz = c
+\end{align*}
+The algorithm is:
+\begin{align*}
+	x^{(k+1)} &\in \argmin_{x} \mathscr{L}_{\rho} \left( \begin{pmatrix} x\\z^{(k)} \end{pmatrix}, y^{(k)}  \right) \\
+	z^{(k+1)} &\in \argmin_{z} \mathscr{L}_{\rho} \left( \begin{pmatrix} x^{(k+1)}\\z \end{pmatrix}, y^{(k)}  \right) \\
+	\text{ update } y^{(k+1)} &= y_k + \rho (A x_{k+1}+ B z_{k+1}-c)
+\end{align*}
+\begin{note}
+	If we jointly minimize the first two lines, it becomes the augmented Lagrangian method.
+\end{note}
+
+What if $ n>2$, \emph{i.e.} $ \min_x \sum_{ i= 1}^{ n} f_i(x)$, where $ x$ is a block vector of $ x_i$?
+
+One idea is $ \min_{x_i} \sum f_i(x_i) s.t. $ linear constraints enforces $ x_i = x_j$. 
+Naive generalization from $ n=2$ doesn't converge very well. Instead we use a consensus trick:
+ \begin{align*}
+	 F(v) &= G(x) + H(z)
+\end{align*}
+where $ x= \begin{pmatrix} x_1\\ \vdots \\ x_n \end{pmatrix} $, $ z$ has the same size as  $ x_i$, and $ v = \begin{pmatrix} x\\z \end{pmatrix} $.
+\begin{align*}
+	\min_{x,z} \quad & F(x) + G(z)\\
+			 &\begin{pmatrix} I&&&&-I\\&I&&&-I\\&& \ddots && \vdots \\&&&I&-I \end{pmatrix} \begin{pmatrix} x\\z \end{pmatrix} =0
+\end{align*}
+This enforces $ x_i = z \implies x_i = x_j$. We see that $ A = I$ and  $ B = \begin{pmatrix} -I\\ \vdots \\ -I \end{pmatrix} $ from the $ n=2$ linear constraint. Now we see $ x_i$ is decoupled at each update step:
+\begin{align*}
+	x_{k+1} &\in \argmin_{x} \mathscr{L}_{\rho}(x,z,y_k) && \text{ decoupled}\\
+	z_{k+1} &\in \argmin_z \mathscr{L}_{\rho} (x_{k+1},z,y_k) = \frac{1}{n} \sum_{ i= 1}^{ n} x_i && \text{ consensus}\\
+	\text{ update } &y_{k+1} \text{ as usual} 
+\end{align*}
+\begin{remark}
+	This is a common trick in optimization. In a coupled system, we relax it to be decoupled first and let them recouple later.
+\end{remark}
+\end{document}

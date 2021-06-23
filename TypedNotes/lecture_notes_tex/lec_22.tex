@@ -1,0 +1,135 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\begin{remark}
+	Complementary slackness means if $ f_j(x^* )<0$ is an inactive constraint, then $ \lambda_j^* =0$, so
+	\begin{align*}
+		\mathscr{L}(x,\lambda^* ,\nu^* ) &= f_0(x) \sum_{i\neq j} \lambda_i^* f_i(x) + \sum \nu_i^* h_i(x) \\
+	\end{align*}
+\begin{align*}
+	(P') \qquad \qquad \min\quad &f_0(x) \\
+\text{subject to } \quad &f_i(x) \leq 0, \ \forall \ i \neq j \\
+&h_i(x) = 0 , i = 1,\ldots,p
+\end{align*}
+This is only true if we have KKT conditions.
+\end{remark}
+\begin{eg}[1]
+\begin{align*}
+\min_{x \in \rr}\quad &x \\
+\text{subject to } \quad &x\geq 0 \\
+&x\leq 1 \text{ this is not tight/active constraint} 
+\end{align*}
+We can just remove the inactive constraint and still get the same solution.
+\end{eg}
+\begin{eg}[2]
+\begin{align*}
+\min_{x \in \rr}\quad &x \\
+\text{subject to } \quad &x\geq 0 \qquad \text{ inactive} \\
+&x^2 \geq 1
+\end{align*}
+But if we remove the inactive constraint here, we would get $ -\infty$ as the solution instead, so we can't just drop inactive constraint for non-convex problems.
+\end{eg}
+
+\subsection{Meta-rules}
+Suppose $ C \subseteq \rr^{n}$, possibly nonconvex.
+\begin{enumerate}[label=(\arabic*)]
+	\item switch between min and max with double minus signs or between argmin and argmax with single minus sign (since we don't care about function value).
+	\item If $ \phi$ is monotone on $ \im(f)$, then
+		\[
+			\argmin_{x \in C} \phi(f(x)) = \argmin_{x \in C} f(x)
+		.\]
+		\begin{eg}
+		$ \frac{1}{2} \norm{ Ax-b}^2 $ and $ \norm{ Ax-b} $.
+		\end{eg}
+	\item If we have all mins or all maxs, we can swap order
+		\[
+			\min_x \min_y f(x,y) = \min_y \min_x f(x,y) = \min_{x,y} f(x,y)
+		.\] 
+	\item If $ D \subseteq C$ where $ C$ can be seen as a relaxation, then
+		\[
+			\min_{x \in C} f(x) \leq \min_{x \in D} f(x)
+		.\]
+		And we can obtain a lower bound this way.
+	\item "superadditivity":
+		\[
+			\min_{x \in C} f(x)+g(x) \geq \min_{x \in C} f(x) + \min_{x \in C} g(x)
+		.\] 
+\end{enumerate}
+
+\begin{eg}[solving convex problems using KKT]
+	Recall that the solution to the least squares problem $ \min_x \frac{1}{2} \norm{ Ax-b}^2 $ when $ A$ has more rows than columns ($ m\geq n$) is
+ \[
+	 x^* = \left( A^{T}A \right) ^{-1} A^{T}b
+.\]
+In the case when $ m<n$, the system is underdetermined so $ Ax=b$ has many solutions, so we instead want to find the solution with the least Euclidean norm (since we can add any vector from $ \ker A$ to arbitrarily inflate the norm of the solution):
+\begin{align*}
+\min\quad &\frac{1}{2}\norm{ x}^2  \\
+\text{subject to } \quad &Ax=b
+\end{align*}
+And the solution is
+\[
+	x^*  = A^{T}\left( AA^{T} \right) ^{-1} b
+.\] 
+To see this, consider the more general quadratic problem
+\begin{align*}
+	\min\quad & \frac{1}{2} \langle x,Px \rangle + \langle q,x \rangle+ r, P\succeq 0  \\
+		  &Ax = b
+\end{align*}
+Note that we recover the problem when $ P=I, q=r=0$.
+The Lagrangian is
+\[
+	\mathscr{L}(x,\nu) = \frac{1}{2} \langle x,Px \rangle+ \langle q,x \rangle+ r+ \nu^{T}(Ax-b)
+.\] 
+The KKT conditions are the following:
+\begin{enumerate}[label=(\arabic*)]
+	\item stationarity:
+		\[
+			\nabla _x \mathscr{L}(x,\nu) = Px+q+A^{T}\nu = 0
+		.\] 
+	\item primal feasibility:
+		\[
+		Ax=b
+		.\] 
+	\item dual feasibility: N/A.
+	\item Complementary slackness: N/A.
+\end{enumerate}
+Since the conditions are linear equations, we can combine them into a larger system of equations:
+\[
+	\begin{pmatrix} P&A^{T}\\A&0 \end{pmatrix} \begin{pmatrix} x\\ \nu \end{pmatrix} = \begin{pmatrix} -q\\ b \end{pmatrix}  
+.\]
+So when $ P=I,q=r=0$, we have
+\begin{align*}
+	\begin{pmatrix} A&A A^{T} \\ A&0 \end{pmatrix} \begin{pmatrix} x\\ \nu \end{pmatrix}&= \begin{pmatrix} 0\\ b \end{pmatrix}  \\
+	\begin{pmatrix} x \\ \nu \end{pmatrix} &= \begin{pmatrix} A^{T}\left(A A^{T} \right) ^{-1} b \\-\left( AA^{T} \right)^{-1} b \end{pmatrix}  
+\end{align*}
+\end{eg}
+\begin{eg}
+Consider the problem
+\begin{align*}
+\min\quad &\frac{1}{2} \norm{ Ax-b}^2  \\
+\text{subject to } \quad & \mathbbm{1}^{T} x \leq \tau 
+\end{align*}
+The Lagrangian is
+\[
+	\mathscr{L}(x,\lambda) = \frac{1}{2}\norm{ Ax-b}^2 + \lambda (\mathbbm{1}^{T}x - \tau) 
+.\]
+The KKT conditions are
+\begin{enumerate}[label=(\arabic*)]
+	\item 
+		\[
+			\nabla _x \mathscr{L}(x,\lambda) = A^{T}(Ax-b) + \lambda \mathbbm{1} = 0
+		.\] 
+	\item $ \mathbbm{1}^{T}x - \tau \leq 0$.
+	\item $ \lambda\geq 0$.
+	\item $ \lambda = 0$ or $ \mathbbm{1}^{T} x -\tau = 0$.
+\end{enumerate}
+In the case when $ \lambda=0$, the problem reduces to least squares and we've already solved it. When $ \lambda \neq 0$ and $ \mathbbm{1}^{T}x  = r$ instead, we can solve it the following way:
+\begin{align*}
+	x &= \left( A^{T}A \right) ^{-1} (A^{T}b - \lambda\mathbbm{1}) \\
+	\tau=\mathbbm{1}^{T}x &= \mathbbm{1}^{T} \left( A^{T}A \right) ^{-1} (A^{T}b- \lambda \mathbbm{1})\\
+	\lambda &= \frac{\mathbbm{1}^{T} \left( A^{T}A \right)^{-1} A^{T}b - \tau }{ \mathbbm{1}^{T} \left( A^{T}A \right)^{-1} \mathbbm{1} } 
+\end{align*}
+Note that $ \lambda$ is just a scalar.
+\end{eg}
+\end{document}

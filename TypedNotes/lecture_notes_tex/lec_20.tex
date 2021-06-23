@@ -1,0 +1,71 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\subsection{Fenchel-Rockafellar Duality [BC17]}
+
+\[
+	(P) \qquad \qquad \min_x f(x) + g(Ax)
+,\]
+where $ f,g \in \Gamma_0$ and allows $ +\infty$ values, and $ A$ is a  $ m\times n$ matrix. 
+\[
+	(D) \qquad \qquad \min_{v} f^* (A^* v) + g^* (-v)
+.\]
+\subsubsection{Connections to Lagrangian duality}
+Recall
+\[
+	f^* (y) = \sup_{x} \langle x,y \rangle -f(x)
+.\]
+
+Take the same $ (P)$, recast as
+ \[
+	 \min_{x,z} f(x) + g(z)\ s.t.\ z=Ax \quad  \implies \quad  \mathscr{L}(x,z,v)=f(x)+g(z)+ \langle z-Ax,v \rangle
+.\]
+Then the Lagrangian dual function $ h(v)$ is
+\begin{align*}
+	h(v) = \inf_{x,z} \mathscr{L}(x,z,v) &= \inf_{x} (f(x)- \langle Ax,v \rangle) + \inf_{z} (g(z) + \langle z,v \rangle)\\
+					     &= - \sup_{x} (\langle x,A^* v \rangle -f(x)) - \sup_{z}( - \langle z,v \rangle -g(z)) \\
+					     &= -(f^* (A^* v) +g^* (-v))
+\end{align*}
+Thus, the Lagrangian and F-R dual problems only differ by a minus sign: \[ \max_v h(v) = -\min_v -h(v) = - \min_v f^* (A^* v) +g^* (-v).\]
+\subsubsection{Saddle-point interpretation}
+
+If $ g \in \Gamma_0$, then $ g=g^{**}$, so $ g(x) = \sup_y \langle x,y \rangle -g^* (y)$. Using this fact we can rewrite the primal problem as
+\begin{align*}
+	(P)\qquad  \min_x f(x) + g(Ax) &= \min_x \sup_v f(x) + \langle Ax,v \rangle - g^* (v) \\
+				 &= \sup_v \min_x f(x) + \langle x,A^* v \rangle -g^* (v) \qquad \text{ if saddle point exists} \\
+				 &= \sup_v -f^* (-A^* v) -g^* (v)\\
+				 &= \sup_v -f^* (A^* v) - g^* (-v) \qquad \qquad (D)
+\end{align*}
+
+\begin{prop}[18.9]
+	Let $ f \in \Gamma_0( \mathcal{ H})$, if $ f^* $ is strictly convex, then $ f$ is (Gateaux) differentiable on  $ \inte \dom(f)$.
+\end{prop}
+\begin{prop}[18.15]
+If $ f$ is continuous and convex, then
+
+$ f$ is (Frechet) differentaible and  $ \nabla f$ is $L$-Lipschitz continuous if and only if $ f^* $ is $ L^{-1}$ strongly convex,
+
+and $ f \in \Gamma_0, f=f^{^* } $.
+\end{prop}
+
+\subsection{Algorithms}
+\begin{enumerate}[label=(\arabic*)]
+	\item gradients: If I know $ \nabla g$, can I find $ \nabla (g \circ A)$? Yes. It's $ A^* (\nabla g \circ A)$.
+	\item projections/proximity operators: Let $ C = \{x: \norm{ x}_2 \leq 1\} $ and $ C \circ A = \{x: \norm{ Ax}_2 \leq 1\} $. In general, if I know $ \prox_{g}$, I don't know $ \prox_{g \circ A}$. Here there is no chain rule nor linearity.
+\end{enumerate}
+\begin{remark}
+We can use the dual to shift the linear operator from the proximity term to the differentiable term.
+\end{remark}
+
+\begin{thm}[15.23 generalized Slater]
+	If $ 0 \in \ri (\dom g - A(\dom f))$ (CQ), then strong duality holds. That is,
+	\[
+		\inf_x f(x) + g(Ax) = -\min_{v} f^* (A^* v) + g^* (-v)
+	,\]
+	and the dual solution is obtained.
+\end{thm}
+\begin{note}
+	In finite dimensions, for CQ we just need to show $ \ri(\dom g) \cap A (\ri (\dom f))\neq \O$. Or, if $ f,g$ are polyhedral,  $ \dom g \cap A(\dom f) \neq \O$. This is essentially saying we want a strictly feasible point.
+\end{note}
+\end{document}
