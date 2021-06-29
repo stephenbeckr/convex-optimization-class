@@ -2,6 +2,25 @@
 \input{../preamble.tex}
 
 \begin{document}
+\subsubsection{Recovering a primal solution from a dual solution}
+\begin{thm}[BC17 19.1]
+	Let $ f \in \Gamma_0(\rr^{n}), g \in \Gamma_0(\rr^{m}), \dom(g) \cap A(\dom f) \neq \O$. The following are equivalent:
+	\begin{enumerate}[label=(\arabic*)]
+		\item There is no duality gap, and $ x,v$ are primal-dual optimal.  \emph{i.e.} there exists saddle points to $ \mathscr{L}(x,v)=f(x) + \langle Ax,v \rangle - g^* (v)$.
+		\item $ A^* v \in \partial f(x)$ and $ -v \in \partial g(Ax)$.
+		\item $ x \in \partial f^* (A^* v)$ and $ Ax \in \partial g^* (-v)$.
+	\end{enumerate}
+\end{thm}
+Note that $ 2 \iff 3$ since $ \partial f^* = \partial f^{-1}$ when $ f \in \Gamma_0$.
+\begin{prop}[BC17 19.4]
+	Under above conditions, if $ f^* $ is differentiable at $ (A^* v)$ (\emph{i.e.} if $ f$ is strictly convex), then either
+	\begin{enumerate}[label=(\alph*)]
+		\item there is no primal optimal solution, or
+		\item $ x = \nabla f^* (A^* v)$ is primal optimal.
+	\end{enumerate}
+\end{prop}
+
+Let's see a simple example applying Fenchel-Rockafellar duality:
 \begin{eg}
 \begin{align*}
 	(P) \qquad \qquad \min\quad & \frac{1}{2} \norm{ x-x_0}^2  \\
@@ -10,7 +29,7 @@
 This is hard to solve directly using gradient descent, as we would need to project which requires finding the SVD of A.
 Let $ f(x) = \frac{1}{2} \norm{ x-x_0}^2 $ and $ g(y) = I_{\norm{ y-b}\leq \epsilon }$. Then
 \begin{align*}
-	f^* (v) = \sup_x \langle v,x \rangle-\frac{1}{2}\norm{ x-x_0} ^2\\
+	f^* (v) &= \sup_x \langle v,x \rangle-\frac{1}{2}\norm{ x-x_0} ^2\\
 	&= \langle v,x_0 \rangle+ \sup_{\widetilde{ x}} \langle v,\widetilde{ x} \rangle -\frac{1}{2} \norm{ \widetilde{ x}}^2  \\
 	&= \langle v,x_0 \rangle + \frac{1}{2} \norm{ v}^2  \\
 	g^* (v) &= \sup_{\norm{ y-b}\leq \epsilon } \langle v,y \rangle \\
@@ -19,8 +38,9 @@ Let $ f(x) = \frac{1}{2} \norm{ x-x_0}^2 $ and $ g(y) = I_{\norm{ y-b}\leq \epsi
 \end{align*}
 Hence we obtain the dual:
 \[
-	(D) \qquad \min_v \left( \langle A^* v,x_0 \rangle + \frac{1}{2}  \right) 
-.\] 
+	(D) \qquad \min_v \left( \underbrace{ \langle A^* v,x_0 \rangle + \frac{1}{2} \norm{ A^* v}_2^2 }_{f^* (A^* v) } \right) + \left( \underbrace{ \langle v,-b \rangle +  \epsilon \norm{ v}_2 }_{ g^* (-v)} \right)   
+,\]
+where the first three terms should be differentiable and the last term should have easy-to-find proximity operator.
 \end{eg}
 
 \subsection{Optimality conditions}

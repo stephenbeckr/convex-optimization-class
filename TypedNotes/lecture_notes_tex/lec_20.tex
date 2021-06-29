@@ -49,7 +49,7 @@ $ f$ is (Frechet) differentaible and  $ \nabla f$ is $L$-Lipschitz continuous if
 and $ f \in \Gamma_0, f=f^{^* } $.
 \end{prop}
 
-\subsection{Algorithms}
+\subsubsection{Algorithms}
 \begin{enumerate}[label=(\arabic*)]
 	\item gradients: If I know $ \nabla g$, can I find $ \nabla (g \circ A)$? Yes. It's $ A^* (\nabla g \circ A)$.
 	\item projections/proximity operators: Let $ C = \{x: \norm{ x}_2 \leq 1\} $ and $ C \circ A = \{x: \norm{ Ax}_2 \leq 1\} $. In general, if I know $ \prox_{g}$, I don't know $ \prox_{g \circ A}$. Here there is no chain rule nor linearity.
