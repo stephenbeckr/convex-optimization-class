@@ -1,0 +1,31 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\subsection{Automatic Differentiation}
+\begin{eg}
+\begin{align*}
+	g(x) &= \prod_{i=1}^m (x-t_i)\\
+	g'(x) &= \sum_{ i= 1}^{ m} \prod_{j\neq i}(x-t_j) && \text{ symbolic} \\
+	g'(x) &= \sum_{ i= 1}^{ m} \frac{g(x)}{x-t_i } \\
+\end{align*}
+
+In AD:
+\begin{align*}
+	f^{(k)} &= (x-t_k) f^{(k-1)} \\
+	r^{(k)} &= (x-t_k) r^{(k+1)} \\
+	g'(x) = \sum_{ i= 1}^{ m} f^{(i-1)} \cdot r^{(i+1)}
+\end{align*}
+\end{eg}
+
+\subsubsection{Modes}
+Let $ f: \rr^{n} \to \rr^{(p)}$. Then
+
+Forward: $ O(n)$ so it's great if  $ f:\rr \to \rr^{p}$.
+
+Reverse: $ O(p)$ so great if  $ f: \rr^{n} \to \rr$. This is usually the setting in optimization.
+
+\begin{eg}
+	$ f: \rr^{2} \to \rr$, $ f(x_1, x_2) = x_1 x_2 + \sin(x_1)$
+\end{eg}
+\end{document}

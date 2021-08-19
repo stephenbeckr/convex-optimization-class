@@ -1,0 +1,120 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\begin{eg}[best function ever]
+	Consider $ f(x) = \frac{1}{2} \norm{ x}_2^2, \nabla f(x) = x, \nabla ^2f(x) = I $. So $ L=1, \mu=1$. This is the only function with this property.
+	
+	This is the nicest function ever for optimization!
+\end{eg}
+\begin{defn}[condition number]
+The \allbold{condition number} of $ f$ is  $ k_f = \frac{L}{\mu}$. $ k_f \approx 1$ is good. Larger is bad.
+\end{defn}
+Why do we care about these assumptions?
+
+Recall from calculus, Taylor's theorem states that
+\[
+	f(y) = f(x) + f'(x) (y-x) + \frac{1}{2} f''(\xi) (y-x)^2
+,\] 
+were $ \xi \in [x,y]$. If $ f''(\xi) \leq L \ \forall \ \xi$, then
+\[
+	f(y) \leq f(x) + f'(x)(y-x) + \frac{L}{2} (y-x)^2
+.\] 
+\begin{thm}
+	If $ \nabla f$ is $L$-Lipschitz continuous and $ f$ is  $ \mu$-strongly convex, then for all $ x,y \in \dom(f)$,
+	\[
+		\frac{\mu}{2} \norm{ y-x}^2 \leq f(y) - (f(x) + \langle \nabla f(x), y-x \rangle) \leq \frac{L}{2} \norm{ y-x}^2 
+	.\] 
+\end{thm}
+~\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{./figures/quad_bounds.png}
+	\caption{If $ f$ is complicated but we can "sandwich" it between a quadratic upper bound and a quadratic lower bound ( $ \mu>0$ ) or a linear lower bound ($ \mu=0$), then we can work with the quadratics to understand the behavior of $ f$ since quadratics are much easier to deal with.}
+\end{figure}
+
+See more properties from this section in the Github handout StrongConvexityLipschitz.pdf.
+\newpage
+
+\subsection{Examples [BV04 Ch.3.1.5]}
+Examples of convex functions $ f: \rr \to \rr$ :
+\begin{itemize}
+	\item $ e^{ax}, a \in \rr$.
+	\item $ x^{a}$ on $ x \in \rr_{++}$ if $ a\leq 0$ or  $ a\geq 1$. (It's concave on  $ 0\leq a \leq 1$).
+	\item  $ |x|^{a}$ on all of $ \rr$, if $ a\geq 1$.
+	\item  $ - \log_b(x)$ on $ \rr_{++}$ if $ b>1$.
+	\item On $ \rr^{+}$,
+		\begin{equation*}
+		\begin{cases}
+			x \cdot \log(x) & x>0\\
+			0 & x=0
+		\end{cases}
+		\end{equation*}
+		since $ f''(x) = \frac{1}{x} >0$.
+\end{itemize}
+
+Examples of convex functions $ f: \rr^{n} \to \rr$:
+\begin{itemize}
+	\item any norm/seminorm (follows directly from triangle inequality).
+	\item $ f(x) = \max\{x_1,\ldots,x_n\} $.
+	\item $ f(x,y) = x^2 /y$, $ \dom(f) = \rr \times \rr_{++}$. "Quadratic over linear".
+
+		$ f(x,y) = \norm{ x}_2^2 /y $, $ \dom(f) = \rr^{n-1} \times \rr_{++}$.
+
+		$ f(x,Y) = x^{T} Y^{-1} x$, $ \dom(f) = \rr^{n} \times S_{++}^{n}$. "Matrix fractional function".
+		\begin{note}
+		"Linear fractional function"
+		 \[
+			 g(x) = \frac{Ax+b}{c^{T}x+ d }, \quad \dom(g) = \{x: c^{T}x+d >0\} 
+		\] 
+		is not convex but it is \allbold{quasi-convex}. It is defined by having all convex sub-level sets $ \{x: f(x) \leq \alpha\} $.  
+		\end{note}
+		~\begin{figure}[H]
+			\centering
+			\hspace*{-3cm}
+			\includegraphics[width=1.4\textwidth]{./figures/quasi_cvx.png}
+		\end{figure}
+	\item "log-sum exp" aka "soft-max"
+		\[
+			f(x) = \frac{1}{\alpha} \log \left( e^{\alpha x_1} + \ldots + e^{\alpha x_n} \right) , \alpha > 0
+		.\]
+		This is differentiable but needs to be careful about numerical under/overflow.
+	\item geometric mean $ f(x) \left( \prod_{ i= 1}^{ n} x_i \right)^{\frac{1}{n}} $ on $ \rr_{++}^{n}$.
+	\item $ - \log \det(X) =-\log\left( \prod \lambda_i \right) = - \sum \log(\lambda_i) $ on $ S_{++}^{n}$.
+\end{itemize}
+
+
+\begin{thm}[Jensen's Inequality]
+	\[
+	f(\ev [x]) \leq \ev [f(x)]
+	.\] 
+\end{thm}
+\begin{remark}
+	Let $ X$ be a random variable that outputs points in  $ \dom(f)$ with probability in $ [0,1]$, then the inequality follows from definition of convex function.
+\end{remark}
+\begin{eg}
+In machine learning, we often prove something like
+\[
+	\ev[\norm{ \text{ error} }^2 ] \leq \epsilon
+.\]
+Let $ f(x) = x^2$. So by Jensen's inequality:
+\begin{align*}
+	\left( \ev[ \norm{ \text{ error} } ] \right) ^2 &\leq \ev\left[ \norm{ \text{ error} }^2  \right]\leq \epsilon \\
+	\ev[\norm{ \text{ error} } ] &\leq \sqrt{\ev \left[ \norm{ \text{ error} }^2  \right] } \leq \sqrt{ \epsilon} 
+\end{align*}
+Recall that $ \norm{ \text{ error} }^2 $ is the nicest function ever.
+\end{eg}
+
+\begin{remark}
+	H\"{o}lder's inequality/Cauchy-Schwarz can also be proved via Jensen.
+\end{remark}
+\begin{thm}[H\"{o}lder's inequality]
+If $ \frac{1}{p} + \frac{1}{q} = 1$,
+\[
+|\langle x,y \rangle| \leq \norm{ x}_p \cdot \norm{ y}_q  
+.\] 
+\end{thm}
+
+\begin{remark}
+We can use Jensen's to prove Holder inequality.
+\end{remark}
+\end{document}

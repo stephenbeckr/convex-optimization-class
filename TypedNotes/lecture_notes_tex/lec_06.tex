@@ -1,0 +1,158 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\newpage
+\section{Convex Functions [BV04 Ch.3]}
+
+~\begin{defn}[convex function]
+	A function $ f: \rr^{n} \to \rr$ is \allbold{convex} if $ \dom(f)$ is a convex set and for all $ x,y \in \dom(f)$ and $ 0\leq t \leq 1$,
+	 \[
+		 f(tx + (1-t)y)\leq tf(x) + (1-t)f(y)
+	.\] 
+	It is \allbold{strictly convex} if it has strict inequality. It is \allbold{strongly convex w.r.t. the norm $ \norm{ \cdot } $ with parameter $ \mu$ } if $ \dom(f)$ is a convex set and, for all $ x,y \in \dom(f), x\neq y, 0\leq t \leq 1$,
+	\[
+		f(tx + (1-t)y) \leq tf(x) + (1-t)f(y) - \frac{\mu}{2} t(1-t) \norm{ x-y}^2 
+	.\] 
+\end{defn}
+\begin{intuition}
+	For strongly convex, we can see that when $ t=\frac{1}{2}$ or when the point is midway between $ x,y$, the bound of inequality is a lot smaller than when  $ t$ is closer to either point. This forces the function to have a large curvature.
+\end{intuition}
+
+\begin{thm}[simpler characterizations]
+	$ f$ is convex if  $ \epi (f)$ is convex ($\implies \dom(f)$ is convex).
+	
+	$ f$ is strictly convex means it always has curvature and no straight lines.
+
+	$ f$ is strongly convex with parameter  $ \mu$ and w.r.t. $ \norm{ \cdot }_2 $ iff $ x \mapsto f(x) - \frac{\mu}{2} \norm{ x}_2^2 $ is convex (not true for general norms). 
+\end{thm}
+\begin{note}
+Subtraction of convex function doesn't preserve convexity, except in the case of strongly convex w.r.t. Euclidean norm.
+\end{note}
+
+\begin{remark}
+Convexity is a \emph{global property}. This contrasts with continuity which is a local property.  
+\end{remark}
+
+\begin{remark}
+	In convex analysis, we allow the \emph{extended value function} $ f: \mathcal{H} \to [-\infty,\infty]$ or $ f: \mathcal{H} \to (-\infty,\infty]$, where $ \mathcal{ H}$ is a generic Hilbert space. 
+
+	This way, if $ x \in \dom(f)$, we can pretend it is but define $ f(x) = +\infty$. This wouldn't affect our minimization problem. Now we can redefine
+	\[
+		\dom(f) = \{x: f(x)< + \infty\} 
+	.\] 
+	This will turn out to be convenient for minimization.
+\end{remark}
+\begin{eg}
+Define the \emph{indicator function} of a set $ C$ to be
+ \begin{equation*}
+	 I_C(x) =
+\begin{cases}
+	0,& x \in C\\
+	+\infty,& x \not\in C
+\end{cases}
+\end{equation*}
+
+This is different than how we usually define indicator function. Now we can do the following:
+\[
+	\min_{x \in C} f(x) \iff \min_{x \in \rr^{n}} f(x) + I_C(x)
+.\] 
+That is, we can turn a constrained minimization problem into an unconstrained problem with huge penalty on going outside the constraint. 
+\end{eg}
+
+\begin{defn}[proper function]
+	$ f: \rr^{n} \to [-\infty,\infty]$ is \allbold{proper} if
+	\begin{enumerate}[label=\arabic*)]
+		\item it never takes the value $ -\infty$.
+		\item $ \dom(f) \neq \O$. That is, the value doesn't always equal to $ + \infty$.
+	\end{enumerate}
+\end{defn}
+\begin{note}
+This way we can assume there exist feasible points, hence "proper".
+\end{note}
+\begin{eg}
+$ I_C$ is proper iff  $ C \neq \O$.
+\end{eg}
+
+\begin{defn}[lower semi-continuous (lsc)] 
+	$ f: \rr^{n} \to [-\infty,\infty]$ is \allbold{lower semi-continuous (lsc)} at $ x \in \rr^{n}$ if for all $ (x_n)$ s.t. $ x_n \to x$,
+	\[
+		f(x) \leq \liminf_n f(x_n) \coloneqq \lim_{ n \to \infty} \inf_{n\leq k} f(x_k)
+	.\] 
+\end{defn}
+\begin{intuition}
+This is a lot like sequential definition of continuity, except that we allow liminf to go higher than the function.
+\end{intuition}
+
+\begin{defn}[lsc function]
+$ f$ is a \allbold{lsc function} if $ f$ is lsc for all points  $ x \in \rr^{n}$. 
+\end{defn}
+~\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{./figures/lsc.png}
+\end{figure}
+\begin{thm}
+	In $ \rr^{n}$ or any Hausdorff space, $ f$ is lsc iff $ \epi(f)$ is a closed set. 
+\end{thm}
+
+~\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{./figures/lsc_epi.png}
+\end{figure}
+
+\begin{eg}
+$ I_C$ is lsc iff  $ C$ is a closed set.
+\end{eg}
+
+We can extend classical theorems involving continuity such as the Extreme Value Theorem to lsc.
+\begin{thm}
+If $ C$ is compact, then  $ f$ is lsc  $ \implies$ $ f$ achieves its minimum over  $ C$.
+\end{thm}
+
+\begin{remark}
+$ f$ is continuous iff  $ f$ is lsc and usc.
+\end{remark}
+\begin{notation}
+	$ \Gamma(\rr^{n})$ is the set of all lsc and convex functions $ f: \rr^{n} \to [-\infty,\infty]$.
+
+	$ \Gamma_0 (\rr^{n}) \subseteq \Gamma (\rr^{n})$ consists of such functions that is also proper, $ f: \rr^{n} \to (-\infty,\infty]$.
+
+	So $ \Gamma_0(\rr^{n})$ is the standard class of functions for convex optimization.
+\end{notation}
+
+\begin{eg}
+	$ I_C \in \Gamma_0 (\rr^{n})$ for some $ C \subseteq \rr^{n}$ iff $ C$ is nonempty, closed, and convex.
+\end{eg}
+
+\begin{remark}
+Recall that the restriction to proper function is mild.
+
+What about restricting to lsc functions? It's also mild in the context of convex functions, because "weird things with convex functions can only involve boundaries (and $ +\infty$).
+\end{remark}
+\begin{thm}[8.38 BC17 ]
+	If $ f: \mathcal{ H} \to (-\infty,\infty]$ is proper and convex, then $ f$ is continuous at  $ x \in \dom(f)$ iff $ f$ is bounded above on a neighborhood of  $ x$.
+\end{thm}
+\begin{note}
+For convex functions, we won't see jumps like in the lsc case.
+\end{note}
+\begin{coro}[8.39]
+Given the same setup, if one of the following is true:
+\begin{enumerate}[label=(\roman*)]
+	\item $ f$ is bounded above on some neighborhood of $ x$.
+	\item  $ f$ is lsc.
+	\item  $ \mathcal{ H}$ is finite dimensional.
+\end{enumerate}
+then $ f$ is continuous on the interior of its domain, $ \inte (\dom(f))$.
+\end{coro}
+\begin{note}
+Under these assumptions, weird discontinuous things can only happen at the boundary.
+\end{note}
+~\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.4\textwidth]{./figures/proper_cvx.png}
+	\caption{An example of a proper, convex function (not lsc) that isn't continuous due to discontinuity at the boundary. It is however continuous on the interior.}
+\end{figure}
+\begin{remark}
+	In summary, by the corollary if $ f: \rr^{n} \to \rr$ (has full-domain and not equal to $ \pm \infty$), then convex $ \implies$ continuous.
+\end{remark}
+\end{document}

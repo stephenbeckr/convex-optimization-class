@@ -1,0 +1,93 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\subsubsection{Douglas-Rachford}
+It is equivalent to ADMM in certain senses. See [BC17 28.3].
+
+Algorithm: $ 0< \lambda<2, \rho>0, y_0$
+\begin{align*}
+	x_k&= \prox_{\rho g}(y_k) \\
+	z_k&= \prox_{\rho f}(2x_k -y_k) \\
+	y_{k+1} &= y_k + \lambda(z_k -y_k)
+\end{align*}
+The proximity operator is equivalent to the Lagrangian in ADMM.
+
+Notice
+\begin{align*}
+	\min \sum_{ i= 1}^{ n} f_i(x) \iff \min \sum_{ i= 1}^{ n} f_i(x_i)\ s.t.\ x_i=x_j \ \forall \ i,j
+\end{align*}
+\begin{remark}
+In signal processing, we can parallelize this algorithm and only require communications among all workers in the consensus step. We can also enforce consensus in different ways and achieve consensus faster in a graph.
+\end{remark}
+\subsection{Primal Dual Methods}
+ADMM has some issues: if we want to $ \min_{x}\ g(x)+ \widetilde{ h}(Ax)$, $ h(x) = \widetilde{ h}(Ax)$ (DR form). Rewrite as $ \min_{x,z}\ g(x) + \widetilde{ h}(z)$, $ Ax-z=0$ (ADMM form). Finding $ \prox_{h}$ is often hard due to $ A$.  $ \prox_{\widetilde{ h}}$ easy doesn't mean $ \prox_{h}$ is easy due to $ A$.
+
+The trick is to use ADMM with a scaled norm in the quadratic term in augmented Lagrangian. A clever choice is
+\begin{align*}
+	\norm{ z} _{M}^2 = \langle z|M|z \rangle,\ M = \frac{1}{\sigma} I - A^{T}A,\ \sigma< \frac{1}{\norm{ A}^2 }\implies M \succ 0
+\end{align*}
+
+Chambolle and Pock, primal-dual hybrid gradient, preconditioned ADMM
+
+\subsubsection{general primal-dual method (Condat)}
+Suppose $ f,g,h$ convex, proper, lsc,
+\begin{align*}
+	\min_x \ \underbrace{ f(x)}_{ \text{ smooth}, \nabla f } + \underbrace{ g(x)}_{ \text{ easy } \prox_g} + \underbrace{ h(Ax)}_{ \text{ easy } \prox_{h} }  
+\end{align*}
+\begin{lem}
+	$ x = \prox_h(x) + \prox_{h^* }(x)$.
+\end{lem}
+Since $ h$ is convex,
+\begin{align*}
+	h(w) =h^{* *} (w) = \sup_y \langle w,y \rangle - h^* (y) 
+\end{align*}
+We solve
+\begin{align*}
+	\min_x \max_y f(x) + g(x) + \underbrace{ \langle Ax,y \rangle }_{ \text{ links primal-dual} } -h^* (y) && \text{ saddle pt problem} 
+\end{align*}
+Optimality: use Fenchel-Rockafellar.
+
+Assume CQ hold,
+\begin{align*}
+	0 &\in \partial (f+g+h \circ A)(x)\\
+	0 &\in \nabla f(x)+ \partial g(x) + A^{T} \underbrace{ \partial h(Ax) }_{ y} && \text{ CQ} \\
+	  &\begin{cases}
+		0 \in \nabla f(x) + \partial g(x) + A^{T}y\\
+		Ax \in \partial h^* (y)\qquad  \text{ since } y \in \partial h(Ax) \\
+	\end{cases}
+\end{align*}
+Rewrite the two equations in matrix form (although they are operators)
+\begin{align*}
+	\underbrace{ - \begin{pmatrix} \nabla f &0\\0&0 \end{pmatrix}}_{T_2} \begin{pmatrix} x\\y \end{pmatrix} \in \underbrace{ \begin{pmatrix} \partial g& A^{T}\\-A& \partial h^*  \end{pmatrix}}_{T_1} \begin{pmatrix} x\\y \end{pmatrix} 
+\end{align*}
+This yields
+\begin{align*}
+	- T_2 z &\in T_1 z,\qquad  z = \begin{pmatrix} x\\y \end{pmatrix} \\
+	z-T_2 z & \in z+T_1 z &&\text{ add }z \text{ on both sides}  \\
+	(I-T_2)z  & \in (I+T_1)z
+\end{align*}
+We will solve via forward-backward (proximal descent). WLOG assume $ T_2$ is $ 1$-Lipschitz, $ (I + dg)^{-1}=\prox_g$ easy and $ (I + \partial h^* )^{-1}$ easy, then
+ \begin{align*}
+	 z_{k+1} = \underbrace{ (I + T_1)^{-1} }_{ \text{ backward/implicit} } \underbrace{ (I-T_2) }_{ \text{ forward/explicit} } z_k
+\end{align*}
+Instead of adding $ z$, we do a trick and add $ Vz$:
+\begin{align*}
+	Vz-T_2 z &\in Vz+ T_1 z
+\end{align*}
+where we choose $ V$ to be
+\begin{align*}
+	V = \begin{pmatrix} \tau^{-1}I& -A^{T}\\-A& \sigma^{-1}I \end{pmatrix} 
+\end{align*}
+This guarantees that $ V \succ 0$ if $ \sigma \tau > \norm{ A}^{-2} $.
+\begin{align*}
+	z_{k+1} &= (V+T_1)^{-1}(V-T_2) z\\
+	V+T_1 &= \begin{pmatrix} \tau^{-1}I + \partial g&0\\-2A& \sigma^{-1}I + \partial h^*  \end{pmatrix} && \text{ upper triangular} 
+\end{align*}
+We can invert this using back substitution:
+\begin{align*}
+	\begin{pmatrix} \tau^{-1}I + \partial g&0\\-2A & \sigma^{-1}I + \partial h^*  \end{pmatrix} \begin{pmatrix} x_{k+1}\\y_{k+1} \end{pmatrix} &= \begin{pmatrix} v\\w \end{pmatrix}\\
+	x_{k+1} &= (\tau^{-1} I + \partial g)^{-1}v && \text{ via } \prox_g \\
+	\text{ then solve for } &y_{k+1} 
+\end{align*}
+\end{document}

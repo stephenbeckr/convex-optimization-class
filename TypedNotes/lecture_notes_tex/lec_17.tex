@@ -1,0 +1,93 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+
+First start with the primal problem without assuming convexity:
+\begin{align*}
+\min\ &f_0(x) \\
+\text{subject to } &f_i(x) \leq 0, i = 1,\ldots,m \\
+&h_i(x) = 0 , i = 1,\ldots,p
+\end{align*}
+Given an non-empty domain $ D = \bigcap_{i=0}^m \dom(f_i) \cap \bigcap_{ i=0}^{m} \dom(h_i)$. Note that $ \dom (f_0) $ is implicit constraint, \emph{i.e.} $ f_0(x) = x^2 + I_{ \{x\geq 0\} }$.
+
+\begin{defn}[lagrangian]
+\[
+	\mathscr{L}(x, \lambda, \nu) = f_0(x) + \sum_{ i= 1}^{ m} \lambda_i f_i(x) + \sum_{ i= 1}^{ p} \nu_i h_i(x)
+,\]
+where $ \lambda,\nu$ are \allbold{dual variables}, $ \lambda$ is associated with inequality constraints whereas $ \nu$ is associated with equality constraints.
+\end{defn}
+\begin{remark}
+	We can be creative about whether we put the constraints explicitly in $ f_i, h_i$ or implicitly in $ f_0$.
+\end{remark}
+
+\begin{defn}[dual function]
+\[
+	g( \lambda, \nu) = \inf_{x \in D} \mathscr{L}(x, \lambda, \nu)
+.\] 
+\end{defn}
+\begin{note}
+This problem is usually easier than the primal problem because it doesn't have constraints.
+\end{note}
+
+\begin{ques}
+Is $ g$ convex?
+\end{ques}
+Recall the infimum preserves convexity iff  $ C$ is convex and  $ f(x,y)$ is jointly convex, whereas the supremum preserves convexity iff $ f(x,y)$ is convex for all  $ x$. Since the Lagrangian is most likely not jointly convex, but it is in fact affine in terms of the dual variables. Therefore,
+ \[
+	 g(\lambda,\nu) = - \sup_{x \in D} \mathscr{L}(x, \lambda,\nu)
+\]
+is concave.
+
+
+Dual problem (D):
+\[
+	d^* = \max_{\lambda \geq 0} g(\lambda,\nu)
+.\] 
+\begin{prop}[weak duality]
+Define $ p^*$ to be the optimal value for the primal problem and $ d^* $ be the maximum value for the dual problem. Then if $ \lambda \geq 0$ and $ \nu$ is anything, then
+\[
+	g(\lambda,\nu) \leq p^* 
+.\]
+Hence $ d^* \leq p^* $. 
+\end{prop}
+
+\begin{proof}
+\begin{align*}
+	g(\lambda,\nu) &= \inf_{x} \mathscr{L}(x, \lambda,\nu) \\
+		       &\leq \mathscr{L}(x, \lambda, \nu)  \ \forall \ x \in D \text{ and feasible} \\
+		       &= f_0(x) + \sum_{ i= 1}^{ m} \underbrace{\lambda_i}_{\geq 0} \underbrace{f_i(x)}_{\leq 0}+ \sum_{ i= 1}^{ p} \nu_i \underbrace{h_i(x)}_{=0} \qquad  \text{ x is feasible}  \\
+		       &\leq f_0(x)
+\end{align*}
+\end{proof}
+\begin{remark}
+	"Strong duality" $ d^* =p^* $ tend to happen if $ (P)$ is convex.
+\end{remark}
+\begin{eg}[dual of a LP]
+\begin{align*}
+\min\ & \langle c,x \rangle \\
+\text{subject to } &x\geq 0 \iff -x_i \leq 0\\
+&Ax=b
+\end{align*}
+Then
+\begin{align*}
+	\mathscr{L}(x,\lambda,\nu) &= \langle c,x \rangle - \langle \lambda,x \rangle + \nu^{T} (Ax-b)\\
+	&= \langle c,x \rangle - \langle \lambda,x \rangle + \langle A^{T} \nu,x \rangle - \langle \nu,b \rangle \\
+	g(\lambda,\nu) &= \inf_x \mathscr{L}(x, \lambda,\nu)  \\
+	&= -\langle \nu,b \rangle + \inf_{\lambda} \langle c-\lambda+ A^{T}\nu,x \rangle =
+	\begin{cases}
+		-\langle \nu,b \rangle &c-\lambda+A^{T} \nu = 0 \\
+		-\infty & \text{ else} 
+	\end{cases}
+\end{align*}
+Thus the dual problem $ \max_{\lambda\geq 0} g(\lambda,\nu)$ becomes
+\[
+\max_{\lambda\geq 0} - \langle \nu,b \rangle, \lambda= c+A^{T} \nu
+\] 
+or
+\[
+-\min\langle \nu,b \rangle, c+A^{T} \nu \geq 0
+.\]
+This is a LP!
+\end{eg}
+\end{document}

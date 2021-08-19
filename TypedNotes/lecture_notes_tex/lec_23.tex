@@ -1,0 +1,93 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\subsection{Perturbation and Sensitivity Analysis [BV 5.6]}
+Given the primal problem
+\begin{align*}
+	(P) \qquad p^* =\min\quad &f_0(x) \\
+\text{subject to } \quad &f_i(x) \leq 0, i = 1,\ldots,m \\
+&h_i(x) = 0 , i = 1,\ldots,p
+\end{align*}
+and let's perturb this a little:
+\begin{align*}
+	(P_{u,v}) \qquad p(u,v)=\min\quad &f_0(x) \\
+\text{subject to } \quad &f_i(x) \leq u_i, i = 1,\ldots,m \\
+&h_i(x) = v_i , i = 1,\ldots,p
+\end{align*}
+So $ p^* =p(0,0)$, what is $ p(u,v)$?
+
+We can do a local analysis and find out the derivatives or a global analysis using a bound.
+
+\subsubsection{global analysis}
+We can use Slater's condition (strict feasibility) to check strong duality and existence of optimal dual points.
+\begin{align*}
+	p^* =p(0,0)&= d^*  \\
+		   &= \sup_{\lambda\geq 0} g(\lambda,\nu)\\
+		   &= g(\lambda^* ,\nu^* ) \\
+		   &= \inf_{x} \mathscr{L}(x,\lambda^* ,\nu^* ) \\
+		   &= \inf_{x} f_0(x) + \sum \underbrace{ \lambda_i^* }_{\geq 0} \underbrace{f_i(x)}_{\leq u_i} + \sum \nu_i^* \underbrace{ h_i(x)}_{v_i} \\
+		   &\leq f_0(\overline{x})+\langle \lambda^* ,u \rangle + \langle \nu^* ,v \rangle\\
+	p(u,v) = f_0(\overline{x}) &\geq p^* -\langle \lambda^* ,u \rangle - \langle \nu^* ,v \rangle 
+\end{align*}
+where we chose an $ \overline{x}$ that is feasible for  $ (P_{u,v})$.
+
+\begin{case}[1]
+	$ \lambda_i^* $ is large, then if we tighten $ i$th inequality constraint  $ (u_i<0)$,
+	\begin{align*}
+		p(u,0) \geq p^* - \lambda_i u_i
+	\end{align*}
+	So $ p(u,0)$ is much larger than  $ p^* $.
+\end{case}
+\begin{case}[2]
+$ \lambda_i^* $ is small, and we loosen $ i$th inequality constraint  $ u_i>0$, then
+\[
+	p^* \geq p(u,0)\geq p^* - \underbrace{\lambda_i^* u_i}_{>0}
+.\] 
+So loosening constraint doesn't help much to reduce the minimum.
+\end{case}
+\begin{case}[3]
+	$ \lambda_i^* =0$, for example when $ f_i(x)\leq 10^{6}$, the constraint is inactive.
+\end{case}
+\begin{case}[4]
+	When $ \lambda_i^* $ is large, loosen $ (u_i)>0$, or if $ \lambda_i^* =0$, tighten $ (u_i<0)$, then the analysis can't help us.
+\end{case}
+\begin{case}[5]
+	If $ \nu_i^* \gg 0, v_i<0$ or $ \nu_i^* \ll 0, v_i>0$, then $ p(0,v) \gg p^* $ and we have a big change.
+\end{case}
+\begin{case}[6]
+	If $ |v_i^* | \ll 1$ or $ \nu_i^* >0,v_i<0$ or $ \nu_i^* <0, v_i>0$, then $ p(0,v)$ doesn't change much.
+\end{case}
+\subsubsection{local sensitivity analysis}
+We can show that $ (P_{u,v})$ is convex using the minimizing conditions. Recall that for a convex function,
+ \[
+	 f(y) \geq f(x) + \langle \partial f(x) , y-x \rangle
+.\] 
+Comparing with Equation above we see that the dual variables are just the subgradients of $ p(u,v)$!
+If $ p(u,v)$ is differentiable,
+ \[
+	 \frac{\partial p(0,0)}{\partial u_i} = -\lambda_i^* , \quad \frac{\partial p(0,0)}{\partial v_i} =-\nu_i^*  
+.\] 
+This is symmetric! Now we can write the Taylor expansion:
+\[
+	p(u,v) = p(0,0) +\langle \frac{\partial p}{\partial u} ,u \rangle + \langle \frac{\partial p}{\partial v} ,v \rangle + \text{ higher-order terms} 
+.\]
+This is only accurate with small perturbation.
+
+In economics, dual variables is referred to as "shadow prices". In statistics, it's called "score test".
+
+\subsection{Generalized Inequalities [BV 5.9]}
+\begin{align*}
+\min\quad &f_0(x) \\
+\text{subject to } \quad &f_i(x) \preceq 0, f_i:\rr^{n} \to S^{m} \\
+&h_i(x) = 0 , i = 1,\ldots,p
+\end{align*}
+\begin{eg}[SDP]
+	Punchline: we get analogous KKT conditions. Instead of $ \lambda_i\geq 0$ now we require $ \Lambda_i \succeq 0$.
+
+	Caveat: Before, if $ \lambda\geq 0, y \geq 0$ and $ \langle \lambda,y \rangle =0$, then $ \ \forall \ i, \lambda_i =0$ or $ y_i = 0$.
+	However, in the matrix case, if $ \Lambda \succeq 0, Y=f_i(x) \succeq 0$ and $ \langle \Lambda,Y \rangle \geq 0$, it does NOT mean $ Y=0$ or  $ \Lambda =0$. 
+
+	But if $ \Lambda \succ 0, Y \succeq 0, \langle \Lambda,Y \rangle = 0 $, then $ Y=0$
+\end{eg}
+\end{document}

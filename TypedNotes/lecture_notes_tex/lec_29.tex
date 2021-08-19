@@ -1,0 +1,76 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\subsubsection{BFGS}
+Using a specific weighted norm that satisfies the secant equation:
+\begin{thm}[BFGS]
+\begin{align*}
+	H_{k+1} = \left( I- \rho_k s_k y_k^{T}  \right) H_k(I- \rho_k y_k s_k^{T}) + \rho_k s_k s_k^{T}, \quad \rho_k = \frac{1}{\langle y_k,s_k \rangle}
+\end{align*}
+\end{thm}
+
+\begin{remark}
+	~\begin{itemize}
+		\item Iteration count: win (compared to gradient descent)
+		\item Flops: $ \mathcal{ O}(n^2) < \mathcal{ O} (n^3)$ : win (compared to Newton)
+		\item Memory: $ \mathcal{ O}(n^2)$ : loss (same as Newton)
+	\end{itemize}
+\end{remark}
+
+\begin{thm}[L-BFGS]
+\begin{align*}
+	H_{k+1} &= V_k^{T} H_k V_k + \rho_k s_k s_k^{T}\\
+	H_{k+1} (w) &= V_k^{T} H_{k} (V_k w)+ \rho_k s_k s_k^{T} w
+\end{align*}
+where $ z :=V_k w$ uses $ y_k, s_k$ and $ s_k^{T} w$ uses $ y_k, s_k$. Both are cheap. Then $ H_k (z)$ depends on $ y_{k-1}, s_{k-1}, H_{k-1}$. We can do this recursively down to the first. Instead we stop at $ (k-m)$th term. That is,
+ \begin{align*}
+	H_{k-m} = \frac{\langle y_{k-m},s_{k-m} \rangle}{ \norm{ y_{k-m}}^2 } \cdot I
+\end{align*}
+We can start with gradient descent to initialize. That is, $ H_0 = \frac{1}{L} \cdot I$.
+\end{thm}
+Then the storage becomes $ 2(m+1) n $. Commonly choose  $ m \in \{3,20\} $.
+
+\begin{remark}
+	Usually $ B_k \not\to \nabla ^2f(x^* )$. 
+\end{remark}
+
+\begin{thm}[convergence]
+	If $ 0< \mu I \leq \nabla ^2 f(x) \leq L \cdot I$, then BFGS converges and usually superlinearly.
+\end{thm}
+
+Open question: if $ f$ is non-convex, does BFGS converge to a stationary point?
+
+\begin{remark}
+If $ m = 0$ "memoryless" BFGs plus exact linesearch yields nonlinear CG.
+\end{remark}
+
+\begin{remark}
+What if we have constraints? Recall that for gradient descent we can do proximal/projected gradient descent. That is,
+\[
+	x_{k+1}= \Proj(x_k - t \cdot \nabla f(x_k))
+.\] 
+Can we do the same thing for any quasi-Newton method? 
+\[
+	x_{k+1} = \Proj_{B_k} (x_k - B_k^{-1} \nabla f_k)
+.\] 
+This is usually not feasible since the scaled projection is hard to compute.
+\end{remark}
+\newpage
+\subsection{Newton's methods}
+Let $ \Delta x = \nabla ^2 f(x_k) ^{-1} \nabla f(x_k)$.
+\begin{enumerate}[label=(\arabic*)]
+	\item computational: "inexact-Newton", "matrix-free", "truncated-Newton", or "Newton-CG" mean approximate $ \Delta x$. That is, we wish to solve
+		\begin{align*}
+			\nabla ^2 f(x_k) \cdot \Delta x = \nabla f(x_k)
+		\end{align*}
+		We can solve this with linear CG with only a few steps (adaptive). We can use preconditioners such as incomplete Cholesky or BFGS. 
+
+		Often Hessian is structured and we can exploit that in computing the Hessian-gradient product.
+	\item convergence:
+
+		In practice, we use a linesearch or even better a trust-region to "globalize". We wish to avoid bad saddle points.
+
+		For trust-region, we minimize a quadratic model.
+\end{enumerate}
+\end{document}

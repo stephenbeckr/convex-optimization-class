@@ -1,0 +1,90 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\newpage
+\subsection{Calculus}
+
+\begin{remark}
+Calculus is a set of rules we can use to calculate.
+\end{remark}
+
+One such rule is that derivatives/gradients are linear.
+
+Is it true that $ \partial (f+g) = \partial f+\partial g$, where $ +$ is the Minkowski sum? No! Although it's often true.
+
+\begin{eg}
+$ f=I_C, g= I_D \in \rr^{2}$. 
+~\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{./figures/counter_linear.png}
+\end{figure}
+
+Then $ \partial (f+g)(x) = \partial f(x) \partial g(x)$ for all $ x$ except at  $ x=0$. At  $ x=0$, recall that 
+ \begin{align*}
+	 \partial f(0) = N_C(0) &= \rr_{+} \times \{0\} \\
+	 \partial g(0) = N_D(0) &= \rr_{-} \times \{0\} 
+\end{align*}
+So $ \partial f(0) + \partial g(0) = \rr \times \{0\} $ 
+But
+\begin{align*}
+	\partial (f+g) (0) &= N_{C \cap D}(0) \qquad \qquad \qquad  \text{ by def of indicator} \\
+	&= N_{0} \\
+	&= \{d: \langle d,y-0 \rangle \leq 0 \ \forall \ y \in \{0\} \} \quad  \text{ vacuous constraint} \\
+	&= \rr^2 
+\end{align*}
+We can see this counterexample is somewhat contrived, so linearity is often true.
+\end{eg}
+
+\begin{remark}
+	Sufficient conditions to guarantee when this linearity is true are called \allbold{constraint qualifications (CQ)}.
+\end{remark}
+\begin{coro}[16.48 (iv) BC17]
+	If $ f,g \in \Gamma_0(\mathcal{H})$, and $\mathcal{H} = \rr^{n} $, and one of the following holds:
+	\begin{enumerate}[label=(\roman*)]
+		\item $ \ri(\dom(f)) \cap \ri(\dom(g)) \neq \O $.
+		\item $ \\dom(f) \cap \inte (\dom(g)) \neq \O$.
+		\item either $ f$ or  $ g$ has full domain (all of $ \rr^{n}$).
+	\end{enumerate}
+\end{coro}
+\begin{note}
+	(iii) is most commonly used.
+\end{note}
+Since the previous example didn't satisfy a CQ, the linearity didn't hold. That is, $ \dom f = C, \dom g =D, \inte C \cap \inte D = \O$.
+\begin{remark}
+There are other cones including \allbold{tangent, polar, recession/asymptotic, and barrier cones}. 
+\end{remark}
+\newpage
+\subsection{Lipschitz gradient}
+An easier way to show $ F$ is Lipschitz-continuous: if $ F'$ exists, then  $ |\norm{ F'}| \leq L \implies F$ is Lipschitz continuous (by the definition of derivative/Jacobian and some manipulation).
+\begin{notation}
+	$ |\norm{ \cdot } |$ denotes the appropriate operator norm, usually spectral norm if the original norm is Euclidean.
+\end{notation}
+
+\begin{remark}
+	In optimization, "Jacobian" is often confusing, since it's unclear what $ F$ is. Of the objective function or of the gradient? Instead we prefer to say the Jacobian of the objective is the gradient (transposed). The Jacobian of the gradient is the Hessian.
+\end{remark}
+\begin{remark}
+	The Hessian can be thought of as a bilinear operator $ \langle d, \nabla ^2 f(x) d \rangle$
+\end{remark}
+
+\begin{thm}
+	Suppose convex $ f \in \mathcal{ C}^2(U)$ for some open set $ U \subseteq \rr^{n}$, then
+	\[
+		\nabla f \text{ is $L$-Lipschitz continuous on } U \iff \ \forall \ x \in U, \nabla ^2 f(x) \preceq L I 
+	.\] 
+	That is, all eigenvalues of $ \nabla ^2f(x) \leq L \implies |\norm{ \nabla ^2 f(x)} | \leq L$.
+\end{thm}
+\begin{thm}
+Same setup, then 
+
+$ f$ is  $ \mu$-strongly convex on $ U \iff \ \forall \ x \in U, \mu I \preceq \nabla ^2 f(x)$.
+\end{thm}
+\begin{note}
+We assume $ \mu>0$ since $ \mu=0$ would give us plain old convexity.
+\end{note}
+\begin{remark}
+	One of our common assumption will be $ \nabla f$ is $L$-Lipschitz continuous ($ \nabla ^2 f \preceq LI$) and a bit less common, also assume strong convexity ($ uI \preceq \nabla ^2 f$).
+\end{remark}
+
+\end{document}

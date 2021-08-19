@@ -1,0 +1,91 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+
+\subsection{Minimizers}
+
+We are given a generic problem $ \min_{x \in C} f(x), C \subseteq \rr^{n}$. Then a \allbold{feasible point} $ x$ means  $ x \in C$. A \allbold{solution} or \allbold{minimizer} or \allbold{global minimizer}  $ x^* $ means
+\begin{enumerate}[label=\arabic*)]
+	\item $ x^* \in C$
+	\item $ \ \forall \ y \in C, f(x^* )\leq f(y)$
+\end{enumerate}
+It might not be unique, \emph{i.e.} $ x^* \in \arg \min_{x \in C} f(x)$.
+\begin{eg}
+\[
+	\min_{x \in \rr} f(x) \text{ where } f(x)=0 \ \forall \ x 
+.\] 
+
+\end{eg}
+Sometimes the solution may not exist (even for convex problems).
+\begin{eg}
+\[
+	\min_{ x \in (0,1)} x^2 
+.\] 
+\end{eg}
+
+$ x^* $ is a \allbold{local minimizer} if $ x^* $ is feasible and there exists an $ \epsilon>0$ s.t. $ f(x^* )\leq f(y)$ $ \ \forall \ y \in C \cap B_{ \epsilon} ( x^*  ) \coloneqq \{y: \norm{ y-x^* } \} < \epsilon$ . A \allbold{strict local minimizer} simply doesn't achieve equality. $ x^* $ is an \allbold{isolated local minimum} if it is a local minimum and no other local minimum are nearby. Notice that isolated implies strict but the converse is false.
+
+\begin{eg}[strict but not isolated]
+\begin{equation*}
+	f(x)=
+\begin{cases}
+	x^{4} \cos \left( \frac{1}{x} \right) +2x^{4} & x\neq 0\\
+	0 & x=0\\
+\end{cases}
+\end{equation*}
+$ x^* =0 $ is strict but not isolated due to the rapid oscillation near $ x=0$.
+\end{eg}
+
+\begin{notation}
+	$ f \in \mathcal{ C}^3$ means $f,f',f'',f''' $ all exist and are continuous. $ f \in \mathcal{ C}^3( \rr^{n})$ means $ f, \nabla f, \nabla^2 f, \nabla^3 f$ all exists and are continuous.
+\end{notation}
+
+\subsubsection{Connections with Calculus 1}
+Recall that in Cal 1, we first find the stationary/critical points in the domain. Then we add the boundary points and minimize over the small (finite) set of candidates.
+
+In high-dimension optimization, we cannot check critical points and the boundary separately because the set of points in the boundary becomes infinite. Moreover, there can be infinite critical points too.
+
+Necessary condition: if $ x^* $ is a local or global minimizer and $ C = \rr^{n}$, then $ x^* $ is a \allbold{critical point}. But the converse is false.
+
+\begin{notation}
+	The boundary of $ C$ is denoted as  $ \partial C \coloneqq \overline{C} \setminus \inte C$.
+\end{notation}
+
+If $ x^* $ is a critical point but is not a local or global minimizer, then it's a \allbold{saddle point}.
+
+\begin{thm}[Weierstrass]
+If $ f$ is continuous and  $ C$ is compact, then  $ f$ achieves its infimum over  $ C$. That is,
+ \[
+	 \inf_{x \in C} f(x) = \min_{x \in C} f(x)
+.\] 
+\end{thm}
+\begin{note}
+This is pretty much the same as the Extreme Value Theorem.
+\end{note}
+
+\begin{proof}
+	First let's prove a claim.
+	\begin{claim}
+		Every compact set $ K$ is closed and bounded. 
+	\end{claim}
+
+	Closed: suppose not, the compact set $ K$ doesn't contain all its limit points. That is, there exists a limit point $ x \not\in K$ s.t. a sequence  $ (x_n) \subseteq K$ converges to $ x$. But that also means that all subsequences of $ (x_n)$ converges to $ x \not\in K$ as well, contradicting with the definition of compactness that for every sequence in $ K$ there exists a subsequence that converges inside $ K$. 
+
+	Bounded: suppose not, for all $ M > 0$, there exists a  $ x \in K$ s.t. $ \norm{ x} > M $. This allows us to find a sequence $ (x_n) \subseteq K$ s.t. $ x_n > n$. This way every subsequence is also unbounded and cannot converge, contradicting with the definition of sequential compactness.
+	
+	Now let's begin proof proper. Since $ C$ is compact and  $ f$ is continuous, the image of  $ C$ under  $ f$,  $ f(C)$, is also compact (this follows from sequential definition of continuity). By the claim $f(C) $ is bounded and closed, meaning that it has an infimum (completeness axiom) and contains the infimum (closed). Thus, $ f$ achieves its infimum over $ C$.
+\end{proof}
+\begin{remark}
+It would be nice if our constraints $ C$ are compact. But at the very least, we want our constraint sets to be closed. For example,  $ \norm{ Ax -b} \leq \epsilon $ instead of $ \norm{ Ax -b} < \epsilon $.
+\end{remark}
+
+Several things to note about the feasible set $ C$:
+
+If $ C = \O$, the problem is infeasible. This is not always easy to spot.
+
+In this class, $ C$ will usually be convex and not integral,  \emph{i.e.} $ \zz^{n}$.
+
+Integral constraint is problematic because the optimal integer solution might not be at all close to the optimal real solution, so we cannot obtain it by solving for the real solution first and then round it.
+
+\end{document}

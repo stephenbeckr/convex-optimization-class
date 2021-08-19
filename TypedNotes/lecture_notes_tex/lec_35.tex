@@ -1,0 +1,135 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\subsection{by hand}
+\subsubsection{implicit differentiation}
+
+$ F(x,y) = 0$ often implicitly defines a function  $ y = f(x)$. Find  $ dy /dx$.
+
+ $ F = 0 \implies dF / dx =  d0 / dx =0$. Thus,
+ \begin{align*}
+ 	0=\frac{d F}{d x} &= \frac{\partial F}{\partial x} \frac{d x}{d x} + \frac{\partial F}{\partial y} \frac{d y}{d x}  \\
+	0&= \frac{\partial F}{\partial x} + \frac{\partial F}{\partial y} \frac{dy}{dx} \\
+	\frac{d y}{d x} &= - \frac{ \frac{\partial F}{\partial x} }{ \frac{\partial F}{\partial y} }
+ \end{align*}
+
+\subsubsection{matrix variables}
+See BV04, or A Matrix Handbook for Statisticians Seber 08, or Matrix Cookbook, for examples.
+\begin{eg}
+\begin{align*}
+	\nabla (\log \det (X)) = X^{-1}, X \succ 0
+\end{align*}
+\end{eg}
+\subsubsection{parametric functions}
+See notes for details.
+\begin{align*}
+	f(x) = \max_{z \in Z} \phi(x,z)
+\end{align*}
+\begin{thm}[Danskin]
+	Suppose $ Z$ compact,  $ \phi$ jointly continuous and $ \phi( \cdot ,z)$ convex. Define
+	\begin{align*}
+		Z(x) = \argmax_{z \in Z} \phi(x,z).
+	\end{align*}
+	Then
+	\begin{enumerate}[label=(\arabic*)]
+		\item The directional derivative $ D_d$ satisfies
+			 \begin{align*}
+				 D_d f(x) = \max_{z \in Z(x)} D_d \phi(x,z)
+			\end{align*}
+		\item If $ \phi( \cdot ,z)$ is differentiable, $ \nabla _x \phi$ is continuous, then
+			\begin{align*}
+				\partial f(x) = \conv \{\nabla _x \phi(x,z): z \in Z(x)\} 
+			\end{align*}
+			and $ Z(x)$ a singleton  $ \implies$ $ f$ is differentiable.
+	\end{enumerate}
+\end{thm}
+\begin{note}
+This theorem doesn't apply to the discrete case.
+\end{note}
+\begin{thm}[Dubovitskii and Milyutin]
+	If $ |Z|$ is finite,  $ \phi( \cdot ,z)$ is convex $ \ \forall \ z \in Z$, then
+	\begin{align*}
+		\partial f = \conv \left\{ \bigcup_{ z \in Z(x)} \partial \phi(x,z) \right\} 
+	\end{align*}
+\end{thm}
+\begin{eg}
+	$ f(x) = |x| = \max \{x,-x\} $. Then $ \partial f(0) = \conv \{1,-1\} = [-1,1] $.
+\end{eg}
+
+\begin{align*}
+	f(x) = \min_{z \in Z} \phi(x,z)
+\end{align*}
+\begin{thm}
+Under the same conditions,
+\begin{align*}
+	\partial f(x) = \partial \phi(x,z) \ \forall \ z \in Z(x)
+\end{align*}
+\end{thm}
+
+\begin{align*}
+	f(x) = \int \phi(x,z) dz
+\end{align*}
+\begin{thm}
+Sometimes,
+\begin{align*}
+	f'(x) = \int \frac{d}{dx} \phi(x,z) dz 
+\end{align*}
+\end{thm}
+\subsection{Adjoint state method}
+\begin{enumerate}[label=(\arabic*)]
+	\item implicit differentiation and careful parentheses.
+		\begin{align*}
+			\min_{p} g(u(p),p)\ s.t.\ f(u(p),p) = 0, u \in \mathcal{ H}
+		\end{align*}
+		\begin{eg}
+			$ u_{tt} = c^2(x) u_{x x}$. Let $p= c^2(x)$, \emph{e.g.} varying speed of sound. Or $ p$ could be other parameters like ICs and BCs. Applications in inverses problems such as oil detection. This is often called ``PDE-constrained optimization problem''.
+			To solve this, we ignore the constraint first. Then we wish to solve $ dg /dp$.
+		\end{eg}
+		\begin{eg}
+		\begin{align*}
+			\min g(u,p) &\ s.t.\ A u = b, A= V \text{ diag}  (p) V^{T}, p \in \rr^{n}, u \in \rr^{m}, A \in \rr^{m} \times \rr^{m}\\
+			g(u,p) &= \frac{1}{2} \sum_i (u_i - y_i)^2 + \frac{1}{2} \norm{ p}^2 \\
+		\end{align*}
+		\end{eg}
+		\begin{eg}
+			Let $ \mathcal{ H} = \rr^{m}$. $ f(u,p) = A(p) \cdot  u -b(p)=0$, linear in $ u$, so $ u(p) = A(p)^{-1} b(p)$. The goal is to find
+			\begin{align*}
+				(\nabla _p g)^{T} &= g_p + g_u u_p \\
+				0=f_p &= A_p u + Au_p -b_p \\
+				u_p &= A^{-1}(b_p - A_p u)\\
+				(\nabla _p g)^{T} &= g_p + g_u (A^{-1}(b_p - A_p u))\\
+						  &= g_p + (g_u A^{-1})(b_p - A_p u) \\
+			\end{align*}
+			Let $ \lambda^* = g_u A^{-1} \implies \lambda = A^{-*} g_u^* $, then we have the adjoint-state equation
+			\begin{align*}
+				A^* \lambda = g_u^* 
+			\end{align*}
+			Now by clever grouping we are only solving one RHS instead of $ n$ RHS.
+		\end{eg}
+	\item adjoints of (bounded/unbounded) linear operators.
+		What about adjoints if $ | \mathcal{ H}| = \infty$?
+		\begin{eg}
+			Let $ L : \mathcal{ H} \to \mathcal{ H}$, $ \mathcal{ H} = L^2[0,T]$:
+		\begin{align*}
+			L(u) = 3u'+4u,u(0)=0, t \in [0,T].
+		\end{align*}
+		Let $ f(u,p) = L(u) -h(t)$. To get the formal adjoint (adjoint doesnt exists since $ L$ doesn't have full domain),
+		 \begin{align*}
+			 \int_0^T (3u'+4u) v dt &= 3\int u'vdt + 4\int uv dt\\
+			 \int u(-3v'+ 4v) dt&= 3uv\big|_0^T - 3\int uv' dt + 4 \int uv dt && \text{ set }  v(T)=0
+		\end{align*}
+		Thus,
+		\begin{align*}
+			L^* (v) = -3v'+4v, v(T)=0, L^* (v) = h
+		\end{align*}
+		\end{eg}
+		\begin{remark}
+		~\begin{enumerate}[label=(\arabic*)]
+			\item doesn't require linear PDE's
+			\item not always a good idea: memory issues, consistency from the order of applying discretization or optimization
+			\item software: Dolfin-Adjoint, FEnICS
+		\end{enumerate}
+		\end{remark}
+\end{enumerate}
+\end{document}

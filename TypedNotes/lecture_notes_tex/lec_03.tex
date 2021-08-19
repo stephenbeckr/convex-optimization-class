@@ -1,0 +1,247 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+
+\subsection{Convexity}
+\begin{note}
+	From now on we always assume the constraint set $ C$ is a subset of a vector space.
+\end{note}
+\begin{defn}[convex set]
+	A set $ C$ is  \allbold{convex} if for all $ x,y \in C$ and for all $ t \in [0,1]$, then
+	\[
+		tx + (1-t)y \in C
+	.\] 
+\end{defn}
+
+~\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{./figures/cvx_set.jpg}
+\end{figure}
+~\begin{defn}[convex function]
+	$ f : \rr^{n} \to \rr$ is a \allbold{convex function} if for all $ x,y \in \rr^{n}$ and $ t \in [0,1]$, then
+	\[
+		f(t x+ (1-t)y) \leq t f(x) + (1-t) f(y)
+	.\] 
+\end{defn}
+~\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{./figures/cvx_fcn.jpg}
+\end{figure}
+
+\begin{remark}
+Linear or affine functions are both convex and concave.
+\end{remark}
+
+Recall that a \allbold{graph} of a function is just the set of points we use to plot a function (now generalized to functions with domain of any dimension).
+
+\begin{defn}[epigraph]
+\[
+	\epi(f) = \{(x,s): x \in \rr^{n}, s \in \rr, s\geq f(x)\}  
+.\] 
+\end{defn}
+\begin{intuition}
+The epigraph of $ f$ is sort of the "upper" partition of the vector space that the graph of $ f$ resides and partitions. We use epigraph to bridge the concepts of convex sets and convex functions.
+\end{intuition}
+
+~\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{./figures/epi.jpg}
+\end{figure}
+
+\begin{prop}
+	A function $ f$ is convex if and only if  the set $ \epi(f)$ is convex.
+\end{prop}
+
+\begin{thm}
+	If $ f$ is convex and  $ C$ is convex, then any local minimizer of  $ \min_{x \in C } f(x)$ is in fact global. The set of global solutions is also convex and in particular connected.
+\end{thm}
+This is very neat for optimization!
+\begin{proof}
+	Given a local minimizer $ x^* \in C$, let's show that it is a global minimizer. Suppose not, that is, there exists a point $ x \in C $ s.t. $ f(x) < f(x^* )$. Since $ x^* $ is a local minimizer, there exists an $ \epsilon>0$ s.t. $ f(x^* ) \leq f(y)$ for all $ y \in C$ s.t. $\norm{ y -x^* }< \epsilon $. Clearly $ \norm{ x^* -x} \geq \epsilon$ or $ x^* $ would not be a local minimizer. Choose $ t < \frac{ \epsilon}{ \norm{ x^* -x } } \in [0,1]$. Since $ C$ is convex, we know that the point $ x_0 = t x + (1-t)x^*  \in C$. Notice that
+\begin{align*}
+	\norm{ x^* -x_0} &=\norm{ x^* - (t x+ ( 1-t) x^* )  }\\
+			 &= \norm{ t (x^* - x) }  \\
+					 &= t \norm{ x^* -x}   \\
+					 &< t \cdot \frac{ \epsilon}{ t } \\
+					 &= \epsilon 
+\end{align*}
+That is, $ x_0$ in the $ \epsilon$-neighborhood of $ x^* $ and it follows that $ f(x^* ) \leq f(x_0)$. 
+	Since $ f$ is convex,
+	\begin{align*}
+		f(x_0) &= f(t x + (1-t) x^* ) \\
+		       &\leq t f(x) + (1-t) f(x^* )\\
+		       &< tf(x^* ) + (1-t) f(x^* )\\
+		       &= f(x^* )
+	\end{align*}
+	This contradicts with the fact that $ f(x^* ) \leq f(x_0)$. Hence we prove that any local minimizer $ x^* $ must also be a global minimizer.
+
+	To show that the set of global minimizers is connected, it suffices to prove that it is path-connected. The path we check is of course the line segment in the definition of convex set:
+\[
+	g(t) = t a + (1-t) b, \qquad a, b \in \argmin_{x \in C} f(x)
+.\] 
+It's easy to see that $ f(g(t)) \leq tf(a)+(1-t)f(b) = \min_{x \in C} f(x)$ for all $ t \in [0,1]$. It follows that $ f(g(t))$ must equal to the global minimum for all $ t \in [0,1]$. This makes $ g(t) \in \argmin_{x \in C} f(x) \ \forall \ t \in [0,1]$. Thus, the continuous function $ g(t)$ is the path we seek. Since $ a,b$ are arbitrary global minimizers, we kill two birds in one stone and show that the set of global minimizers is 1. convex and 2. path-connected and therefore connected.
+\end{proof}
+\newpage
+
+\section{Convex Sets [BV04 Ch.2] }
+\subsection{Convex, affine, and cone}
+~\begin{defn}
+	Let $ x,y \in \rr^{n}$ (or any vector space), then
+	\begin{enumerate}[label=\arabic*)]
+		\item $ tx + (1-t)y, t \in [0,1]$ is a \allbold{convex combination} (of $ x,y$).
+		\item $ t x+(1-t)y, t \in \rr$ is a \allbold{linear combination}.
+		\item $ t x + sy, t,s \geq 0$ is a  \allbold{(convex) conic combination}. 
+	\end{enumerate}
+\end{defn}
+
+\begin{defn}
+A set $ C \subseteq \rr^{n}$ is
+\begin{enumerate}[label=\arabic*)]
+	\item \allbold{convex} if for all $ x,y \in C$, it contains all convex combinations of $ x,y$.
+	\item  \allbold{affine} if for all $ x,y \in C$, it contains all linear combinations of $ x,y$.
+	\item a  \allbold{cone} if for all $ x \in C$, it contains all conic combinations of $ x$.
+	\item a  \allbold{convex cone} if it's convex and a cone. That is, for all $ x,y \in C, t,x\geq 0$, $ tx + sy \in C$. 
+\end{enumerate}
+\end{defn}
+\begin{note}
+Affine implies convex based on definition.
+\end{note}
+
+\begin{remark}
+	An affine set/subspace is like a subspace except it is possible shifted (may not include 0). Think inhomogenous equation from differential equations. It's also analogous to cosets.
+\end{remark}
+
+Recall from analysis, the \allbold{closure} of $ A$, $ \overline{A}$, is the union of $ A$ and all its limit points. We can also characterize $ \overline{A}$ as the smallest closed set containing $ A$ or equivalently the intersection of all closed sets containing $ A$. We can do something similar here.
+
+\begin{defn}[affine hull]
+	 The \allbold{affine hull} of $ C$,  $ \aff(C)$, is the smallest affine set containing  $ C$.\end{defn}
+	 The \allbold{affine dimension} of $ C$ is  $ \dim(\aff (C))$. For example, although the unit circle in $ \rr^{2}$ has dimension 1, its affine hull is all of $ \rr^2$ so its affine dimension is 2.
+
+\begin{defn}[convex hull]
+	The \allbold{convex hull} of $ C$,  $ \conv(C)$, is the smallest convex set containing  $ C$. It is equivalent to the set of all convex combinations of points in $ C$:
+	 \[
+	 \left\{\sum_{ i= 1}^{ k} t_i x_i: x_i \in C, t_i \geq 0, \sum_{ i= 1}^{ k} t_i = 1 \right\} 
+	 .\] 
+
+\end{defn}
+\begin{intuition}
+	Given an arbitrary set $ C$, we wrap a rubber band around it and the region enclosed by the rubber band is $ \conv(C)$.
+\end{intuition}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.4\textwidth]{./figures/cvx_hull.png}
+\end{figure}
+
+\begin{defn}[conic hull]
+The \allbold{conic hull} of $ C$ is the set of all conic combinations of points in  $ C$. That is,
+	 \[
+	 \left\{\sum_{ i= 1}^{ k} t_i x_i: x_i \in C, t_i \geq 0 \right\} 
+	 .\]
+	 It is the smallest convex cone that contains $ C$.
+\end{defn}
+\begin{defn}[relative interior]
+	The \allbold{relative interior} of a set $ C$ is the set
+	\[ \ri(C) = \{x \in C: \ \exists \ \epsilon>0 , B_{ \epsilon} ( x ) \cap \aff(C) \subseteq C\} \]
+\end{defn}
+
+\begin{note}
+This is really useful for studying symmetric matrices. 
+\end{note}
+
+\begin{eg}
+	Let $ C = [0,1] \subseteq \rr$, then $ \inte (C) = \ri(C) = (0,1)$.
+
+	However, if $ C = [0,1] \times \{0\} $ which has the same shape but is a embedding in $ \rr^2$, then $ \inte (C) = \O$ because for every $ x \in C$, $ B_{ \epsilon} ( x )$ goes outside $ C$ along the second dimension. But $ \ri (C) = (0,1)$ because  $ \aff(C) = \rr \times \{0\} \cong \rr $.
+\end{eg}
+
+\subsection{Important examples}
+~\begin{defn}[hyperplane]
+	For $  a \in \rr^{n}, b \in \rr$, the \allbold{hyperplane} would be the affine, $ n-1$ dimensional set
+ \[
+\{x \in \rr^{n}: a^{T} x =b\} 
+.\] 
+Alternatively,
+\[
+	\{x \in \rr^{n}: a^{T} (x - x_0) =0\} 
+.\] 
+\end{defn}
+\begin{note}
+Hyperplanes are convex and affine with $ n-1$ dimension. In 2D, it's a line. In 3D it's an actual plane. Also recall from cal 3 that $ a$ is the normal vector of the hyperplane.
+\end{note}
+
+\begin{defn}[half-space]
+A hyperplane partition $ \rr^{n}$ into two \allbold{half-spaces}. They have the form 
+\[
+	\{x \in \rr^{n}: a^{T} x \leq b\}
+.\] 
+\end{defn}
+\begin{note}
+Half spaces are convex but not affine.
+\end{note}
+\begin{defn}[Euclidean ball]
+Open ball: $ B_{ \epsilon} ( x ) = \{y \in \rr^{n}: \norm{ y-x} < \epsilon\} $.
+
+Closed ball: $ \overline{ B_{ \epsilon} } (x) = \{ y \in \rr^{n}, \norm{ y- x} \leq \epsilon\} $.
+\end{defn}
+\begin{note}
+Balls are convex but not affine.
+\end{note}
+\newpage
+\begin{defn}[ellipsoid]
+	An \allbold{ellipsoid} has the form 
+\[
+	\mathcal{ E} = \{x: (x-x_0)^{T} P^{-1} (x-x_0) \leq 1\} 
+\]
+for some matrix $ P \succ 0$.
+\end{defn}
+\begin{notation}
+	$A \succ 0$ in this course means $ A$ is symmetric and positive definite. 
+\end{notation}
+\begin{note}
+Ellipsoid, like ball, is convex but not affine. If we choose $ P = \epsilon^2 I$, then we get an $ \epsilon$-ball.
+\end{note}
+\begin{intuition}
+	This is a generalization of Cal 3 ellipsoid using quadratic form. Recall that the $P^{-1}$ in the middle of $ x^{T} x$ is giving us a \emph{weighted} sum. Since $ y^{T} y = \norm{ y}^2  \leq 1$ is a unit ball, a weighted norm would help us transform an ellipsoid into the unit ball. We use the inverse of $ P$ in the definition because the image of this quadratic form is sort of a unit ball, but we are more interested in knowing how to go from the unit ball to the ellipsoid, and $ P$ encodes this transformation.  Also since $ P \succ 0$, using Spectral Theorem we can find the principle axises and length of the ellipsoid.
+\end{intuition}
+
+
+\begin{eg}[cones]
+	~\begin{itemize}
+		\item positive orthant in $ \rr^{n}$, \emph{e.g.} first quadrant in $ \rr^2$.
+
+			$ \rr^{n}_+ = \{x \in \rr^{n}: x_i \geq 0\} $ is a cone.
+
+			However, $ \rr^{n}_{++} = \{x \in \rr^{n}: x_i >0\} $ is not a cone as a cone must include the additive identity 0 to be closed under non-negative scalar multiplication.
+		\item Lorentz cone/2nd order cone/"ice cream cone"
+			\[
+				C= \{(x,t) \in \rr^{n+1}, x \in \rr^{n}, t \in \rr: \norm{ x}_2 \leq t   \} 
+			.\]
+		\item the set of positive semidefinite matrices (PSD): this is the most important nonployhedral cone. We assume PSDs are Hermitian and are denoted by $A \succeq 0$.
+			\begin{notation}
+				$ \mathbb{S}^n$ denotes the set of symmetric  $ n\times n$ matrices. Similar to the reals, we use $ \mathbb{S}_+^n$ to denote the set of symmetric positive semidefinite matrices. 
+			\end{notation}
+	\end{itemize}
+\end{eg}
+
+\begin{defn}[polyhedron]
+	A \allbold{polyhedron} $ \mathcal{ P} \subseteq \rr^{n}$ is a set of the intersection of a \emph{finite} number of half-spaces and hyperplanes. That is,
+	\[
+	\mathcal{ P} = \{x \in \rr^{n}: a_j^{T} x \leq b_j, j=1,\ldots,m; c_j^{T}x= d_j, j=1,\ldots,p\} 
+	.\] 
+\end{defn}
+
+\begin{note}
+	Intersection of infinite number of half-spaces and hyperplanes are not necessarily a polyhedron (in the intuitive sense) because it can "smooth out" the edges and turn it into for example a ball, such as
+\[
+	\overline{B_{ 1}} (  0) = \{x \in \rr^{n}: a_j^{T} x \leq 1, a_j \in \text{ unit circle} \} 
+.\] 
+\end{note}
+\begin{note}
+	Polyhedra are always convex since it's finite intersection of convex sets.
+\end{note}
+
+\begin{note}
+The terms "polygon", "polyhedron", and "polytope" will be used interchangeably in this course.
+\end{note}
+\end{document}

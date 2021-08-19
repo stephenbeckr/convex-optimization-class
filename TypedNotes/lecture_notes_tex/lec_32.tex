@@ -1,0 +1,102 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\subsection{Augmented Lagrangian}
+
+Assume we only have equality constraints.
+\begin{align*}
+	(P) \qquad \qquad \min\quad &f_0(x) \\
+&h_i(x) = 0 , i = 1,\ldots,p
+\end{align*}
+
+If I knew optimal Lagrange multipliers, then 
+\begin{align*}
+	x^* \in \argmin_x \mathscr{L}(x, \nu^* ) \impliedby f_0(x) + \sum_i \nu_i^* h_i(x)
+\end{align*}
+and turn this into an unconstrained problem. We can try searching for $  \nu^* $:
+\begin{align*}
+	g(\nu) &= \min_{x} \mathscr{L}(x,\nu)
+\end{align*}
+and we try to maximize $ g(\nu)$/dual ascent. We can use gradient ascent: 
+\begin{align*}
+	\nu_{k+1} = \nu_k + \eta_k \cdot \nabla g(\nu_k)
+\end{align*}
+\begin{prop}
+	If $ g(\nu) = \inf_x \mathscr{L}(x,\nu)$ and $ x_{\nu} = \argmin \mathscr{L}(x,\nu)$ is a single point under some reasonable conditions,
+	\begin{align*}
+		\nabla g(\nu) = \nabla _\nu \mathscr{L}(x_{\nu}, \nu)
+	\end{align*}
+\end{prop}
+
+However, this problem might not have a minimizer unless $ \nu$ is optimal (can go to negative infinity \emph{e.g.} linear objective). Then there is no gradient. Augmented Lagrangian aims to fix this. The problem becomes:
+
+\begin{align*}
+	(P_{\mu}) \qquad \qquad \min\quad &f_0(x) + \frac{\mu}{2} \sum_{ i= 1}^{ m} h_i^2(x) \\
+\text{ subject to}\quad  &h_i(x) = 0
+\end{align*}
+$ (P_{\mu})$ is equivalent to $ (P)$, since the squared terms cannot make the objective smaller. Then the dual ascent becomes
+ \begin{align*}
+	 \max g(\nu)\\
+	 g(\nu) &= \min_{x} \mathscr{L}_{\mu}(x,\nu) =\min_x f_0(x) + \sum_i \nu_i h_i(x) + \frac{\mu}{2} \sum_i h_i^2(x)
+\end{align*}
+The quadratic penalty term regularizes this objective so it won't go to negative infinity. Then the algorithm becomes
+\begin{align*}
+	\text{ principle update: }& x_k \in \argmin_{x} \mathscr{L}_{\mu} (x, \nu_k) \\
+	\text{ dual update: }& \nu_{k+1} = \nu_k + \mu h_i(x_k) && \text{ gradient ascent} 
+\end{align*}
+In practice we often provide $ \mu$ heuristically.
+
+Notice that this is adding a regularization term to the gradient ascent, or we can understand it as adding a linear term and thus not requiring $ \mu$ to go to infinity as the penalty method, which fixes the ill-conditioned problem of penalty method. The convergence result is however fairly weak.
+
+What if we add inequality constraints? We have some tricks and we only mention one here:
+\begin{enumerate}[label=(\arabic*)]
+	\item slack variables: $ f_i(x) \leq 0 \iff f_i(x) + s_i=0 , s_i\geq 0$ and we keep the simpler inequality constraint implicit in the domain (hard constraints). Then we hope the solver can solve it.
+\end{enumerate}
+See the rest in Nocedal and Wright. LANCELOT is a software that uses this.
+
+\subsubsection{SQP}
+Sequential quadratic programming, \emph{i.e.} fancy Newton. Packages use this are SNOPT, KNITRO, LANCELOT, TRON.
+
+Again let's first consider only equality constraints:
+\begin{align*}
+\min\quad &f_0(x) \\
+			 &H(x) = 0
+\end{align*}
+The Lagrangian is
+\begin{align*}
+	\mathscr{L}(x,\nu) = f_0(x) + \nu^{T} H(x)
+\end{align*}
+Let's list the KKT conditions:
+\begin{enumerate}[label=(\arabic*)]
+	\item stationarity: 
+		\begin{align*}
+			0 = \nabla _x \mathscr{L} &= \nabla f_0(x) + \mathbf{J}(x) \nu
+		\end{align*}
+		where $ \mathbf{J}(x)$ is the Jacobian of  $ H(x)$.
+	\item primal feasibility: $ H(x) = 0$.
+\end{enumerate}
+There are no complementary slackness or dual feasibility conditions since $ \lambda$ doesn't exist.
+
+So we have two vector equations and we can just stack them together as one vector equation $ F(x,\nu) = 0$ and treat it as a root-finding problem using Newton's method.
+
+\begin{align*}
+	\begin{pmatrix} x_{k+1}\\ \nu_{k+1} \end{pmatrix} = \begin{pmatrix} x_k\\ \nu_k \end{pmatrix} + \left( F'(x_k,\nu_k) \right) ^{-1} F(x_k,\nu_k)
+\end{align*}
+where
+\begin{align*}
+	F'(x,\nu) = \begin{pmatrix} \nabla _{x x}^2 \mathscr{L}& \mathbf{J}(x)\\ \mathbf{J}(x)^{T}&0 \end{pmatrix} 
+\end{align*}
+Let $ p = x_{k+1} - x_k$, then the problem becomes
+\begin{align*}
+	(QP) \qquad \qquad 	\min \quad & f_k + \langle \nabla f_k, p \rangle + \frac{1}{2} \langle p|\nabla _{x x}^2 \mathscr{L}|p\rangle\\
+	\text{ subject to} \quad & \mathbf{J}(x_k) p + H(x_k) = 0 
+\end{align*}
+
+This is a primal-dual Newton method. We can also add in inequality constraints and solve it via Quadratic Programming. We can add in tricks:
+\begin{enumerate}[label=(\arabic*)]
+	\item active- sets
+	\item line search or trust region
+\end{enumerate}
+
+\end{document}

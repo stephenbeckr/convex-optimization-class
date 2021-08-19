@@ -1,0 +1,42 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\subsubsection{Linear matrix inequalities (LMI): dual problem of SDPs}
+\begin{align*}
+\min_{x \in \rr^{n}}\ & \langle c,x \rangle \\
+\text{subject to } &\sum_{ i= 1}^{ m} x_i F_i + G \preceq 0, i = 1,\ldots,m, F_i, G \in S^{k} \\
+& Ax=b
+\end{align*}
+\begin{note}
+	$ \sum_{ i= 1}^{ m} x_i F_i$ is like $ A^* y = \sum_{ i= 1}^{ m} y_i \ve{a}_i$ in the case when $ Ax=b \implies \ve{a}_i^{T}x=b$.
+\end{note}
+
+\begin{remark}
+We can recover linear programs by letting $ F_i,G$ be diagonal matrices.
+\end{remark}
+
+\begin{remark}
+We can also recover SOCP's, details ommitted. Let $ A \in S_{++}^{r}, C \in S^{s}, B \in \rr^{r \times s}$. Then
+\[
+	\begin{pmatrix} A&B\\B^{T}&C \end{pmatrix} \succeq 0 \iff \underbrace{ C-B^{T}A^{-1}B}_{ \text{ Schur complement} } \succeq 0
+.\]
+Schur complement might be computationally cheaper especially for example when $ C =0$.
+\end{remark}
+
+Let $ K_1, K_2$ be proper cones, then $ K_1 \times K_2$ is also a proper cone.
+\begin{eg}
+$ X \succeq 0, Y \succeq 0$, we can write
+\[
+	\begin{pmatrix} X&Z\\Z^{T}&Y\\ \end{pmatrix} \succeq 0, Z=0 \text{ (linear constraint)} 
+.\] 
+However, this is horrible for computation. For example, in the case of negative log barrier, we can separate each constraint and projecting to $ \rr_{+}^{n}$ is easy. We can also project to $ S_{+}^{n}$ by making the eigenvalues to nonnegative. But doing this on a bigger matrix is expensive since finding eigenvalues is super-linear.
+\end{eg}
+
+\newpage
+\section{Duality [BV04 Ch.5]}
+\subsection{Lagrange dual function/problem}
+
+Consider $ p^* = \min_{x \in C} f(x)$. Here $ x \in C$ is \allbold{primal feasible} and we can find it by finding the smallest upper bound. We wish to find a dual feasible point s.t. it is the largest lower bound on  $ p^* $. 
+
+\end{document}

@@ -1,0 +1,141 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\subsection{Preserving convexity}
+
+\subsubsection{Rule 0: non-negative (weighted) sums}
+If $ f_1, \ldots, f_m$ are convex, $ \alpha_i \geq 0$, then
+$ x \mapsto \sum \alpha_i f_i(x)$ is convex too.
+
+Subtraction (negative weights) doesn't work. 
+
+It works for integrals too:
+
+If for all $ y$,  $ f( \cdot ,y)$ is convex, and $ w(y) \geq 0$. Then
+\[
+	x \mapsto \int_{\Omega} f(x,y) w(y)\ dy
+\]
+is convex.
+
+\subsubsection{Rule 1: perspective function}
+
+~\begin{defn}[perspective]
+Let $ f: \rr^{n} \to \rr$, then its \allbold{perspective} is $ g: \rr^{n+1} \to \rr$,
+\[
+	g(x,t) = t \cdot f\left(\frac{x}{t}\right), \quad \dom(g) = \{(x,t): x / t \in \dom(f), t>0\} 
+.\] 
+\end{defn}
+\begin{prop}
+$ f: \rr^{n} \to \rr$ is convex $ \implies$ its perspective is convex.
+\end{prop}
+
+\begin{eg}
+	$ f(x) = \norm{ x}^2 $ is convex. Its perspective is
+	\[
+	t \cdot \norm{ \frac{x}{t}}^2 = t \cdot \frac{\norm{ x}^2 }{t^2 }  = \frac{\norm{ x}^2 }{t } 
+	.\] 
+	This is the quadratic-over-linear example we saw earlier. This is the proof that it is convex.
+\end{eg}
+\begin{eg}
+	$ f(x) = -\log(x)$ is convex. Its perspective is
+	\[
+		-t \cdot \log\left( \frac{x}{t} \right) = t \cdot \log(t) - t \cdot \log(x), x,t>0
+	.\]
+	This is the \allbold{relative entropy} of $ t,x$. More generally, the \allbold{Kullback-Leibler divergence} is
+	\[
+		D_{KL} (u,v) = \sum_{ i= 1}^{ n} u_i \log\left( \frac{u_i}{v_i } \right) -u_i+v_i
+	.\] 
+
+This is an example of \allbold{Bregman Divergence}, which we often use to measure "distance" as an alternative to metric. It's especially good for probability distributions.
+\end{eg}
+
+
+\subsubsection{Rule 2: special types of compositions}
+
+Composition of convex functions typically doesn't preserve convexity!
+
+\begin{thm}
+$ f$ is convex if
+ \begin{enumerate}[label=(\roman*)]
+	\item $ h$ is convex and
+	\item if $ k=1$, $ h$ is nondecreasing and  $ g$ is convex or $ h$ is nonincreasing and  $ g$ is concave.
+	\item if  $ k>1$, we enforce (ii) to each argument of  $ h$ and each $ g_i$.
+\end{enumerate}
+\end{thm}
+\begin{note}
+	For nonincreasing/decreasing, we must take into account $ \pm \infty$, since in convex analysis we assign infinity to any point not in the domain. So although $ h(x) = x$ is nondecreasing on  $ \rr$, if we restrict $ \dom(h) = [0,1]$ then it is not nondecreasing anymore.
+\end{note}
+\begin{thm}[tattoo-worthy]
+$ f= h\circ g$ is convex if  $ h$ is convex and  $ g$ is affine.
+\end{thm}
+
+\begin{eg}
+	$ f(x) = \norm{ Ax-b}^2 $ is convex by this theorem.
+\end{eg}
+\subsubsection{Rule 3: min/max}
+
+\begin{prop}
+	If $ f,g$ both convex, then $ x\mapsto \max \{f(x),g(x)\} $ is convex.
+\end{prop}
+\begin{proof}
+The epigraph of the maximum is the intersection of two convex epigraphs. Convex sets are closed under arbitrary intersections.
+\end{proof}
+~\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{./figures/max_cvx.png}
+\end{figure}
+\begin{note}
+This works for supremum too due to closure under arbitrary intersections.
+\end{note}
+\begin{eg}
+\[
+	f(x) = \sup_{y \in \mathcal{ A}} f(x;y) 
+\] 
+is convex as long as $ f( \cdot ; y)$ is convex $ \ \forall \ y \in \mathcal{ A}$, where $ \mathcal{ A}$ is an arbitrary set that can be uncountable.
+\end{eg}
+
+\begin{eg}[spectral norm]
+	\[ f(A) = \norm{ A}_{\infty} = \sup_{\norm{ x}_2=1 } \norm{ Ax}_2 \] is convex since $ \ \forall \ x, A \mapsto \norm{ Ax}_2 $ is convex (composition of convex and affine).
+\end{eg}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{./figures/min_cvx.png}
+\end{figure}
+It's easy to see that min doesn't necessarily preserve convexity because it unions epigraphs instead.We need to impose more restrictions to make it work:
+\begin{thm}
+	If $ f: \rr^{n} \times \rr^{m}$ is (jointly) convex and if $ C \neq \O$ is a convex set, then
+	\[
+		g(x) = \inf_{y \in C} f(x,y) \text{ is convex} 
+	.\] 
+\end{thm}
+
+\begin{eg}
+	$ \min \{f_1(x), f_2(x)\} $ is not usually convex since this is like taking
+	\begin{equation*}
+		f(x,y)=
+	\begin{cases}
+		f_1(x), &y=1\\
+		f_2(x), &y=2
+	\end{cases}
+	\end{equation*}
+	and constraint $ C = \{1,2\} $ is not convex.
+\end{eg}
+\begin{eg}
+The distance to a convex set is a convex function. Let $ C \neq \O$ be convex,
+\[
+	f(x) = \inf_{y \in C} \norm{ x-y} 
+.\] 
+	
+Prove $ (x,y) \mapsto \norm{ x-y} $ is convex.
+\begin{proof}
+	We know $ z \mapsto \norm{ z} $ is convex. Consider the linear operator $ A(x,y) = x-y$. That is,
+	 \[
+		 A \begin{pmatrix} x\\y \end{pmatrix} = \begin{pmatrix} I & -I \end{pmatrix} \begin{pmatrix} x\\y \end{pmatrix} = x-y
+	.\] 
+	Then the composition of convex and affine is still convex.
+\end{proof}
+\end{eg}
+
+\end{document}

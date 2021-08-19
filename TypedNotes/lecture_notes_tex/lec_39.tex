@@ -1,0 +1,51 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\section{Linear Programs}
+\subsection{Simplex Method}
+\begin{defn}[face]
+\begin{align*}
+	\{x: a_i^{T}x=b_i, i \in I; a_i^{T}x=b_i, i \in I^{c}\} 
+\end{align*}
+\end{defn}
+
+\begin{defn}[vertex]
+A \allbold{vertex} of a polyhedral set $ \{x: Ax\leq b\} $ is a face that has just 1 point. 
+\end{defn}
+
+There exists an optimal solution that is a vertex (optimal might not be unique \emph{e.g.} when level set is parallel to an edge).
+
+Simplex method hops from one vertex to another. We also call vertex a basic feasible point.
+
+The constraints is $ Ax=b, x\leq 0$, $ A$ is  $ m\times n$ matrix, and for some points the equality is achieved. Let  $ B$ be the list of all indices, called basis, where  $ |B| = m$. And for $ n-m$  
+
+We start at a basis $ B$, use duality to choose 1 index to leave. Adjust until a new index enters.
+
+Problems:
+ \begin{enumerate}[label=(\arabic*)]
+	\item lots of linear algebra, $ A_B^{-1}$ needs to be updated/downdated. Usually we use LU. If $ A$ is sparse, it's more complicated.
+	\item there are many pivot rules
+	\item finding a starting point: 2-phase approach
+	\item degenerate bases and cycling
+	\item presolving
+	\item variants: dual simplex, self-dual
+\end{enumerate}
+
+\subsubsection{complexity}
+In CS, complexity means: time in input. What does the input mean?
+\begin{enumerate}[label=(\arabic*)]
+	\item real arithmetic, numbers are ``cts'', encode real numbers. A unit storage cost for a $ \rr$ number. Operations/flops have unit cost. Thus the cost depends only on the dimension.
+	\item rational model, or combinatorial model: $ b_i \in \qq$. Now the cost of operations depends on the value of the integers. Larger value is more costly.
+\end{enumerate}
+
+Practically simplex is great. However, Klee-Minty showed that in $ \rr^{n}$ with $ 2^{n}$ vertices and simplex visited all. Thus simplex is not in $ P$ using the usual pivot rule. The open question is whether this is true for all pivot rules. If we prove polynomial Hirsch conjecture we will know the answer.
+
+\begin{eg}[solving linear equations]
+	In real arithmetic, this is polynomial $ \mathcal{ O}(n^3)$. In rational model, it is also polynomial.
+
+	For LPs, in rational model, the answer is again yes. Khachiyan proposed ellipsoid method, a generalization of bisection method. Then Karmarkkov with IPM which is practical.
+\end{eg}
+What is the answer for real arithmetic model, is it polynomial time (strongly polynomial)?
+Are there other algorithms to solve LPs in polynomial time?
+\end{document}

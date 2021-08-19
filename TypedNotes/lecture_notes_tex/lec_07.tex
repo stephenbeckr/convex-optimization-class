@@ -1,0 +1,142 @@
+\documentclass[class=article,crop=false]{standalone} 
+\input{../preamble.tex}
+
+\begin{document}
+\subsection{First-order conditions}
+
+~\begin{thm}
+	If $ f: \rr^{n} \to \rr$ is differentiable on dom(f) and if dom(f) is open and convex, then $ f$ is convex iff for all  $ x,y \in \dom(f)$,
+	\[
+		f(y) \geq f(x) + \langle \nabla f(x),y-x \rangle
+	.\] 
+\end{thm}
+\begin{note}
+	This is the 1st order Taylor approximation (tangent line). The line is supporting the epigraph of $ f$.
+\end{note}
+~\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{./figures/cvx_tan.png}
+\end{figure}
+\begin{thm}
+	Under the same assumption, $ f$ is convex iff $\nabla  f$ is monotone. That is, for all $ x,y \in \dom(x)$,
+	\[
+		\langle x-y, \nabla f(x) - \nabla f(y) \rangle \geq 0
+	.\] 
+\end{thm}
+\begin{intuition}
+	Recall in 1D, $ f$ is convex if slope is non-decreasing. That is, if $ x-y\geq 0$, then  $ f'(x) - f'(y) \geq 0$ and if $ x-y \leq 0$ then  $ f'(x)-f'(y)\leq 0$. A concise way to express that is $ (x-y)(f'(x) - f'(y)) \geq 0$. Here we generalize this to higher dimensions.
+\end{intuition}
+
+\begin{thm}[2nd-order condition]
+	$ f: \rr^{n} \to \rr$. If the Hessian $ \nabla^2 f(x)$ exists for all $ x \in \dom(f)$, then
+	\begin{enumerate}[label=\alph*)]
+		\item $ f$ is convex iff  $ \nabla ^2 f(x) \succeq 0 \ \forall \ x \in \dom(f)$.
+		\item $ f$ is  $ \mu$-strongly convex ( w.r.t. $ \norm{ \cdot }_2 $ ) iff $ \nabla ^2 f(x) \succeq \mu I$.
+	\end{enumerate}
+	If $ \nabla ^2 f(x) \succ 0$, then $ f$ is \allbold{strictly convex}. 
+\end{thm}
+\begin{remark}
+$ f$ can be convex but  $ \nabla f, \nabla ^2 f$ need not exist!
+\end{remark}
+What if $ f$ isn't differentiable?
+
+ \begin{defn}[subdifferential]
+	 Let $ f: \rr^{n} \to (-\infty, \infty]$ be proper, then we define the \allbold{subdifferential} of $ f$ at $ x$ to be
+	 \[
+		 \partial f(x) = \{d \in \rr^{n}: \ \forall \ y \in \rr^{n}, f(y) \geq f(x) + \langle d,y-x \rangle\} 
+	 .\] 
+\end{defn}
+\begin{note}
+$ d$ here is called a  \allbold{subgradient}. 
+\end{note}
+\begin{thm}
+If $ f$ is proper and convex then
+ \[
+	 x \in \ri(\dom(f)) \implies \partial f(x) \neq \O
+.\] 
+\end{thm}
+\begin{note}
+The proof is related to separating/supporting hyperplanes.
+\end{note}
+\begin{prop}
+	$ \partial f(x) $ is a singleton  iff  $ f$ is differentiable at  $ x$.
+\end{prop}
+
+\begin{eg}
+	$ f(x) = |x|$. Then if  $ x\neq 0$,  $ f'(x) = \sgn(x)$ and  $ \partial f(x) = \{f'(x)\} $. If $ x=0$,  $ f'(0)$ DNE. But $ \partial f(0) = [-1,1] $.
+\end{eg}
+
+\begin{thm}[Fermat's Rule]
+If $ f$ is a proper function, then
+ \[
+	 \argmin_{x} f(x) = \{x: 0 \in \partial f(x)\} 
+.\] 
+\end{thm}
+\begin{proof}
+This just means that we can plug $ 0$ into the definition of subdifferential and get
+ \[
+	 f(y) \geq f(x) + \langle 0, y-x \rangle = f(x) \ \forall \ y
+.\] 
+This clearly shows that $ x$ is a global minimizer. 
+\end{proof}
+
+\begin{note}
+This generalizes the calculus idea of critical points for smooth functions.
+\end{note}
+
+\begin{remark}
+	Subdifferentials are a global notion (for all $ y$) whereas gradients are a local notion. How do we reconcile that subdifferential can be the gradient? The answer is that the global property of convexity links the two.
+\end{remark}
+\begin{remark}
+So all we need to do is to invert $ \partial f$. That is,
+ \[
+	 \argmin f(x) = \partial f^{-1}
+.\]
+In fact, this is usually not practical or even possible especially for interesting problems. It may be possible for subproblems.
+\end{remark}
+\begin{defn}[normal cone]
+The \allbold{normal cone} to a set $ C$ at point  $ x$ is
+\begin{equation*}
+	N_C(x)=
+\begin{cases}
+	\{d: \langle d,y-x \rangle \leq 0 \ \forall \ y \in C\} & \text{ if } x \in C\\
+	\O & \text{ if } x \not\in C 
+\end{cases}
+\end{equation*}
+\end{defn}
+\begin{eg}
+Let $ C \neq \O$ be convex, so $ I_C$ is a proper convex function. Then  $ \partial I_C = N_C$.
+\end{eg}
+\begin{eg}
+	$ x \in \inte C \implies N_C(x) = \{0\} $. Why? WLOG, shift $ C$ so  $ x=0$. If  $ \langle d,y \rangle\leq 0 \ \forall \ y \in C$. Then $ x \in \inte C \implies$ we can choose $y = \epsilon d \in C$ for sufficiently small $ \epsilon >0$. Then $ \epsilon \norm{ d}^2 \leq 0 \implies d=0 $.
+\end{eg}
+\begin{eg}
+	$ x \in \partial C$ (the boundary). We want $ d$  s.t. $ \langle d,y \rangle\leq 0 \ \forall \ y \in C$. Geometrically this means we want the angle between $ d,y$ to be perpendicular or obtuse. If the boundary is smooth, since  $ d$ needs to be at least perpendicular to any  $ y$ immediately to the left and right of  $ x$, it must be the normal ray of the tangent plane.
+\end{eg}
+
+\begin{eg}
+	~\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.8\textwidth]{./figures/normal_cone.png}
+		\caption{The normal cone at non-smooth boundary looks indeed like a cone.}
+	\end{figure}
+\end{eg}
+\begin{remark}
+An equivalent definition of normal cone is the set of all vectors that define a supporting hyperplane to $ C$, passing through  $ x$.
+\end{remark}
+
+\begin{eg}
+If $ C$ is a vector space, since $ C$ is closed under inverses, if we use  $ -y$ in addition to $ y$ in the definition we will get an equality which implies orthogonality. Hence
+ \begin{equation*}
+	 N_C(x)=
+\begin{cases}
+	C^{\perp} & x \in C\\
+	\O & x \not\in C
+\end{cases}
+\end{equation*}
+\end{eg}
+
+\begin{prop}[6.47 BC17]
+	If $ C \neq \O$ is closed and convex, then $ x=P_C(y)$ iff  $ y-x \in N_C(x)$, where $ P_C(y)$ denotes the orthogonal projection of  $ y$ onto  $ C$.
+\end{prop}
+\end{document}
