@@ -63,7 +63,7 @@ HW 1-2 is due early, but I don't want to push the due-date back farther because 
 Here's what we did in Spring 2021.
 
 1. Fri, Jan 15  
-    - Watch "[Introduction to Optimization Problems](https://youtu.be/0xuzxEJHP6g)" (36 min);  [notes](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/00_IntroToOptProblems.pdf).  
+    - Watch "Introduction to Optimization Problems" (36 min);  [notes](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/00_IntroToOptProblems.pdf).  
     - No class on Mon, Jan 18 (MLK Jr day)
 2. Wed, Jan 20
     - [01_TypesOfMinimizers_IntroConvexity.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/01_TypesOfMinimizers_IntroConvexity.pdf)
@@ -73,14 +73,12 @@ Here's what we did in Spring 2021.
 4. Mon, Jan 25
     -   Optional lecture on "appendix 01" material,  [corresponding notes](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/appendix_notes_01.pdf)
     -   Main lecture (flipped class style), [corresponding notes, 03_ConvexSets_part2](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/03_ConvexSets_part2.pdf)
-        -   First part of the video,  [on youtube](https://youtu.be/ZaZzLkm0aHY)  (18 min)
-        -   Second part of the video,  [on youtube](https://youtu.be/o7kv70x2YnI)  (13 min)
     -   In-class  [cvx/cvxpy demo](https://github.com/stephenbeckr/convex-optimization-class/tree/master/Demos/CVX_demo)
 5.  Wed, Jan 27
     -   Class flipped again, finish up demo or do homework questions
     -   Main lecture
-        -   [Separating hyperplanes](https://youtu.be/oVyym2nbYV4)  (25 min,  [notes: 04_SeparatingHyperplanes_Farkas.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/04_SeparatingHyperplanes_Farkas.pdf)) and Farkas lemma
-        -   Convex functions,  [part 1a](https://youtu.be/qtyNJZWEn8Y)  (10 min) and  [part 1b](https://youtu.be/Z6kWa3Lt9Bg)  (13 min);  [notes: 05_ConvexFunctions_part1.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/05_ConvexFunctions_part1.pdf)
+        -   Separating hyperplanes (25 min,  [notes: 04_SeparatingHyperplanes_Farkas.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/04_SeparatingHyperplanes_Farkas.pdf)) and Farkas lemma
+        -   Convex functions;  [notes: 05_ConvexFunctions_part1.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/05_ConvexFunctions_part1.pdf)
 1.  Fri, Jan 29
     -  [Notes (05_ConvexFunctions_part2.pdf)](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/05_ConvexFunctions_part2.pdf)
 
