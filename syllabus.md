@@ -59,6 +59,160 @@ Legend: * means last day to add a class (without instructor approval), ** is las
 
 HW 1-2 is due early, but I don't want to push the due-date back farther because I want students to get feedback on a homework before they have to decide about withdrawing from the class (Feb 1, lecture #7).
 
+### Spring 2021
+Here's what we did in Spring 2021.
+
+1. Fri, Jan 15  
+    - Watch "[Introduction to Optimization Problems](https://youtu.be/0xuzxEJHP6g)" (36 min);  [notes](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/00_IntroToOptProblems.pdf).  
+    - No class on Mon, Jan 18 (MLK Jr day)
+2. Wed, Jan 20
+    - [01_TypesOfMinimizers_IntroConvexity.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/01_TypesOfMinimizers_IntroConvexity.pdf)
+3. Fri, Jan 22
+    -   Finish notes from last class
+    -   New  [notes on convex sets (part 1)](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/02_ConvexSets_part1.pdf)
+4. Mon, Jan 25
+    -   Optional lecture on "appendix 01" material,  [corresponding notes](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/appendix_notes_01.pdf)
+    -   Main lecture (flipped class style), [corresponding notes, 03_ConvexSets_part2](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/03_ConvexSets_part2.pdf)
+        -   First part of the video,  [on youtube](https://youtu.be/ZaZzLkm0aHY)  (18 min)
+        -   Second part of the video,  [on youtube](https://youtu.be/o7kv70x2YnI)  (13 min)
+    -   In-class  [cvx/cvxpy demo](https://github.com/stephenbeckr/convex-optimization-class/tree/master/Demos/CVX_demo)
+5.  Wed, Jan 27
+    -   Class flipped again, finish up demo or do homework questions
+    -   Main lecture
+        -   [Separating hyperplanes](https://youtu.be/oVyym2nbYV4)  (25 min,  [notes: 04_SeparatingHyperplanes_Farkas.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/04_SeparatingHyperplanes_Farkas.pdf)) and Farkas lemma
+        -   Convex functions,  [part 1a](https://youtu.be/qtyNJZWEn8Y)  (10 min) and  [part 1b](https://youtu.be/Z6kWa3Lt9Bg)  (13 min);  [notes: 05_ConvexFunctions_part1.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/05_ConvexFunctions_part1.pdf)
+1.  Fri, Jan 29
+    -  [Notes (05_ConvexFunctions_part2.pdf)](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/05_ConvexFunctions_part2.pdf)
+
+1.  Mon, Feb 1
+    -   Finish  [Notes (05_ConvexFunctions_part2.pdf)](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/05_ConvexFunctions_part2.pdf), start Notes  [05_ConvexFunctions_part3_LipschitzGradient.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/05_ConvexFunctions_part3_LipschitzGradient.pdf "05_ConvexFunctions_part3_LipschitzGradient.pdf")  (which as associated  [Handouts/StrongConvexityLipshitz.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Handouts/StrongConvexityLipshitz.pdf)
+1.  Wed, Feb 3
+    -   Finish [05_ConvexFunctions_part3_LipschitzGradient.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/05_ConvexFunctions_part3_LipschitzGradient.pdf "05_ConvexFunctions_part3_LipschitzGradient.pdf")
+    -   Cover  [05_ConvexFunctions_part4_examples.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/05_ConvexFunctions_part4_examples.pdf "05_ConvexFunctions_part4_examples.pdf")
+1.  Fri, Feb 5
+    -   Cover  [05_ConvexFunctions_part5_preservingConvexity.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/05_ConvexFunctions_part5_preservingConvexity.pdf "05_ConvexFunctions_part5_preservingConvexity.pdf")
+    -   Cover most of  [06_ConjugateFunctions.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/06_ConjugateFunctions.pdf "06_ConjugateFunctions.pdf")
+1. Mon, Feb 8
+    -   Finish conjugate functions (postponed for later)
+    -   Start  [Intro to gradient descent: 07_GradientDescent_intro.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/07_GradientDescent_intro.pdf)  "interlude" since this week's HW discusses "first-order methods"
+1.  Wed, Feb 10
+    -   Finish  [conjugate functions: 06_ConjugateFunctions.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/06_ConjugateFunctions.pdf)
+1.  Fri, Feb 12
+    -   Cover  [existence and uniqueness of minimizers: 08_ExistenceUniquenessMinimizers.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/08_ExistenceUniquenessMinimizers.pdf)
+    -   Start  [proximity operators: 09_ProximityOperators.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/09_ProximityOperators.pdf). The "Supplementary material: Moreau Envelope" and later content is _optional_.
+1.  Mon, Feb 15
+    -   We covered ch 4.1 and part of 4.2 in Boyd and Vandenberghe
+    -   I mentioned "variational inequalities" ("VI") when we talked about Euler's inequalities
+        -   for a short intro to VI and related "complementarity problems", see the note  [supplement_VariationalInequalities_and_LCP](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/supplement_VariationalInequalities_and_LCP.pdf)
+    - Wed, Feb 17:  No class! Enjoy the day off
+1.  Fri, Feb 19
+    -   ch 4.2 in Boyd and Vandenberghe, then ch 4.3, 4.4, 4.6 (as time permits)
+    -   [11_FirstViewLagrangeMultipliers](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/11_FirstViewLagrangeMultipliers.pdf)
+    -   start  [12_ConicOptimizationProblems](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/12_ConicOptimizationProblems.pdf)
+    -   If you want to connect the Lagrange multipliers we saw in lecture with what you may have seen in your calculus course, see my 1 page note:  [supplement_LagrangeMultipliersIn2D](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/supplement_LagrangeMultipliersIn2D.pdf)
+1.  Mon, Feb 22
+    -   More on SDPs, LMIs
+1.  Wed, Feb 24
+    -   Section 5.1, Lagrange dual function (and some of 5.2, Lagrange dual problem)
+1.  Fri, Feb 26
+    -   Section 5.2, more duality:  [handwritten notes: 15_MoreDuality.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/15_MoreDuality.pdf)
+        -   see also  [supplement_Slater_PrimalNotAchieved](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/supplement_Slater_PrimalNotAchieved.pdf)
+1. Mon, March 1
+    -   Section 5.4 (Saddle Point interpretation) & Problems with shared Lagrangians
+        -   notes:  [16_SaddlePtsSharedLagrangians.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/16_SaddlePtsSharedLagrangians.pdf)
+    -   Section 5.2.5 (Game theory interpretation)
+        -   notes:  [17_GameTheoryConnections.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/17_GameTheoryConnections.pdf)
+1.  Wed, March 3
+    -   Finish game theory interpretation
+    -   [Fenchel-Rockafellar Duality: 18_FenchelRockafellarDuality.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/18_FenchelRockafellarDuality.pdf)
+1.  Fri, march 5
+    -   Finish Fenchel-Rockafellar Duality
+    -   [KKT equations and complementary slackness: 19_KKT_and_complementarySlackness.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/19_KKT_and_complementarySlackness.pdf)
+1.  Mon, March 8
+    -   Finish up KKT equations
+        -   in the same notes, discuss when you can and cannot drop constraints that were not active
+    -   Example of using KKT equations to solve a problem in "closed form" (e.g., reduce it to solving a linear system)
+    -   Activity on using KKT equations (and quiz on Lagrangian and KKT equations)
+1.  Wed, March 10 (in person/hybrid)
+    -   Sensitivity/perturbation analysis, ch 5.6 in Boyd and Vandenberghe
+    -   5 min summary of ch 5.9 "generalized inequalties"
+1.  Fri, March 12 (in person/hybrid)
+    -   We're done with Boyd and Vandenberghe mostly
+    -   Starting algorithms, beginning with _proximal gradient descent_
+1.  Mon, March 15
+    -   no school (snow day)
+1.  Wed, March 17
+    -   Convergence analysis of gradient descent (non-strongly convex case)
+    -   Intro to worst-case first-order method result, and Nesterov's accelerated gradient descent (and proximal version, aka FISTA)
+1.  Fri, March 19
+    -   Convergence analysis of gradient descent (strongly convex case, using the PL inequality)
+    -   Discussion of error metrics and termination criteria
+        -   See the *handout*  [SubOptimalityBounds.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Handouts/SubOptimalityBounds.pdf)  on github
+    -   Discussion of convergence rates (sub-linear, linear, quadratic)
+1.  Mon, March 22
+    -   See supplementary notes (*handout*) on  [unified analysis of subgradient/gradient descent](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Handouts/SubgradientDescent.pdf)  and on  [analysis of Nesterov acceleration](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/23_NesterovAcceleration_convergenceAnalysis.pdf)
+        -   Finish up  [convergence rates](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/24_ConvergenceRates.pdf)
+        -   [convergence rate demo](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Demos/ConvergenceRateDemo.ipynb)  in python
+    -   [listen_to_Handel demo](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Homeworks/HW10/listen_to_Handel.ipynb)  in python for HW 9/10
+    -   Start conjugate gradient and nonlinear conjugate gradient
+        -   [dense vs sparse demo](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Demos/ConjugateGradientDemo.ipynb)
+1.  Wed, March 24
+    -   [(Linear) conjugate gradient method: 25_ConjugateGradientMethod.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/25_ConjugateGradientMethod.pdf)
+1.  Fri, March 26
+    -   finish up CG (discuss _non-linear CG_); see same notes as Wednesday
+    -   start  [quasi-Newton methods: 26_QuasiNewtonMethods.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/26_QuasiNewtonMethods.pdf)
+1.  Mon, Mar 29
+    -   finish up quasi-Newton methods, and discuss L-BFGS
+    -   discuss inexact Newton
+    -   optional supplement on  [convergence of gradient descent](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/supplement_convergenceIteratesGradientDescent.pdf)
+1.  Wed, Mar 31
+    -   trust-regions
+    -   non-linear least-squares (Gauss-Newton, Levenberg-Marquardt)
+1.  Fri, Apr 2
+    -   constrained optimization overview
+    -   penalty methods (quadratic and exact)
+1.  Mon, Apr 5
+    -   Augmented Lagrangian; Sequential Quadratic Programming
+1.  Wed, Apr 7
+    -   Interlude: finding gradients, DFO and analytic methods
+1.  Fri, Apr 9
+    -   Interlude: automatic differentiation ([notes: 29_AutomaticDifferentiation.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/29_AutomaticDifferentiation.pdf))
+    -   [Jupyter notebook demo](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Demos/AutomaticDifferentiation.ipynb)
+1.  Mon, Apr 12
+    -   More calculus rules (for min/max/integral functions, see  [GradientsParameterizedFunctions: 30_GradientsParameterizedFunctions.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/30_GradientsParameterizedFunctions.pdf)  )
+    -   Start adjoint state method
+1.  Wed, Apr 14
+    -   Finish adjoint state method
+    -   Start analyzing Newton's method via self-concordancy, cf. Boyd & Vandenberghe textbook
+1. Fri, Apr 16
+    -   Newton's method via self-concordancy
+    -   Newton's method with (linear) equality constraints
+    -   Interior-Point methods (very brief; see Boyd and Vandenberghe for more)
+    -   [corresponding handwritten notes for today: 31_NewtonAndIPM.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/31_NewtonAndIPM.pdf)
+1.  Mon, Apr 19
+    -   Alternating Minimization and Coordinate Descent
+    -   ADMM
+1. Wed, Apr 21
+    -   ADMM, Douglas-Rachford
+    -   Primal-Dual methods
+        -   Further reading on these things:
+            -   Mark Schmidt's  [notes on big-n problems](https://www.cs.ubc.ca/~schmidtm/Documents/2012_Notes_BigN.pdf)  (2012)
+            -   Dvurechenskya et al.  [First-Order Methods for Convex Optimization](https://arxiv.org/abs/2101.00935)  (2021)
+            -   Amir Beck's 2017 book
+            -   [Convex Optimization for Big Data: Scalable, randomized, and parallel algorithms for big data analytics](http://dx.doi.org/10.1109/MSP.2014.2329397), Volkan Cevher, Stephen Becker, Mark Schmidt, _IEEE Signal Processing Magazine_, vol. 31, no. 5, 2014
+            -   Marc Teboulle's  [A simplified view of first order methods for optimization](https://link.springer.com/article/10.1007/s10107-018-1284-2)  (2018)
+            -   Combettes, Condat et al.  [A forward-backward view of some primal-dual optimization methods in image recovery](https://arxiv.org/abs/1406.5439)  (2014)  
+    -   [my handwritten notes: 32_ADMM_DRS_PrimalDual.pdf](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/32_ADMM_DRS_PrimalDual.pdf)
+1.  Fri, Apr 23
+    -   Linear programs: simplex method (Nocedal and Wright), and complexity (Nemirovski)
+    -   didn't get to Integer Linear Programs (R. Vanderbei), so will try to post notes on that
+        -   Update: here are the supplementary  [notes on ILP](https://github.com/stephenbeckr/convex-optimization-class/blob/master/Notes/34_IntegerLinearPrograms.pdf)
+1.  Mon, Apr 26 (projects due, project presentations)
+1.  Wed, Apr 28 (project presentations, last day of class)
+1.  Fri, Apr 30 (extra presentations; attend 2 of 3 lectures this week)
+
+
+
 ### Fall 2018
 Here's what we did in Fall 2018.  Spring 2021 will be somewhat similar.
 
