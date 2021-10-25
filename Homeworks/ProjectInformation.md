@@ -1,4 +1,4 @@
-# APPM 5360 Final Project
+# APPM 5630 Final Project
 
 - The project is due at the beginning of class on Friday April 23, 2021.  The last three days of class (April 23, 26, 28) will be used for presentations
 - The project consists of a 10 minute presentation and a short paper. There is no strict length requirement for the paper, but aim for 4 to 6 pages (including figures). Paper lengths are a guideline, as I’m aware you can add figures, code, adjust white space and font to make it longer/shorter.
