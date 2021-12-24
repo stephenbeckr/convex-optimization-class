@@ -67,7 +67,7 @@ If $ f_i(x^* )<0$, then $ \lambda_i^* $ must be zero, meaning that the constrain
 	\begin{enumerate}[label=(\arabic*)]
 		\item stationarity: 
 			 \[
-				 0 = \nabla f_0(x^* ) + \sum \lambda_i^* f_i(x^* ) + \sum \nu_i h_i(x^* ) = \nabla _x \mathscr{L}(x^* ,\lambda^* ,\nu^* )
+				 0 = \nabla f_0(x^* ) + \sum \lambda_i^* \nabla f_i(x^* ) + \sum \nu_i  \nabla h_i(x^* ) = \nabla _x \mathscr{L}(x^* ,\lambda^* ,\nu^* )
 			.\] 
 		\item primal feasibility: $ f_i(x^* )\leq 0, h_i(x^* ) =0$.
 		\item dual feasibility: $ \lambda^* \geq 0$.
@@ -101,7 +101,7 @@ We can generalize stationarity:
 			.\] 
 			If we have CQ,
 			\[
-				0 \in \partial f_0(x^* ) + \sum \lambda_i^* \partial f_i(x^* ) + \sum \partial h_i(x^* )
+				0 \in \partial f_0(x^* ) + \sum \lambda_i^* \partial f_i(x^* ) + \sum \nu_i^* \partial h_i(x^* )
 			.\] 
 \end{enumerate}
 
@@ -111,12 +111,18 @@ We can generalize stationarity:
 \begin{proof}
 	Assume $ (x^* ,\lambda^* ,\nu^* )$ satisfies the KKT conditions.
 	\begin{align*}
-		p^* &\leq f_0(x^* ) \qquad  x^* \text{is feasible }\\
-		    &= \mathscr{L}(x^* ,\lambda^* ,\nu^* ) \qquad \text{ since feasible and comp. slack.} \\
-		    &\inf_x \mathscr{L}(x,\lambda^* ,\nu^* ) \qquad \text{ stationarity}  \\
-		    &= g(alm^* ,\nu^* ) \qquad  \text{ dual feasibility} \\
+		p^* &\leq f_0(x^* ) &&  x^* \text{ is feasible }\\
+		    &= \mathscr{L}(x^* ,\lambda^* ,\nu^* ) && \text{ since feasible and comp. slack.} \\
+		    &\inf_x \mathscr{L}(x,\lambda^* ,\nu^* ) && \text{ stationarity}  \\
+		    &= g(\lambda^* ,\nu^* ) &&  \text{ dual feasibility} \\
 		    &\leq d^*  
 	\end{align*}
 	Thus we prove strong duality, and $ p^* =f_0(x^* ) \implies x^* $ is optimal. Same for duals. 
+\end{proof}
+\begin{thm}[KKT 3 necessary and sufficient]
+	If $ (P)$ is convex and Slater's conditions hold, then  $ x^* $ is primal optional if and only if $ x^* $ with some $ \lambda^*, \nu^* $ satisfy the KKT conditions.
+\end{thm}
+\begin{proof}
+	Slater's implies strong duality and existence of $ \lambda^*, \nu^*$. Hence, either $ x^* $ doesn't exist (\emph{e.g.} min $ e^{-x}$) or it exists and KKT theorems 1 and 2 apply.
 \end{proof}
 \end{document}

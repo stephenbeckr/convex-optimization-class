@@ -3,18 +3,14 @@
 
 \begin{document}
 \begin{remark}
-	Complementary slackness means if $ f_j(x^* )<0$ is an inactive constraint, then $ \lambda_j^* =0$, so
+	Complementary slackness means if $ f_j(x^* )<0$, then this is an inactive constraint, since $ \lambda_j^* =0$, and
 	\begin{align*}
-		\mathscr{L}(x,\lambda^* ,\nu^* ) &= f_0(x) \sum_{i\neq j} \lambda_i^* f_i(x) + \sum \nu_i^* h_i(x) \\
+		\mathscr{L}(x,\lambda^* ,\nu^* ) &= f_0(x)+ \sum_{i\neq j} \lambda_i^* f_i(x) + \sum \nu_i^* h_i(x) 
 	\end{align*}
-\begin{align*}
-	(P') \qquad \qquad \min\quad &f_0(x) \\
-\text{subject to } \quad &f_i(x) \leq 0, \ \forall \ i \neq j \\
-&h_i(x) = 0 , i = 1,\ldots,p
-\end{align*}
-This is only true if we have KKT conditions.
+This is only true if we have strong duality. In particular, it usually isn't true for non-convex problems.
 \end{remark}
 \begin{eg}[1]
+Consider a convex case with inactive constraints:
 \begin{align*}
 \min_{x \in \rr}\quad &x \\
 \text{subject to } \quad &x\geq 0 \\
@@ -23,12 +19,13 @@ This is only true if we have KKT conditions.
 We can just remove the inactive constraint and still get the same solution.
 \end{eg}
 \begin{eg}[2]
+Consider a non-convex case with non-tight constraints:
 \begin{align*}
 \min_{x \in \rr}\quad &x \\
-\text{subject to } \quad &x\geq 0 \qquad \text{ inactive} \\
+\text{subject to } \quad &x\geq 0 \qquad \text{ not tight} \\
 &x^2 \geq 1
 \end{align*}
-But if we remove the inactive constraint here, we would get $ -\infty$ as the solution instead, so we can't just drop inactive constraint for non-convex problems.
+as solution is $ x^* =1$. But if we remove the non-tight constraint $ x\geq 0$ here, we would get $ -\infty$ as the solution instead, so we can't just drop non-tight constraint for non-convex problems.
 \end{eg}
 
 \subsection{Meta-rules}
