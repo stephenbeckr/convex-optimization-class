@@ -5,6 +5,7 @@ Spring 2021, Instructor: Stephen Becker
 This semester, the class is taught remotely some of the time due to COVID-19
 
 Since there is no established optimization curriculum at CU Boulder, we will attempt to cover a lot of material in just one semester. We can divide topics into four broad categories:
+
 - **Analysis**: Basic theory (convex analysis, optimality, duality)
 - **Methods**: Standard methods, both classical and modern, and standard classifications. The idea is to give students a toolkit of standard approaches to solve actual problems.
 - **Convergence**: Convergence theory (ellipsoid, Nesterov, etc.). This involves some very beautiful mathematics (and is also useful!)
@@ -260,6 +261,7 @@ Here's what we did in Fall 2018.  Spring 2021 will be somewhat similar.
 44.	STUDENT PRESENTATIONS
 
 **References (books)**
+
 -	[BV04]	S. Boyd and L. Vandenberghe, “Convex Optimization” (Cambridge U. Press, 2004). [Free electronic version](http://www.stanford.edu/~boyd/cvxbook/)
 -	[NW05]	J. Nocedal and S. Wright, “Numerical Optimization” (Springer, 2005). We have free electronic access at [SpringerLink](https://link.springer.com/book/10.1007%2F978-0-387-40065-5)
 -	[Nem16]	A. Nemirovski, Introduction to Linear Optimization, [lecture notes](http://www2.isye.gatech.edu/~nemirovs/OPTI_LectureNotes2016.pdf)
@@ -272,6 +274,7 @@ Here's what we did in Fall 2018.  Spring 2021 will be somewhat similar.
     - A new version is out, "[Lectures On Convex Optimization](https://www.springer.com/gp/book/9783319915777)" Nesterov 2018, but it has rearranged the chapters a bit, so you need to adjust the numbering quite a bit
 
 **References (papers)**			
+
 -	[Boyd10]	“[Distributed Optimization and Statistical Learning via the Alternating Direction Method of Multipliers](http://web.stanford.edu/~boyd/papers/pdf/admm_distr_stats.pdf)” by S. Boyd, N. Parikh, E. Chu, B. Peleato, and J. Eckstein (2010);
 -	[CP11]	P. L. Combettes and J.-C. Pesquet, “[Proximal splitting methods in signal processing](http://www4.ncsu.edu/~pcombet/prox.pdf),” 2011;  				
 -	[Con13]	Laurent Condat “[A primal-dual splitting method for convex optimization involving Lipschitzian, proximable and linear composite terms](https://www.gipsa-lab.grenoble-inp.fr/~laurent.condat/publis/Condat-optim-JOTA-2013.pdf)”, 2011 (J. Optim. Theory and Appl. 2013). 			
@@ -328,6 +331,7 @@ Spring 2016](https://people.eecs.berkeley.edu/~brecht/eecs227c.html) and his [CS
 - R. Tyrrell Rockafellar and Roger J. B. Wets, "[Variational Analysis](https://link.springer.com/book/10.1007/978-3-642-02431-3)" (Springer; via SpringerLink or Rockafellar's website), goes more into detail on the analysis portion; a good mathematical reference for researchers.
 
 And a fun miscellaneous reference:
+
 - Harvey Greenberg (UC Denver, emeritus), [Myths and counterexamples in mathematical programming](https://glossary.informs.org/myths/CurrentVersion/myths.pdf). Entertaining and informative
 
 
@@ -352,6 +356,7 @@ For automatic differentiation in Matlab, try [ADiMat](https://www.sc.informatik.
 We don't present the lectures in the following order (lectures intermingle topics more, so that students can get started on interesting homeworks right away), but thematically, the following is what we roughly cover:
 
 Section 1: Background, duality, motivation
+
 1. Intro
 2. Convex Sets (ch 2 in [BV2004])
 3. Convex Functions (ch 3 in [BV2004])
@@ -363,6 +368,7 @@ recovery
 8. CVX, CVXPY, convex.jl tutorials
 
 Section 2: Conic programs & relaxations
+
 1. Linear programming
      - standard LP theory, duality ([WrightIPM])
      - simplex method, complexity, smoothed analysis ([Vanderbei_LP], [Nemirovski_LP])
@@ -375,6 +381,7 @@ Section 2: Conic programs & relaxations
 6. Polynomial optimization, SOS ([Nemirovski_LP],[BN_Modern])
 
 Section 3: Algorithms
+
 1. Gradient Descent ([V_course])
 2. Accelerated and projected/proximal gradient descent, optimality ([V_course])
 3. Classical methods ([NW05], Bertsekas, [Nesterov2004])
@@ -392,6 +399,7 @@ Section 3: Algorithms
     - State-of-the-art variants (SDCA, SAGA, etc.)
 
 Possible additional topics
+
 1. Benders decomposition
 2. Geometric Programming, linear-fractional
 3. Online Convex Optimization
