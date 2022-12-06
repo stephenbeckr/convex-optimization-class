@@ -7,9 +7,9 @@ The main routine is this:
   - It has a few features, like it can record error information
 
 There are three high-level functions:
-- `lassoSolver` is a wrapper to `gradientDescent` specialized for the lasso problem $\min_x .5\|Ax-b\|^2 + \tau\|x\|_1$
+- `lassoSolver` is a wrapper to `gradientDescent` specialized for the lasso problem $\min_x .5\|\|Ax-b\|\|^2 + \tau\|\|x\|\|_1$
 - `createTestProblem` creates some test problems for unit tests
-  - it has 3 types of problems: (1) plain least-squares, (2) lasso, (3) logistic regressoin
+  - it has 3 types of problems: (1) plain least-squares, (2) lasso, (3) logistic regression
   - it can use `cvxpy` to compute the exact solution, and also return the objects needed to test the code in this package
 - you can run `runAllTestProblems` to run all the problems
 
