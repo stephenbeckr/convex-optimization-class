@@ -1,11 +1,11 @@
 # APPM 5630 Final Project
 
-- The project is due at the beginning of class on Friday April 23, 2021.  The last three days of class (April 23, 26, 28) will be used for presentations
+- The project is due at the beginning of class on Friday April 28, 2023.  The last three days of class (April 28, May 1 and 3) will be used for presentations
 - The project consists of a 10 minute presentation and a short paper. There is no strict length requirement for the paper, but aim for 4 to 6 pages (including figures). Paper lengths are a guideline, as I’m aware you can add figures, code, adjust white space and font to make it longer/shorter.
 - If you really wanted to, you could write a longer, much more detailed paper and skip the presentation
-- On Friday April 23, we will determine the presentation order. You must be ready to present that Friday in case you are chosen.
+- On Friday April 28, we will determine the presentation order. You must be ready to present that Friday in case you are chosen.
 - You are encouraged to form groups; group sizes can be 1 (single person), 2 or 3. No larger please.
-- By Wednesday April 21, email me to let me know your group, so I know how many groups there are; this will help me schedule the presentations.
+- By Wednesday April 26, email me to let me know your group, so I know how many groups there are; this will help me schedule the presentations.
 - The project is 20% of your overall class grade. It cannot be dropped.
 - Deliverables:
   - Written paper (typeset; Latex is suggested but not required), turned in via Canvas
