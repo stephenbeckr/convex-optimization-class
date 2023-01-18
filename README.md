@@ -1,6 +1,6 @@
 # Advanced Convex Optimization class
 APPM 5630 at CU Boulder
-Prof. Becker, Spring 2023. Meeting time: MWF 10:10 -- 11:00 AM, KCEN S161.
+Prof. Becker, Spring 2023. Meeting time: MWF 10:10 -- 11:00 AM, VAC 1B88
 
 Office hours:
 - TBD

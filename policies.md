@@ -14,7 +14,7 @@ This class is expected to meet **in person**.  Lectures will usually be at a bla
 - Jacob Spainhour, a PhD student in Applied Math, is the grader / TA.  He might hold limited office hours.
 
 ## Meeting times
-Meeting time: MWF 10:10 -- 11:00 AM, in KCEN S161
+Meeting time: MWF 10:10 -- 11:00 AM, in VAC 1B88
 
 ## Office Hours
 Prof. Becker's office hours:
