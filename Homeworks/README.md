@@ -11,7 +11,7 @@ The homework assignments are here, but homework **solutions** are on Canvas
 
 
 
-You can find the old homeworks [here in the Fall2018 branch](https://github.com/stephenbeckr/convex-optimization-class/tree/Fall2018/Homeworks)
+You can find the old homeworks [here in the Fall2018 branch](https://github.com/stephenbeckr/convex-optimization-class/tree/Fall2018/Homeworks) or in the [here in the Spring2021 branch](https://github.com/stephenbeckr/convex-optimization-class/tree/Spring2021/Homeworks)
 
 ## FAQ
 
