@@ -23,7 +23,9 @@ Prof. Becker's office hours:
 - The zoom link is available on Canvas
 
 Times/dates:
-- TBD
+- Wed 3-5 PM and Thur 1-3 PM, hybrid (in my office or via zoom; see Canvas for zoom link)
+
+
 
 
 ## Course Topic Information and Syllabus
