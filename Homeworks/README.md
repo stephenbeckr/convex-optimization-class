@@ -5,11 +5,12 @@ The homework assignments are here, but homework **solutions** are on Canvas
 
 - [HW 1/2](APPM5630Spring23Homework01-02.pdf) HW 1 on convex sets; HW 2 on using cvx/cvxpy for least-squares and l1 regression on wine dataset. Due Fri Feb 3 2023.
 
-[//]: # - [HW 3/4](APPM5630Spring21Homework03-04.pdf) HW 3 on convex functions; HW 4 on 1D deblurring problem, finding adjoint, using existing first-order solver
-[//]: # - [HW 5/6](APPM5630Spring21Homework05-06.pdf) HW 5 and 6 on logistic regression; checking if strongly convex, strongly smooth; derive gradient/Hessian; implement gradient check; implement gradient descent with backtracking linesearch
+<!-- 
+[//]: # [HW 3/4](APPM5630Spring21Homework03-04.pdf) HW 3 on convex functions; HW 4 on 1D deblurring problem, finding adjoint, using existing first-order solver
+[//]: # [HW 5/6](APPM5630Spring21Homework05-06.pdf) HW 5 and 6 on logistic regression; checking if strongly convex, strongly smooth; derive gradient/Hessian; implement gradient check; implement gradient descent with backtracking linesearch
 [//]: # - [HW 7/8](APPM5630Spring21Homework07-08.pdf) HW 7 and 8 on logistic regression and 2D total-variation, and proximal methods. You have 3 weeks to do this HW
 [//]: # - [HW 9/10](APPM5630Spring21Homework09-10.pdf) HW 9 and 10 on compressed sensing and perturbation analysis, applied to the Handel audio clip (using a matrix-free linear operator). See the [HW10](HW10/) subfolder for helper files.
-
+-->
 
 
 You can find the old homeworks [here in the Fall2018 branch](https://github.com/stephenbeckr/convex-optimization-class/tree/Fall2018/Homeworks) or in the [here in the Spring2021 branch](https://github.com/stephenbeckr/convex-optimization-class/tree/Spring2021/Homeworks)
