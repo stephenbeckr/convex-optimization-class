@@ -4,6 +4,7 @@ Prof. Becker, Spring 2023. Meeting time: MWF 10:10 -- 11:00 AM, VAC 1B88
 
 Office hours:
 - Wed 3-5 PM and Thur 1-3 PM, hybrid (in my office or via zoom; see Canvas for zoom link)
+- Our TA Jacob Spainhour's office hours are Thurs 11 AM to noon in ECCR 235 (also hybrid; see Canvas or Piazza for zoom link)
 
 This repo contains in-class demos and some homework solutions (much of it is from Spring 2021 or even Fall 2018 when this class was taught as a special topics course 4720/5720)
 

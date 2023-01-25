@@ -25,7 +25,9 @@ Prof. Becker's office hours:
 Times/dates:
 - Wed 3-5 PM and Thur 1-3 PM, hybrid (in my office or via zoom; see Canvas for zoom link)
 
-
+TA office hours:
+- Our TA, Jacob Spainhour, has hybrid office hours weekly from 
+11 AM to Noon on Thursdays in ECCR 235 (see Canvas or Piazza for the zoom link)
 
 
 ## Course Topic Information and Syllabus
