@@ -4,7 +4,7 @@ APPM 5630, Spring 2023
 The homework assignments are here, but homework **solutions** are on Canvas
 
 - [HW 1/2](APPM5630Spring23Homework01-02.pdf) HW 1 on convex sets; HW 2 on using cvx/cvxpy for least-squares and l1 regression on wine dataset. Due Fri Feb 3 2023.
-- [HW 3/4](APPM5630Spring23Homework03-04.pdf) HW 2 on convex functions; HW 4 on 1D deblurring problem, finding adjoint, using existing first-order solver (such as the Python one I made in [utilities](../utilities)
+- [HW 3/4](APPM5630Spring23Homework03-04.pdf) HW 2 on convex functions; HW 4 on 1D deblurring problem, finding adjoint, using existing first-order solver (such as the Python one I made in [utilities](../utilities). Due Fri Feb 17 2023.
 
 <!-- 
 [//]: # [HW 3/4](APPM5630Spring21Homework03-04.pdf) HW 3 on convex functions; HW 4 on 1D deblurring problem, finding adjoint, using existing first-order solver
