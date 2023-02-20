@@ -1,4 +1,4 @@
-function [f,g] = fminunc_wrapper_simple(x,F,G)
+function [f,g,h] = fminunc_wrapper_simple(x,F,G, H)
 % [f,g] = fminunc_wrapper_simple( x, F, G  )
 % for use with Matlab's "fminunc"
 % and also compatible with Mark Schmidt's minFunc package
@@ -25,6 +25,9 @@ function [f,g] = fminunc_wrapper_simple(x,F,G)
 %       will return the function history
 %       and reset the history to zero.
 %
+% ... = fminunc_wrapper( x, F, G, H )
+%   will also compute the Hessian H if provided and requested
+%
 % Stephen Becker, Stephen.Becker@Colorado.edu  2/17/2017
 
 persistent fcnHist
@@ -40,4 +43,7 @@ fcnHist(end+1)  = f; % not efficient in terms of memory allocation
 
 if nargout > 1
     g = G(x);
+end
+if nargin > 3 && ~isempty(H) && nargout > 2
+    h = H(x);
 end
