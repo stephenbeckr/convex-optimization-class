@@ -6,6 +6,7 @@ The homework assignments are here, but homework **solutions** are on Canvas
 - [HW 1/2](APPM5630Spring23Homework01-02.pdf) HW 1 on convex sets; HW 2 on using cvx/cvxpy for least-squares and l1 regression on wine dataset. Due Fri Feb 3 2023.
 - [HW 3/4](APPM5630Spring23Homework03-04.pdf) HW 2 on convex functions; HW 4 on 1D deblurring problem, finding adjoint, using existing first-order solver (such as the Python one I made in [utilities](../utilities). Due Fri Feb 17 2023.
 - [HW 5/6](APPM5630Spring23Homework05-06.pdf) HW 5 and 6 on logistic regression; checking if strongly convex, strongly smooth; derive gradient/Hessian; implement gradient check; implement gradient descent with backtracking linesearch. Due Fri Mar 3 2023.
+- [HW 7/8](APPM5630Spring23Homework07-08.pdf) HW 7 and 8 on logistic regression and 2D total-variation, and proximal methods. Due Fri Mar 17 2023.
 
 <!-- 
 [//]: # [HW 5/6](APPM5630Spring21Homework05-06.pdf) HW 5 and 6 on logistic regression; checking if strongly convex, strongly smooth; derive gradient/Hessian; implement gradient check; implement gradient descent with backtracking linesearch
