@@ -462,8 +462,53 @@ lassoSolver( A, b, tau )
                   prox=prox, prox_obj=prox_fcn, **kwargs )
   return xNew, data
 
+def createLogisticProblem(A,b,tau=0):
+    """ Creates the function/gradient/Hessian for a logistic regression problem,
+    assuming data A and labels b, where labels b are +/- 1
+    Optionally regularize with tau/2||w||^2 if requested """
+    
+    import scipy.special
+    from functools import partial
+    
+    n = A.shape[1]
+    L     = np.linalg.norm(A,ord=2)**2/4 + tau
+
+    # For logistic function
+    def f_logistic_general(w,X=None,y=None):
+      """ sum log( 1 + e^{-y x_i^T w} ) """
+      ww = as_column_vec(np.asarray(w))  # Python details
+      return np.sum( np.logaddexp(-y*(X@ww), 0) ) + tau/2*norm(w)**2
+
+    f = partial(f_logistic_general,X=A,y=as_column_vec(b))
+
+    # For its gradient
+    sigmoid = scipy.special.expit   # if we want to avoid overflow warnings
+
+    def gradient_logistic_general(w,X=None,y=None):
+      """ uses X and y from parent workspace """
+      mu = as_column_vec( sigmoid( -as_column_vec(y)*(X@as_column_vec(np.asarray(w)) ) ) )
+      return X.T@(-y*mu).ravel() + tau*w.ravel() # convert from col vector to just 1D array
+
+    grad = partial(gradient_logistic_general,X=A,y=as_column_vec(b))
+
+    # mu    = lambda w : as_column_vec( sigmoid( -as_column_vec(b)*(A@as_column_vec(np.asarray(w)) ) ) )
+    # Hess  = lambda x : A.T@((mu(x)*(1-mu))*A) + tau*np.eye(n) # NOT TESTED
+
+    def create_Hessian_logistic(X,y):
+      yy=as_column_vec(np.asarray(y))
+      def H(w):
+        ww = as_column_vec(np.asarray(w))
+        mu = as_column_vec( sigmoid( yy*(X@ww) ) )
+        s  = mu*(1-mu)
+        return X.T@(s * X ) + tau*np.eye(n)  # broadcasts
+      return H
+    Hess = create_Hessian_logistic(A,b)
+
+    return f, grad, Hess, L
 
 def createTestProblem( problemName, n=10, rng=None, m = None, tau = None):
+  """ Creates some standard test problems:
+    quadratic/regression, lasso/l1, logistic-regression """
 
   if rng is None:
     rng   = np.random.default_rng()
@@ -486,7 +531,7 @@ def createTestProblem( problemName, n=10, rng=None, m = None, tau = None):
     else:
       nameString = 'quadratic (overdetermined)'
     return {'f':f, 'grad':grad, 'xTrue':xTrue, 'fTrue':fTrue, 'L':L, 
-            'name':nameString, 'n':n, 'prox':None, 'prox_obj':None }
+            'name':nameString, 'n':n, 'prox':None, 'prox_obj':None,'unique_soln': n <= m }
   
   if problemName == 'lasso' or problemName == 1:
     import cvxpy as cvx
@@ -514,41 +559,19 @@ def createTestProblem( problemName, n=10, rng=None, m = None, tau = None):
     nameString = 'lasso'
     return {'f':f, 'grad':grad, 'xTrue':xTrue, 'fTrue':fTrue, 'L':L, 'Hess':Hess,
             'name':nameString, 'n':n, 'prox':prox, 'tau':tau, 'prox_obj':prox_fcn,
-            'A':A,'b':b}
+            'A':A,'b':b,'unique_soln':True}
 
   if problemName == 'logistic' or problemName == 2:
-    import scipy.special
     import cvxpy as cvx
     if m is None:
       m = int(5*n) # if m is too small, no unique solution
+  
     tau   = .001  # make it strongly convex, guarantee unique solution
-    A     = rng.random((m,n))
-    b     = rng.random(m)
-    L     = np.linalg.norm(A,ord=2)**2/4 + tau
+    A     = rng.random((m,n))  # uniform in [0,1]
+    b     = rng.random(m) # usually this is +1 or -1; if not, some of the tricks may not work
+    b     = np.sign(b) # force it to be -1 and 1
 
-    # For logistic function
-    def f_logistic_general(w,X=None,y=None):
-      """ sum log( 1 + e^{-y x_i^T w} ) """
-      ww = as_column_vec(np.asarray(w))  # Python details
-      return np.sum( np.logaddexp(-y*(X@ww), 0) ) + tau/2*norm(w)**2
-
-    from functools import partial
-    f = partial(f_logistic_general,X=A,y=as_column_vec(b))
-
-    # For its gradient
-    import scipy.special
-    sigmoid = scipy.special.expit   # if we want to avoid overflow warnings
-
-    def gradient_logistic_general(w,X=None,y=None):
-      """ uses X and y from parent workspace """
-      mu = as_column_vec( sigmoid( -as_column_vec(y)*(X@as_column_vec(np.asarray(w)) ) ) )
-      return X.T@(-y*mu).ravel() + tau*w.ravel() # convert from col vector to just 1D array
-
-    from functools import partial
-    grad = partial(gradient_logistic_general,X=A,y=as_column_vec(b))
-
-    mu    = lambda w : as_column_vec( sigmoid( -as_column_vec(b)*(A@as_column_vec(np.asarray(w)) ) ) )
-    Hess  = lambda x : A.T@((mu(x)*(1-mu))*A) + tau*np.eye(n) # NOT TESTED
+    f, grad, Hess, L = createLogisticProblem(A,b,tau)
 
     # Get answer from CVXPY
     x     = cvx.Variable(n)
@@ -563,7 +586,26 @@ def createTestProblem( problemName, n=10, rng=None, m = None, tau = None):
     # print_status(prob,x) # optional
     nameString = 'logistic'
     return {'f':f, 'grad':grad, 'xTrue':xTrue, 'fTrue':fTrue, 'Hess':Hess,
-            'L':L, 'name':nameString, 'n':n, 'prox':None, 'prox_obj':None}
+            'L':L, 'name':nameString, 'n':n, 'prox':None, 'prox_obj':None,'unique_soln':True}
+
+  if problemName == 'logistic_noCVXPY' or problemName == 3:
+    # logistic, but let's manufacture an interpolating solution so we don't have to rely on CVXPY
+    # The downside is that there may not be a unique solution
+    if m is None:
+      m = int(5*n) # if m is too small, no unique solution
+    # create a problem that may not have a unique solution, but we at least know f^* = 0
+    A     = rng.standard_normal((m,n))
+    xTrue = rng.standard_normal((n,))
+    b     = np.sign( A@xTrue )
+    tau   = 0
+
+    f, grad, Hess, L = createLogisticProblem(A,b,tau)
+
+    fTrue = 0
+    # print_status(prob,x) # optional
+    nameString = 'logistic, non-unique solution'
+    return {'f':f, 'grad':grad, 'xTrue':xTrue, 'fTrue':fTrue, 'Hess':Hess,
+            'L':L, 'name':nameString, 'n':n, 'prox':None, 'prox_obj':None, 'unique_soln':False }
 
   raise ValueError('The problem type you specified is not implemented')
 
