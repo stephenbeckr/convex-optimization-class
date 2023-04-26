@@ -33,10 +33,15 @@ firstOrderMethods module
             only needs to be computed once
 
     Stephen Becker, April 1 2021, stephen.becker@colorado.edu
+    Updates (Douglas-Rachford, bookkeeper) April 2023
+    TODO:
+      incorporate the bookkeeper class into the gradient descent code
+        (this makes the actual algorithm itself more clear)
+      in gradient descent code, is the function value properly updated? May affect linesearches
     
     Released under the Modified BSD License:
 
-Copyright (c) 2021, Stephen Becker. All rights reserved.
+Copyright (c) 2023, Stephen Becker. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
@@ -48,6 +53,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 """
 import numpy as np
 from numpy.linalg import norm
+from scipy import linalg
 
 
 def as_column_vec(x):
@@ -211,6 +217,167 @@ def powerMethod(A, At=None, domainSize=None, x=None, iters=100, tol=1e-6, rng=No
       break
   return np.sqrt(normalization)
 
+
+
+class bookkeeper:
+    def __init__(self, printEvery, errorFunction, F, printStepsize = True, tol = 1e-6, 
+            tolAbs = None, tolX = None, tolG = None, tolErr = -1, minIter = 1):
+        self.printEvery = printEvery
+        self.errFcn     = errorFunction
+        self.objFcn     = F # objective function
+        self.errHist    = []
+        self.fcnHist    = []
+        if self.printEvery == 0 or np.isinf( self.printEvery ):
+            self.display = False
+        else:
+            self.display = True
+        self.printStepsize = printStepsize
+        self.stoppingFlag = 'Reached max iterations'
+        self.tol = tol               # relative tolerance on objective value decrease
+        if tolAbs is None: tolAbs = 1e-3*tol # absolute  tol on objective value
+        if tolX is None: tolX = tol  # tolerance for succesive iterates
+        if tolG is None: tolG = tol  # tolerance for norm of gradient 
+        self.tolX = tolX
+        self.tolG = tolG
+        self.tolAbs = tolAbs
+        self.tolErr = tolErr # if we have an oracle error function...
+        self.minIter = minIter # min # of iterations before allowing stopping condition
+
+    def printInitialization(self):
+        if self.display:
+            if self.objFcn is not None:
+                if self.printStepsize:
+                    if self.errFcn is not None:
+                        print("Iter.  Objective Stepsize  Error")
+                        print("-----  --------- --------  -------")
+                    else:
+                        print("Iter.  Objective Stepsize")
+                        print("-----  --------- --------")
+                else:
+                    if self.errFcn is not None:
+                        print("Iter.  Objective Error")
+                        print("-----  --------- -------")
+                    else:
+                        print("Iter.  Objective")
+                        print("-----  ---------")
+            else:
+                if self.printStepsize:
+                    if self.errFcn is not None:
+                        print("Iter.  Stepsize  Error")
+                        print("-----  --------  -------")
+                    else:
+                        print("Iter.  Stepsize")
+                        print("-----  --------")
+                else:
+                    if self.errFcn is not None:
+                        print("Iter.  Error")
+                        print("-----  -------")
+                    else:
+                        print("Iter.  ")
+                        print("-----  ")
+    def update_and_print(self, x, k, stepsize=None, ignorePrintEvery = False):
+        """ x is current iterate, k is stepnumber, stepsize is stepsize """
+        if self.objFcn is not None:
+            Fx = self.objFcn( x )
+            self.fcnHist.append( Fx )
+        if self.errFcn is not None:
+            err = self.errFcn( x )
+            self.errHist.append( err )
+        if self.display and ( (not k % self.printEvery) or ignorePrintEvery ):
+            if self.objFcn is not None:
+                if self.printStepsize:
+                    if self.errFcn is not None:
+                        print(f"{k:5d}  {Fx:7.2e}  {stepsize:6.2e}  {err:.2e}")
+                    else:
+                        print(f"{k:5d}  {Fx:7.2e}  {stepsize:6.2e}")
+                else:
+                    if self.errFcn is not None:
+                        print(f"{k:5d}  {Fx:7.2e}  {err:.2e}")
+                    else:
+                        print(f"{k:5d}  {Fx:7.2e}")
+            else:
+                if self.printStepsize:
+                    if self.errFcn is not None:
+                        print(f"{k:5d}  {stepsize:6.2e}  {err:.2e}")
+                    else:
+                        print(f"{k:5d}  {stepsize:6.2e}")
+                else:
+                    if self.errFcn is not None:
+                        print(f"{k:5d}  {err:.2e}")
+                    else:
+                        print(f"{k:5d}")
+    
+    def printFinalization(self, x, k, stepsize=None):
+        if self.display:
+            self.update_and_print(x,k,stepsize,ignorePrintEvery=True)
+            print('== ', self.stoppingFlag, ' ==')
+        if self.objFcn:
+            fx = self.fcnHist[-1]
+        else:
+            fx = np.nan
+        # assume that k (steps) is 0-based
+        data = {'steps':k+1, 'fcnHistory':np.asarray(self.fcnHist), 
+            'errHistory':np.asarray(self.errHist),
+            'flag':self.stoppingFlag, 'fx':fx }
+        return data
+    
+    def checkStoppingCondition(self, x, xOld=None, k=np.Inf, gradient=None):
+        stop = False
+        if k > self.minIter:
+            if self.objFcn is not None:
+                if np.abs( self.fcnHist[-1] - self.fcnHist[-2] ) < self.tol*np.abs(self.fcnHist[-1]) + self.tolAbs:
+                    stop = True
+                    self.stoppingFlag = "Quitting due to stagnating objective value"
+            if self.errFcn is not None:
+                if self.errHist[-1] < self.tolErr:
+                    stop = True
+                    self.stoppingFlag = "Quitting due to error reaching threshold"
+            if gradient is not None:
+                if np.linalg.norm( gradient.ravel() ) < self.tolG:
+                    # Euclidean norm
+                    stop = True
+                    self.stoppingFlag = "Quitting due to norm of gradient being small"
+            if xOld is not None:
+                if np.allclose(x,xOld,rtol=self.tolX, atol=1e-3*self.tolX):
+                    # Relative and abs tolerance, and uses l_inf norm
+                    stop = True
+                    self.stoppingFlag = "Quitting due to successive iterates being close together"
+        return stop
+
+
+
+
+# ======= Algorithms ============
+def DouglasRachford( prox1, prox2, y0, gamma = 1, F=None,overrelax = 1, tol  = 1e-6,
+         maxIters = 500, printEvery = 10, errorFunction = None ):
+    """ Douglas Rachford algorithm to minimize F(x) = f1(x) + f2(x)"""
+    maxIters = int(maxIters)
+    if printEvery is None:
+        printEvery = int( maxIters/20 )
+    if overrelax < 0 or overrelax > 2:
+        raise ValueError('Over-relaxation parameter "overrelax" must be in range (0,2)')
+    if gamma <= 0:
+        raise ValueError('Scaling gamma must be in range (0,inf)')
+    
+    book =  bookkeeper( printEvery, errorFunction, F, printStepsize = False, tol=tol )
+    book.printInitialization()
+
+      
+    y   = np.asarray(y0).copy()
+    x   = None
+    for k in range(maxIters):
+        xOld = x
+        x   = prox2(y,gamma)
+        z   = prox1( 2*x - y, gamma)
+        y  += overrelax*(z-x)
+
+        book.update_and_print( x, k )
+        stop = book.checkStoppingCondition( x, xOld, k)
+        if stop:
+            break
+    
+    data = book.printFinalization( x, k )
+    return x, data
 
 
 def gradientDescent(f,grad,x0,prox=None, prox_obj=None,stepsize=None,tol=1e-6,
@@ -420,7 +587,27 @@ def gradientDescent(f,grad,x0,prox=None, prox_obj=None,stepsize=None,tol=1e-6,
   return xNew, data
 
 
+# ======== Algorithms specialized for certain problems ==========
+def lassoSolver_DouglasRachford(A,b,tau,At=None,x=None,**kwargs):
+  """ not yet tested as of 4/25/23 """
+  if not callable(A):
+    # A is a matrix
+    f     = lambda x : norm(A@x-b)**2/2
+    n     = A.shape[1]
+    if x is None:
+      x = A.conj().T@b # ought to be the right size
+    H     = A.conj().T@A
+    prox1    = lambda x, t : np.sign(x)*np.maximum( 0, np.fabs(x) - tau*t )
+    def prox2(y,t):
+      x = linalg.solve( t*H + np.eye(n), y + t* A.conj().T@b, assume_a = 'pos' )
+      return x
+    F     = lambda x : f(x) + tau*norm(x,ord=1) 
+  else:
+      raise ValueError('Not currently implemented')
+  xNew, data =  DouglasRachford( prox1, prox2, x, F=F, **kwargs )
+  return xNew, data
 
+   
 def lassoSolver(A,b,tau,At=None,x=None,**kwargs):
   """
 lassoSolver( A, b, tau )
@@ -625,6 +812,15 @@ def runAllTestProblems():
           x0  = np.zeros(prob['n'])
           L   = prob['L']
           print('')
+
+          if problemNumber == 1:
+            # The lasso problem. We can solve via Douglas-Rachford
+            print("  (Douglas-Rachford algorithm)")
+            xNew,data = lassoSolver_DouglasRachford(prob['A'], prob['b'], prob['tau'],
+                            printEvery = 0, tol = 1e-10, maxIters = int(1e3), errorFunction = errFcn )
+            print(f"  Error in x: {errFcn(xNew):.2e}, after {data['steps']} steps")
+            print("  Stopping flag is:", data['flag'])
+            print('')
 
           for linesearch in (False,True):
             for acceleration in (False,True):
