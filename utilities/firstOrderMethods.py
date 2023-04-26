@@ -408,7 +408,7 @@ def gradientDescent(f,grad,x0,prox=None, prox_obj=None,stepsize=None,tol=1e-6,
   errorFunction     if provided, will evaluate errorFunction(x) at every iteration
   saveHistory       whether to save function and error history
   acceleration      Nesterov acceleration (default: True)
-  restart           How often to restart acceleration
+  restart           How often to restart acceleration; if negative, then adaptive restart
 
   Outputs:
   x         final iterate
@@ -504,10 +504,12 @@ def gradientDescent(f,grad,x0,prox=None, prox_obj=None,stepsize=None,tol=1e-6,
         # Not recommended for Acceleration or Proximal methods
         xNew = prox(y - tPredicted*g,tPredicted)  # y = x if not using Nesterov acceleration
         p    = xNew - y  # this reduces to p = -tPredicted*g if prox=I
-        xNew,t,fNew,linesearchIter = backtrackingLinesearch(F,y,p,g,1,fy,**kwargs) # t=1
+        xNew,t,fNew,linesearchIter = backtrackingLinesearch(F,y,p,g,1,fy,**kwargs) # t=1. Uses F = f + prox_obj
         t    *= tPredicted # since t was scaled to [0,1]
       elif LipschitzStable:
         xNew,t,fNew,linesearchIter =  LipschitzLinesearch_stabler(f,y,grad,tPredicted,gx=g,prox=prox)
+        # 4/26/23, add fNew += prox_obj(xNew)   here?
+        fNew += prox_obj(xNew)
       else:
         # todo, save fy value to save time (and rename fy and Fy)
         # and also if this is not doing Nesterov, then we can pass in fx 
@@ -531,7 +533,6 @@ def gradientDescent(f,grad,x0,prox=None, prox_obj=None,stepsize=None,tol=1e-6,
       fcnHistory.append(fNew)
     
     if display and (not k % printEvery) :  # modulo
-      if fNew is None: fNew = f(xNew)
       if errorFunction is not None:
         print(f"{k:5d}  {fNew:7.2e}  {t:6.2e}  {err:.2e}")
       else:
@@ -562,6 +563,7 @@ def gradientDescent(f,grad,x0,prox=None, prox_obj=None,stepsize=None,tol=1e-6,
     if acceleration:
       kk += 1
       if kk > restart: kk = 0
+      if restart < 0 and kk > -restart and fNew > np.mean( fcnHistory[restart:-1] ): kk = 0 # adaptive restart, 4/26/23
       y = xNew + kk/(kk+3)*(xNew-x)
       fy = F(y)
       x  = xNew.copy() # not sure if needed, but just to be safe
