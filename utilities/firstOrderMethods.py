@@ -26,11 +26,12 @@ firstOrderMethods module
     Finally, if you run this file from the command line, it will execute the tests
 
     Features to add:
-        (1) adaptive restarts
+        (1) adaptive restarts. Done, 4/26/23
         (2) take advantage of functions that give you function value and gradient
             at the same time (since it's often possible to share some computation;
             e.g., f(x) = 1/2||Ax-b||^2, grad(x) = A'*(Ax-b), the residual Ax-b
-            only needs to be computed once
+            only needs to be computed once. [Along with this, make a class for
+            fcn/grad computation that records total # of fcn calls]
 
     Stephen Becker, April 1 2021, stephen.becker@colorado.edu
     Updates (Douglas-Rachford, bookkeeper) April 2023
@@ -191,7 +192,7 @@ def LipschitzLinesearch_stabler(f,x,g,t,fx=None,gx=None,prox=None,rho=0.9,linese
 
 
 
-def powerMethod(A, At=None, domainSize=None, x=None, iters=100, tol=1e-6, rng=None): 
+def powerMethod(A, At=None, domainSize=None, x=None, iters=100, tol=1e-6, rng=None, quiet=False): 
   if not callable(A):
     Amatrix = A
     domainSize = Amatrix.shape[1]
@@ -213,7 +214,8 @@ def powerMethod(A, At=None, domainSize=None, x=None, iters=100, tol=1e-6, rng=No
     normalization = norm( x.ravel() )
     x /= normalization # do this in-place
     if abs(oldNormalization - normalization)/np.max( [1e-12,normalization] ) < tol:
-      print("Reached tolerance after",k,"iterations.") 
+      if not quiet:
+        print("Reached tolerance after",k,"iterations.") 
       break
   return np.sqrt(normalization)
 
@@ -275,9 +277,11 @@ class bookkeeper:
                     else:
                         print("Iter.  ")
                         print("-----  ")
-    def update_and_print(self, x, k, stepsize=None, ignorePrintEvery = False):
+    def update_and_print(self, x, k, stepsize=None, ignorePrintEvery = False, Fx = None):
         """ x is current iterate, k is stepnumber, stepsize is stepsize """
-        if self.objFcn is not None:
+        if Fx is not None:
+            self.fcnHist.append( Fx )
+        elif self.objFcn is not None:
             Fx = self.objFcn( x )
             self.fcnHist.append( Fx )
         if self.errFcn is not None:
@@ -285,7 +289,7 @@ class bookkeeper:
             self.errHist.append( err )
         if self.display and ( (not k % self.printEvery) or ignorePrintEvery ):
             if self.objFcn is not None:
-                if self.printStepsize:
+                if self.printStepsize and stepsize is not None:
                     if self.errFcn is not None:
                         print(f"{k:5d}  {Fx:7.2e}  {stepsize:6.2e}  {err:.2e}")
                     else:
@@ -296,7 +300,7 @@ class bookkeeper:
                     else:
                         print(f"{k:5d}  {Fx:7.2e}")
             else:
-                if self.printStepsize:
+                if self.printStepsize and stepsize is not None:
                     if self.errFcn is not None:
                         print(f"{k:5d}  {stepsize:6.2e}  {err:.2e}")
                     else:
@@ -307,23 +311,23 @@ class bookkeeper:
                     else:
                         print(f"{k:5d}")
     
-    def printFinalization(self, x, k, stepsize=None):
-        if self.display:
-            self.update_and_print(x,k,stepsize,ignorePrintEvery=True)
-            print('== ', self.stoppingFlag, ' ==')
+    def finalize(self, x, k, stepsize=None): # fix Fx  
         if self.objFcn:
             fx = self.fcnHist[-1]
         else:
             fx = np.nan
+        if self.display:
+            self.update_and_print(x,k,stepsize,ignorePrintEvery=True, Fx = fx)
+            print('== ', self.stoppingFlag, ' ==')
         # assume that k (steps) is 0-based
         data = {'steps':k+1, 'fcnHistory':np.asarray(self.fcnHist), 
             'errHistory':np.asarray(self.errHist),
             'flag':self.stoppingFlag, 'fx':fx }
         return data
     
-    def checkStoppingCondition(self, x, xOld=None, k=np.Inf, gradient=None):
+    def checkStoppingCondition(self, x, xOld=None, iteration=np.Inf, gradient=None, stepsize = None):
         stop = False
-        if k > self.minIter:
+        if iteration > self.minIter:
             if self.objFcn is not None:
                 if np.abs( self.fcnHist[-1] - self.fcnHist[-2] ) < self.tol*np.abs(self.fcnHist[-1]) + self.tolAbs:
                     stop = True
@@ -342,6 +346,11 @@ class bookkeeper:
                     # Relative and abs tolerance, and uses l_inf norm
                     stop = True
                     self.stoppingFlag = "Quitting due to successive iterates being close together"
+            if stepsize is not None:
+                if stepsize == 0:
+                    stop = True
+                    self.stoppingFlag = "Quitting since linesearch failed"
+                  
         return stop
 
 
@@ -376,7 +385,7 @@ def DouglasRachford( prox1, prox2, y0, gamma = 1, F=None,overrelax = 1, tol  = 1
         if stop:
             break
     
-    data = book.printFinalization( x, k )
+    data = book.finalize( x, k )
     return x, data
 
 
@@ -384,25 +393,24 @@ def gradientDescent(f,grad,x0,prox=None, prox_obj=None,stepsize=None,tol=1e-6,
                     maxIters=1e4,printEvery=None, linesearch=False,
                     stepsizeOptimism = 1.1, errorFunction=None, 
                     ArmijoLinesearch = None, LipschitzStable = True,
-                    saveHistory=False,acceleration=True,restart=500,
+                    saveHistory=False,acceleration=True,restart=-5,
                     **kwargs):
   """
   (Proximal) gradient descent with either fixed stepsize or backtracking linesearch
+  Minimizes F(x) := f(x) + g(x), where f is differentiable and f has an easy proximity operator
+    (if g=0 then this reduces to gradient descent)
 
-  f         is objective function; we're trying to solve min_x f(x)
-  grad      returns gradient of objective function
-  x0        is initial starting point
-  prox      proximity operator for a function h, 
-              prox(y,t) = argmin_x h(x) + 1/(2*t)||x-y||^2
-  prox_obj  aka h(x), this is when we solve min_x f(x) + h(x)
-  stepsize  either a scalar or if None (default) then uses backtracking linesearch
-  linesearch  if True then uses backtracking linesearch (default: true if stepsize is None)
-  ArmijoLinesearch  if True, uses Armijo backgracking linesearch (default:
-    true, if no prox and no acceleration, otherwise false)
-  LipschitzStable   if not using Armijo linesearch, then use the stable (slightly more expensive)
-    linesearch?
-  tol       stopping tolerance
-  maxIters  maximum number of iterations
+  f                 is smooth part of the objective function
+  grad              returns gradient of f
+  x0                is initial starting point
+  prox              proximity operator for a function g,  prox(y,t) = argmin_x g(x) + 1/(2*t)||x-y||^2
+  prox_obj          aka g(x), this is when we solve min_x f(x) + g(x)
+  stepsize          either a scalar or if None (default) then uses backtracking linesearch
+  linesearch        if True then uses backtracking linesearch (default: true if stepsize is None)
+  ArmijoLinesearch  if True, uses Armijo backgracking linesearch (default: true, if no prox and no acceleration, otherwise false)
+  LipschitzStable   if not using Armijo linesearch, then use the stable (slightly more expensive) linesearch
+  tol               stopping tolerance
+  maxIters          maximum number of iterations
   printEvery        prints out information every printEvery steps; set to 0 for quiet
   stepsizeOptimism  how much to multiply old stepsize by when guessing new stepsize (linesearch only)
   errorFunction     if provided, will evaluate errorFunction(x) at every iteration
@@ -415,7 +423,7 @@ def gradientDescent(f,grad,x0,prox=None, prox_obj=None,stepsize=None,tol=1e-6,
   data      dictionary with detailed info. Keys include: 
     'steps', 'fcnHistory', 'errHistory', 'flag', 'fx'
 
-    Stephen Becker, University of Colorado Boulder, March 2021
+    Stephen Becker, University of Colorado Boulder, March 2021 and April 2023
   """
   x   = np.asarray(x0).copy()
   
@@ -430,37 +438,27 @@ def gradientDescent(f,grad,x0,prox=None, prox_obj=None,stepsize=None,tol=1e-6,
     restart = np.Inf
   else:
     restart = int(restart)
-  fcnHistory = []
-  errHistory = []
 
   ## Fancy stuff, not essential
   if printEvery is None:
     printEvery = int( maxIters/20 )
   if printEvery == 0  or  np.isinf(printEvery):
-    # Users has requested no output
-    # The "pprint" function does nothing
     def pprint(*args, **kwargs):
-      pass
+      pass  # The "pprint" function does nothing
     display = False
   else:
     display = True
-    pprint = print  # pprint is now a synonym for "print" function
-    if errorFunction is not None:
-      pprint("Iter.  Objective Stepsize  Error")
-      pprint("-----  --------- --------  -------")
-    else:
-      pprint("Iter.  Objective Stepsize")
-      pprint("-----  --------- --------")
+    pprint = print
   
   if ArmijoLinesearch is None:
     if (prox is None) and (not acceleration):
       ArmijoLinesearch = True
     else:
       ArmijoLinesearch = False
-
+  
   # Allow both plain gradient descent and proximal gradient descent
   if prox is None:
-    prox = lambda x, stepsize : x
+    prox     = lambda x, stepsize : x
     prox_obj = lambda x : 0
     F    = f
     if linesearch and ArmijoLinesearch:
@@ -468,11 +466,15 @@ def gradientDescent(f,grad,x0,prox=None, prox_obj=None,stepsize=None,tol=1e-6,
   else:
     F       = lambda x : f(x) + prox_obj(x)
 
+
   if linesearch and acceleration and ArmijoLinesearch:
       pprint("WARNING: Armijo linesearch not recommended for Nesterov acceleration")
 
+  book =  bookkeeper( printEvery, errorFunction, F, printStepsize = True, tol=tol )
+  book.printInitialization()
+
   y   = x.copy() # for Nesterov acceleration, y and x will be different
-  g   = grad(y)
+  g   = grad(x)
   fx  = F(x)
   fy  = fx
   if not np.array_equal( g.shape, x.shape ):
@@ -487,105 +489,65 @@ def gradientDescent(f,grad,x0,prox=None, prox_obj=None,stepsize=None,tol=1e-6,
 
 
   ## Main loop
-  flag = "Quitting due to reaching max iterations"
   kk = 0  # for Nesterov
   linesearchIter = 1
   for k in range(maxIters+1):
     ## Actual math:
     #g   = grad(x)  # Now doing this at end of loop
     
-    if linesearch:
-      if linesearchIter == 0:
-        tPredicted  = stepsizeOptimism*t  # guess for stepsize
-      else:
-        tPredicted  = t  # use old guess for stepsize
-
-      if ArmijoLinesearch:
-        # Not recommended for Acceleration or Proximal methods
-        xNew = prox(y - tPredicted*g,tPredicted)  # y = x if not using Nesterov acceleration
-        p    = xNew - y  # this reduces to p = -tPredicted*g if prox=I
-        xNew,t,fNew,linesearchIter = backtrackingLinesearch(F,y,p,g,1,fy,**kwargs) # t=1. Uses F = f + prox_obj
-        t    *= tPredicted # since t was scaled to [0,1]
-      elif LipschitzStable:
-        xNew,t,fNew,linesearchIter =  LipschitzLinesearch_stabler(f,y,grad,tPredicted,gx=g,prox=prox)
-        # 4/26/23, add fNew += prox_obj(xNew)   here?
-        fNew += prox_obj(xNew)
-      else:
-        # todo, save fy value to save time (and rename fy and Fy)
-        # and also if this is not doing Nesterov, then we can pass in fx 
-        xNew,t,fNew,linesearchIter = LipschitzLinesearch(f,y,g,tPredicted,prox=prox)
-        fNew += prox_obj(xNew)
-      if t == 0:
-        flag = "Quitting since linesearch failed"
-        break
-    else:
+    ### Take the update, either fixed stepsize or via a linesearch
+    if not linesearch:
+      # Plain update
       xNew = prox(y - t*g,t)
       fNew = F(xNew)
+    else: # doing a linesearch
+      if linesearchIter == 0:
+          # This means we didn't have to backgrack previously, so our guess was likely too conservative
+          tPredicted  = stepsizeOptimism*t  # guess for stepsize
+      else:
+          tPredicted  = t  # use old guess for stepsize
+
+      if ArmijoLinesearch:
+          # Not recommended for Acceleration or Proximal methods
+          xNew = prox(y - tPredicted*g,tPredicted)  # y = x if not using Nesterov acceleration
+          p    = xNew - y  # this reduces to p = -tPredicted*g if prox=I
+          if fy is None: fy = F(y)
+          xNew,t,fNew,linesearchIter = backtrackingLinesearch(F,y,p,g,1,fy,**kwargs) # t=1. Uses F = f + prox_obj
+          t    *= tPredicted # since t was scaled to [0,1]
+      elif LipschitzStable:
+          xNew,t,fNew,linesearchIter =  LipschitzLinesearch_stabler(f,y,grad,tPredicted,gx=g,prox=prox)
+          fNew += prox_obj(xNew) # added 4/26/23, fixing bug
+      else:
+          # todo, save fy value to save time (and rename fy and Fy)
+          # and also if this is not doing Nesterov, then we can pass in fx 
+          xNew,t,fNew,linesearchIter = LipschitzLinesearch(f,y,g,tPredicted,prox=prox)
+          fNew += prox_obj(xNew)
+      
     
     ### Now book-keeping, etc.
+    book.update_and_print( xNew, k, Fx = fNew, stepsize=t )
+    stop = book.checkStoppingCondition( xNew, xOld=y, iteration=k, stepsize = t, gradient = g)
+    if stop:
+        break
 
-    # Save data, record error
-    if errorFunction is not None:
-      err = errorFunction(xNew)
-      if saveHistory:
-        errHistory.append(err)
-    if saveHistory:
-      fcnHistory.append(fNew)
     
-    if display and (not k % printEvery) :  # modulo
-      if errorFunction is not None:
-        print(f"{k:5d}  {fNew:7.2e}  {t:6.2e}  {err:.2e}")
-      else:
-        print(f"{k:5d}  {fNew:7.2e}  {t:6.2e}")
-    
-    # Check for convergence
-    # If we wanted to get fancier, we could have separate tolerance variables
-    #   for each kind of check.
-    if np.abs(fx-fNew) < tol*np.abs(fx) + 1e-3*tol:
-      flag = "Quitting due to stagnating objective value"
-      break
-    if np.linalg.norm(g) < tol:
-      flag = "Quitting due to norm of gradient being small"
-      # This isn't useful for proximal/projected methods
-      # but doesn't cause any harm though. Those methods will benefit
-      # from the np.allclose() check below
-      break
-    # since xNew - x = stepsize*g, the following check is very similar
-    #   to the norm(g) check. The main difference is that it uses both
-    #   relative and absolute tolerances; another difference is that it
-    #   checks each entry (like l_inf norm) rather than
-    #   Euclidean norm.
-    if np.allclose(xNew,x,rtol=tol, atol=1e-3*tol):
-      flag = "Quitting due to successive iterates being close together"
-      break
-    
-    # Get ready for next iteration
+    ### Get ready for next iteration
     if acceleration:
       kk += 1
       if kk > restart: kk = 0
-      if restart < 0 and kk > -restart and fNew > np.mean( fcnHistory[restart:-1] ): kk = 0 # adaptive restart, 4/26/23
-      y = xNew + kk/(kk+3)*(xNew-x)
-      fy = F(y)
+      if restart < 0 and kk > -restart and fNew > np.mean( book.fcnHistory[restart:-1] ): kk = 0 # adaptive restart, 4/26/23
+      y = xNew + kk/(kk+3)*(xNew-x) # Nesterov acceleration
+      #fy = F(y)
+      fy = None  # Not usually needed (except with Armijo search, not usual in Nesterov case), so don't request unless needed
       x  = xNew.copy() # not sure if needed, but just to be safe
     else:
-      y = xNew
-      if fNew is None: fNew = f(xNew)
+      y  = xNew.copy() # not sure if needed, but just to be safe
       fy = fNew
-      x  = xNew
+    ### Request gradient at new point:
     fx = fNew
     g  = grad(y)
 
-
-  if display and (k % printEvery) :  # modulo
-    if errorFunction is not None:
-      print(f"{k:5d}  {fNew:7.2e}  {t:6.2e}  {err:.2e}")
-    else:
-      print(f"{k:5d}  {fNew:7.2e}  {t:6.2e}")
-  pprint("Iter",k,flag)
-  if fx is None: fx = f(xNew)
-  data = {'steps':k, 'fcnHistory':np.asarray(fcnHistory), 
-          'errHistory':np.asarray(errHistory),
-          'flag':flag, 'fx':fx }
+  data = book.finalize( xNew, k, stepsize=t )
   return xNew, data
 
 
@@ -610,7 +572,7 @@ def lassoSolver_DouglasRachford(A,b,tau,At=None,x=None,**kwargs):
   return xNew, data
 
    
-def lassoSolver(A,b,tau,At=None,x=None,**kwargs):
+def lassoSolver(A,b,tau,At=None,x=None,L=None,**kwargs):
   """
 lassoSolver( A, b, tau )
     solves min_x .5||Ax-b||^2 + tau||x||_1
@@ -630,8 +592,8 @@ lassoSolver( A, b, tau )
     f     = lambda x : norm(A@x-b)**2/2
     grad  = lambda x : A.conj().T@( A@x - b )
     n     = A.shape[1]
-    # Get a rough estimate, and make it a bit larger to account for uncertainty:
-    L     = 1.2*powerMethod(A, domainSize=n, x=x, iters=10, tol=1e-3)**2
+    if L is None:
+      L     = np.linalg.norm(A,ord=2)**2
     if x is None:
       x = A.T@b # ought to be the right size
   else:
@@ -642,7 +604,8 @@ lassoSolver( A, b, tau )
       x = At(b) # ought to be the right size
     f     = lambda x : norm(A(x)-b)**2/2
     grad  = lambda x : At( A(x) - b )
-    L     = 1.2*powerMethod(A, At=At,x=x, iters=10, tol=1e-3)**2
+    if L is None:
+      L     = 1.2*powerMethod(A, At=At,x=x, iters=10, tol=1e-3)**2
   
   prox  = lambda x, t : np.sign(x)*np.maximum( 0, np.fabs(x) - tau*t )
   prox_fcn = lambda x : tau*norm(x,ord=1) 
@@ -741,10 +704,23 @@ def createTestProblem( problemName, n=10, rng=None, m = None, tau = None):
     x     = cvx.Variable(n)
     obj   = cvx.Minimize( cvx.sum_squares(A@x-b)/2 + tau*cvx.norm(x,p=1) )
     prob  = cvx.Problem(obj)
-    highPrecision = {'solver':cvx.ECOS,'max_iters':400,'abstol':1e-13,'reltol':1e-13}
+    #highPrecision = {'solver':cvx.ECOS,'max_iters':400,'abstol':1e-13,'reltol':1e-13}
+    highPrecision = {'solver':cvx.ECOS,'max_iters':5000,'abstol':1e-16,'reltol':1e-16,'feastol':1e-16,'verbose':False}
     prob.solve(**highPrecision)
     xTrue = x.value 
     fTrue = prob.value
+    fTrue = f(xTrue) + prox_fcn(xTrue)
+
+    # Improve on that solution
+    xNesterov, data = lassoSolver(A,b,tau,x=xTrue,L=L,acceleration=True,tol=1e-20,linesearch=False,maxIters=1e2,printEvery=0)
+    fx = f(xNesterov) + prox_fcn(xNesterov)
+    # If we did improve, then use that
+    if fx < fTrue:
+       #print('Using the first-order refinement of ECOS solution')
+       fTrue = fx
+       xTrue = xNesterov
+
+
     nameString = 'lasso'
     return {'f':f, 'grad':grad, 'xTrue':xTrue, 'fTrue':fTrue, 'L':L, 'Hess':Hess,
             'name':nameString, 'n':n, 'prox':prox, 'tau':tau, 'prox_obj':prox_fcn,
@@ -767,8 +743,8 @@ def createTestProblem( problemName, n=10, rng=None, m = None, tau = None):
     #ff    = -cvx.sum(cvx.multiply(b.ravel(), A @ x) - cvx.logistic(A @ x) )  # cvx.logistic(a)=log(1+exp(a))
     ff    = cvx.sum(cvx.logistic(cvx.multiply(-b, A @ x))) + tau*cvx.sum_squares(x)/2
     prob  = cvx.Problem(cvx.Minimize(ff))
-    highPrecisionECOS = {'solver':cvx.ECOS,'max_iters':1000,'abstol':1e-13,'reltol':1e-13,'verbose':False}
-    highPrecisionSCS = {'solver':cvx.SCS,'eps':1e-8,'use_indirect':False,'verbose':False}
+    highPrecisionECOS = {'solver':cvx.ECOS,'max_iters':5000,'abstol':1e-15,'reltol':1e-15,'feastol':1e-14,'verbose':False}
+    #highPrecisionSCS = {'solver':cvx.SCS,'eps':1e-8,'use_indirect':False,'verbose':False}
     prob.solve(**highPrecisionECOS)
     xTrue = x.value 
     fTrue = prob.value
@@ -830,7 +806,7 @@ def runAllTestProblems():
               xNew, data = gradientDescent(prob['f'],prob['grad'],x0,stepsize=1/L,
                           prox=prob['prox'], prox_obj=prob['prox_obj'],
                           errorFunction = errFcn, tol=1e-10, saveHistory=True, printEvery=0,
-                          linesearch = linesearch,acceleration=acceleration,restart=100,
+                          linesearch = linesearch,acceleration=acceleration, restart=100,
                           maxIters=1e4,ArmijoLinesearch = False, LipschitzStable=True)
               print(f"  Error in x: {errFcn(xNew):.2e}, after {data['steps']} steps")
               print("  Stopping flag is:", data['flag'])
