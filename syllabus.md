@@ -1,8 +1,6 @@
 # Syllabus for APPM 5630 Advanced Convex Optimization
 
-Spring 2021, Instructor: Stephen Becker
-
-This semester, the class is taught remotely some of the time due to COVID-19
+Spring 2023, Instructor: Stephen Becker
 
 Since there is no established optimization curriculum at CU Boulder, we will attempt to cover a lot of material in just one semester. We can divide topics into four broad categories:
 
