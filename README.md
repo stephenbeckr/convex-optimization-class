@@ -1,12 +1,12 @@
 # Advanced Convex Optimization class
 APPM 5630 at CU Boulder
-Prof. Becker, Spring 2023. Meeting time: MWF 10:10 -- 11:00 AM, VAC 1B88
+Prof. Becker, Spring 2025. Meeting time: MWF 11:15 -- 12:05 PM, DUAN G2B21
 
 Office hours:
-- Wed 3-5 PM and Thur 1-3 PM, hybrid (in my office or via zoom; see Canvas for zoom link)
-- Our TA Jacob Spainhour's office hours are Thurs 11 AM to noon in ECCR 235 (also hybrid; see Canvas or Piazza for zoom link)
+- Mon 3-4:30 and Thursday 1-2:30, hybrid (in my office or via zoom; see Canvas for zoom link)
+- Our TA Nic Rummel's office hours are TBD
 
-This repo contains in-class demos and some homework solutions (much of it is from Spring 2021 or even Fall 2018 when this class was taught as a special topics course 4720/5720)
+This repo contains in-class demos and some homework solutions (much of it is from Spring 2023 and 2021 or even Fall 2018 when this class was taught as a special topics course 4720/5720)
 
 - Here is the [class policy/procedures](policies.md) document (and if you need it for some reason, the [2018 policies/syllabus (PDF)](APPM4720_5720_Fall2018_Syllabus.pdf)).
 - Here is the [syllabus (details on the content)](syllabus.md) document (and if you need it, the [day-by-day schedule](Fall2018_day-by-day_schedule.pdf) from Fall 2018 has even more details on what we covered)
