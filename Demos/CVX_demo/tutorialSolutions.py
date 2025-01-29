@@ -2,6 +2,7 @@
 import numpy as np # np.array (and used internally in cvxpy)
 import cvxpy as cvx
 import argparse
+import time
 
 def get_vars():
    A = np.array([[1, 6,11, 5,10, 4, 9, 3, 8, 2],
@@ -137,6 +138,29 @@ def problem8():
 
    print_status(prob, X)
 
+def problem9():
+   A, y = get_vars()
+   print('Rerun Problem 1 without parameterizing ...')
+   x = cvx.Variable(10)
+   obj = cvx.Minimize(cvx.norm(x))
+   constraints = [cvx.norm(A@x - y) <= 0.1]
+   prob = cvx.Problem(obj, constraints)
+   t = time.time()
+   prob.solve()
+   elapsed = time.time() - t
+   print(f"  Elapsed time: {elapsed} seconds.")
+   print('Now parameterize y ...')
+   b = cvx.Parameter(5)
+   obj = cvx.Minimize(cvx.norm(x))
+   constraints = [cvx.norm(A@x - b) <= 0.1]
+   prob = cvx.Problem(obj, constraints)
+
+   for i in range(10):
+      b.value = np.random.rand(5)
+      t = time.time()
+      prob.solve()
+      elapsed = time.time() - t
+      print(f"  {i=}, Elapsed time: {elapsed} seconds.")
 
 if __name__ == '__main__':
    parser = argparse.ArgumentParser()
@@ -144,10 +168,10 @@ if __name__ == '__main__':
    args = parser.parse_args()
    
    num = args.num
-   if num < 1 or num > 8:
-      raise argparse.ArgumentError('Problem number should be in [1..8]')
+   if num < 1 or num > 9:
+      raise argparse.ArgumentError('Problem number should be in [1..9]')
    
-   problem_funs = [eval('problem'+str(i)) for i in range(1,9)]
+   problem_funs = [eval('problem'+str(i)) for i in range(1,10)]
    problem_funs[num-1]()
    
 
