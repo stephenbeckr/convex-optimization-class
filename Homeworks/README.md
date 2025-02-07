@@ -1,13 +1,13 @@
 # Advanced Convex Optimization: Homeworks
-APPM 5630, Spring 2023
+APPM 5630, Spring 2025
 
 The homework assignments are here, but homework **solutions** are on Canvas
 
-- [HW 1/2](APPM5630Spring23Homework01-02.pdf) HW 1 on convex sets; HW 2 on using cvx/cvxpy for least-squares and l1 regression on wine dataset. Due Fri Feb 3 2023.
-- [HW 3/4](APPM5630Spring23Homework03-04.pdf) HW 2 on convex functions; HW 4 on 1D deblurring problem, finding adjoint, using existing first-order solver (such as the Python one I made in [utilities](../utilities). Due Fri Feb 17 2023.
-- [HW 5/6](APPM5630Spring23Homework05-06.pdf) HW 5 and 6 on logistic regression; checking if strongly convex, strongly smooth; derive gradient/Hessian; implement gradient check; implement gradient descent with backtracking linesearch. Due Fri Mar 3 2023.
-- [HW 7/8](APPM5630Spring23Homework07-08.pdf) HW 7 and 8 on logistic regression and 2D total-variation, and proximal methods. Due Fri Mar 17 2023.
-- [HW 9/10](APPM5630Spring23Homework09-10.pdf) HW 9 and 10 on compressed sensing and perturbation analysis, applied to the Handel audio clip (using a matrix-free linear operator). See the [HW10](HW10/) subfolder for helper files (we did [listen_to_Handel.ipynb](HW10/listen_to_Handel.ipynb) in class). Due Fri Apr 7 2023.
+- [HW 1/2](APPM5630Spring23Homework01-02.pdf) HW 1 on convex sets; HW 2 on using cvx/cvxpy for least-squares and l1 regression on wine dataset. Due Fri Jan 31, 2025
+- [HW 3/4](APPM5630Spring23Homework03-04.pdf) HW 2 on convex functions; HW 4 on 1D deblurring problem, finding adjoint, using existing first-order solver (such as the Python one I made in [utilities](../utilities). Due Fri Feb 14 2025.
+- [HW 5/6](APPM5630Spring23Homework05-06.pdf) HW 5 and 6 on logistic regression; checking if strongly convex, strongly smooth; derive gradient/Hessian; implement gradient check; implement gradient descent with backtracking linesearch. Due Fri Feb 28 2025.
+- [HW 7/8](APPM5630Spring23Homework07-08.pdf) HW 7 and 8 on logistic regression and 2D total-variation, and proximal methods. Due Fri Mar 14 2025.
+- [HW 9/10](APPM5630Spring23Homework09-10.pdf) HW 9 and 10 on compressed sensing and perturbation analysis, applied to the Handel audio clip (using a matrix-free linear operator). See the [HW10](HW10/) subfolder for helper files (we did [listen_to_Handel.ipynb](HW10/listen_to_Handel.ipynb) in class). Due Fri Apr 4 2025.
 
 <!-- 
 [//]: # [HW 5/6](APPM5630Spring21Homework05-06.pdf) HW 5 and 6 on logistic regression; checking if strongly convex, strongly smooth; derive gradient/Hessian; implement gradient check; implement gradient descent with backtracking linesearch
