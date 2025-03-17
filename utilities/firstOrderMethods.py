@@ -325,7 +325,7 @@ class bookkeeper:
             'flag':self.stoppingFlag, 'fx':fx }
         return data
     
-    def checkStoppingCondition(self, x, xOld=None, iteration=np.Inf, gradient=None, stepsize = None):
+    def checkStoppingCondition(self, x, xOld=None, iteration=np.inf, gradient=None, stepsize = None):
         stop = False
         if iteration > self.minIter:
             if self.objFcn is not None:
@@ -435,7 +435,7 @@ def gradientDescent(f,grad,x0,prox=None, prox_obj=None,stepsize=None,tol=1e-6,
   if maxIters is None: maxIters = 1e4
   maxIters = int(maxIters)
   if restart is None: 
-    restart = np.Inf
+    restart = np.inf
   else:
     restart = int(restart)
 
