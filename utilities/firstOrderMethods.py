@@ -706,8 +706,15 @@ def createTestProblem( problemName, n=10, rng=None, m = None, tau = None):
     prob  = cvx.Problem(obj)
     #highPrecision = {'solver':cvx.ECOS,'max_iters':400,'abstol':1e-13,'reltol':1e-13}
     highPrecision = {'solver':cvx.ECOS,'max_iters':5000,'abstol':1e-16,'reltol':1e-16,'feastol':1e-16,'verbose':False}
-    highPrecision = {'verbose':False} # 2025, ECOS isn't installed by default in CVXPY any more, need to update!
-    prob.solve(**highPrecision)
+    try:
+      prob.solve(**highPrecision)
+    except cvx.SolverError as err: # ECOS no longer bundled/recommended by cvxpy in recent versions...
+      print(f"Found error '{err}', retrying with a different solver")
+      tol = 1e-15
+      highPrecision = {'solver':cvx.CLARABEL,'max_iter':100,'tol_gap_abs':tol,'tol_gap_rel':tol}
+      prob.solve(verbose=False,**highPrecision)
+    print(prob.solver_stats)
+
     xTrue = x.value 
     fTrue = prob.value
     fTrue = f(xTrue) + prox_fcn(xTrue)
@@ -717,7 +724,7 @@ def createTestProblem( problemName, n=10, rng=None, m = None, tau = None):
     fx = f(xNesterov) + prox_fcn(xNesterov)
     # If we did improve, then use that
     if fx < fTrue:
-       #print('Using the first-order refinement of ECOS solution')
+       #print('Using the first-order refinement of CVXPY solution')
        fTrue = fx
        xTrue = xNesterov
 
@@ -744,10 +751,17 @@ def createTestProblem( problemName, n=10, rng=None, m = None, tau = None):
     #ff    = -cvx.sum(cvx.multiply(b.ravel(), A @ x) - cvx.logistic(A @ x) )  # cvx.logistic(a)=log(1+exp(a))
     ff    = cvx.sum(cvx.logistic(cvx.multiply(-b, A @ x))) + tau*cvx.sum_squares(x)/2
     prob  = cvx.Problem(cvx.Minimize(ff))
-    highPrecisionECOS = {'solver':cvx.ECOS,'max_iters':5000,'abstol':1e-15,'reltol':1e-15,'feastol':1e-14,'verbose':False}
-    highPrecisionECOS = {'verbose':False} # 2025, ECOS isn't installed by default in CVXPY any more, need to update!
+    tol = 1e-14
+    highPrecisionECOS = {'solver':cvx.ECOS,'max_iters':5000,'abstol':tol,'reltol':tol,'feastol':tol,'verbose':False}
+    highPrecisionCLARABEL = {'solver':cvx.CLARABEL,'max_iter':100,'tol_gap_abs':tol,'tol_gap_rel':tol}
     #highPrecisionSCS = {'solver':cvx.SCS,'eps':1e-8,'use_indirect':False,'verbose':False}
-    prob.solve(**highPrecisionECOS)
+    try:
+      prob.solve(**highPrecisionECOS)
+    except cvx.SolverError as err: # ECOS no longer bundled/recommended by cvxpy in recent versions...
+      print(f"Found error '{err}', retrying with a different solver")
+      prob.solve(verbose=False,**highPrecisionCLARABEL)
+    print(prob.solver_stats)
+    
     xTrue = x.value 
     fTrue = prob.value
     # print_status(prob,x) # optional
