@@ -15,7 +15,7 @@ List of previous semesters' class projects
 - [2023 class projects](SlideshowAllPresentations_5630_Spring23.pdf)
 - [2021 class projects](SlideshowAllPresentations_5630_Spring21.pdf)
 - [2018 class projects](SlideshowAllPresentations_4720Fall18.pdf)
-- [2017 class projects](https://amath.colorado.edu/faculty/becker/SlideshowAllPresentations_4720Spr17.pdf).  
+- [2017 class projects](SlideshowAllPresentations_4720Spr17.pdf).  
 
 We will follow instructors' notes. The supplementary texts we used most often:
 - [Convex Optimization by Boyd and Vandenberghe](http://www.stanford.edu/~boyd/cvxbook/), Cambridge University Press 2004
