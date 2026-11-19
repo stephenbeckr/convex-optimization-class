@@ -11,8 +11,8 @@ This repo contains in-class demos and some homework solutions
 - See the [class policy/procedures](policies.md) document
 - See the [syllabus (details on the content)](syllabus.md) document
 - See the [daily schedule](schedule.md) 
-  - [daily schedule from 2025](schedule.2025.md)
-  - [dialy schedule from 2018 (PDF)](Fall2018_day-by-day_schedule.pdf)
+  - [daily schedule from 2025](PreviousYears/schedule.2025.md)
+  - [dialy schedule from 2018 (PDF)](PreviousYears/Fall2018_day-by-day_schedule.pdf)
 
 ### Homeworks
 Homeworks are posted here on github, solutions only on Canvas
@@ -30,7 +30,7 @@ The supplementary texts we used most often:
 More details on textbooks in the [syllabus](syllabus.md).
 
 ### List of previous semesters' class projects
-- [2023 class projects](SlideshowAllPresentations_5630_Spring23.pdf)
-- [2021 class projects](SlideshowAllPresentations_5630_Spring21.pdf)
-- [2018 class projects](SlideshowAllPresentations_4720Fall18.pdf)
-- [2017 class projects](SlideshowAllPresentations_4720Spr17.pdf).  
+- [2023 class projects](PreviousYears/SlideshowAllPresentations_5630_Spring23.pdf)
+- [2021 class projects](PreviousYears/SlideshowAllPresentations_5630_Spring21.pdf)
+- [2018 class projects](PreviousYears/SlideshowAllPresentations_4720Fall18.pdf)
+- [2017 class projects](PreviousYears/SlideshowAllPresentations_4720Spr17.pdf).  
